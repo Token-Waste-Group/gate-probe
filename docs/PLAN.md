@@ -281,7 +281,7 @@ first takes the skeleton and the decision packets):
 - done-when: same protocol as X1 in `docs/experiments/x2-judge.md` (planned report pushed before launch); launched Tuesday evening so it finishes overnight; served model, revision and dtype recorded; after the run, `docker compose down` and cleanup per memory/reference-dgx-usage.md.
 
 ### X7 — Claude judge full run: Opus 5.5 via the Batch API, 3 repeats [API: Anthropic]
-- status: in_review (#31)
+- status: done
 - owner: jrzkaminski@Jerzy-Pro.local
 - claimed_at: 2026-10-19T19:56:21Z
 - deps: G1 C4 C5 R2 R6 R8
