@@ -37,7 +37,7 @@ def build_parser() -> argparse.ArgumentParser:
         prog="gateprobe", description="Metamorphic testing of coding-agent permission gates."
     )
     parser.add_argument("--version", action="version", version=f"gateprobe {__version__}")
-    names = [*PLANNED, *RUNS, "expand"]
+    names = [*PLANNED, *RUNS, "expand", "analyze"]
     sub = parser.add_subparsers(dest="command", metavar="{" + ",".join(sorted(names)) + "}")
     for name, (help_text, step) in PLANNED.items():
         sub.add_parser(name, help=help_text, description=f"{help_text} (built in step {step}).")
@@ -47,6 +47,14 @@ def build_parser() -> argparse.ArgumentParser:
         description="Write variants/generated.jsonl (base items + all applicable variants); print counts.",
     )
     ex.add_argument("--config", type=Path, default=ROOT / "configs" / "relations.yaml")
+    an = sub.add_parser(
+        "analyze",
+        help="score run JSONL files as pre-registered in docs/RELATIONS.md and write results/<name>/*.csv",
+        description="Score runs per gate: floor, flips above it, M inversions, A shifts, band, ECE, cost.",
+    )
+    an.add_argument("--runs", nargs="+", required=True, type=Path, help="run JSONL files (any gates)")
+    an.add_argument("--name", required=True, help="results/<name>/ (must not exist: results are append-only)")
+    an.add_argument("--probes", type=Path, default=ROOT / "probes" / "corpus.jsonl", help="for the labels")
     for name, help_text in RUNS.items():
         p = sub.add_parser(name, help=help_text, description=help_text)
         p.add_argument("--gate", required=True, help="gate name in configs/gates.yaml, e.g. jev")
@@ -118,6 +126,24 @@ def cmd_expand(args: argparse.Namespace) -> int:
     return 0
 
 
+def cmd_analyze(args: argparse.Namespace) -> int:
+    from gateprobe.analysis.score import score
+    from gateprobe.analysis.write import write
+    from gateprobe.corpus.schema import Probe, load_jsonl
+
+    rows = [
+        json.loads(line)
+        for path in args.runs
+        for line in path.read_text(encoding="utf-8").splitlines()
+        if line.strip()
+    ]
+    labels = {p.id: p.label for p in load_jsonl(args.probes, Probe) if p.label}
+    out = ROOT / "results" / args.name
+    written = write(score(rows, labels or None), out, [str(p) for p in args.runs])
+    print(f"{len(rows)} rows -> {len(written)} tables in {out.relative_to(ROOT)}")
+    return 0
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = build_parser()
     args = parser.parse_args(argv)
@@ -126,6 +152,8 @@ def main(argv: list[str] | None = None) -> int:
         return 2
     if args.command == "expand":
         return cmd_expand(args)
+    if args.command == "analyze":
+        return cmd_analyze(args)
     if args.command in RUNS:
         return cmd_run(args, replay=args.command == "replay")
     step = PLANNED[args.command][1]
