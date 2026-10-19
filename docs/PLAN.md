@@ -233,9 +233,9 @@ first takes the skeleton and the decision packets):
 - done-when: `probes/labels.jsonl` committed with 60 labels and labeler ids; recorded in STATUS.md.
 
 ### C8 — Paraphrase class (P): open-model rewrites, labeled as such [GPU: H100 or RTX]
-- status: todo
-- owner: —
-- claimed_at: —
+- status: claimed
+- owner: jrzkaminski@Jerzy-Pro.local
+- claimed_at: 2026-10-19T21:10:34Z
 - deps: C2 C3 G1
 - source: gateprobe_plan.md § Metamorphic relations (P); memory/decision-llm-routing.md
 - done-when: `gateprobe/relations/paraphrase.py` rewrites commands (`rm -rf build` ↔ `find build -delete`) and policies with an open model whose id, revision, prompt and temperature are fixed in config; every output is class P and never mixed into E; the generated set is frozen in `variants/` with its sha256; a hand-checked sample of 20 pairs in the PR says which rewrites are not equivalent (P is the explicitly weaker class).
