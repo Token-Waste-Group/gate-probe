@@ -224,6 +224,7 @@ __marimo__/
 # git. Run JSONL stays out too; distilled numbers in results/ ARE committed.
 cache/
 runs/
+reports/
 results/**/*.tmp
 .DS_Store
 
