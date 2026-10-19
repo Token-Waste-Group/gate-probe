@@ -154,7 +154,7 @@ first takes the skeleton and the decision packets):
 - done-when: `gateprobe/gates/rules.py` evaluates Claude Code-style permission patterns (e.g. `Bash(git push:*)`, `Read(./.env)`) with deny-over-allow precedence and p_block ∈ {0, 1}, deterministic; one rule set per policy at `policies/<policy_id>/rules.yaml`, hand-written to match the policy (stated as such in `policies/README.md`); unit tests on pattern semantics (prefix match, precedence, unmatched calls).
 
 ### R4 — Judge adapter and the fixed judge prompt
-- status: in_review (#10)
+- status: done
 - owner: jrzkaminski@Jerzy-Pro.local
 - claimed_at: 2026-10-19T17:38:19Z
 - deps: S1
