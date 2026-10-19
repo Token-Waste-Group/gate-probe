@@ -309,9 +309,9 @@ first takes the skeleton and the decision packets):
 ## Day 2 — Wed 21 Oct: second decision model, hook end to end, Docker builds, go/no-go at 18:00
 
 ### X3 — The three further decision models chosen at G1 [API: OpenRouter]
-- status: todo
-- owner: —
-- claimed_at: —
+- status: claimed
+- owner: jrzkaminski@Jerzy-Pro.local
+- claimed_at: 2026-10-19T21:31:43Z
 - deps: X1
 - source: gateprobe_plan.md § Validation plan; open question 3; § Budget and compute
 - done-when: the models G1 chose (human, 2026-10-19) — `openai/gpt-6-luna-decisions`, `perplexity/pplx-decider-v1.2`, `nace-ai/drex-v1.5` — run pinned to the dated snapshots the API serves (`-20261006`, `-20261016`, `-20261009`; pinned in `configs/gates.yaml` at G1, measured prices recorded there: about $0.00007, $0.000013 and $0.000024 per call, so GPT-6 Luna Decisions passes its $20 cap with room); `docs/experiments/x3-decision-models.md` is pushed as `planned` before the run; same protocol and outputs as X1, one gate at a time.
