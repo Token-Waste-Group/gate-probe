@@ -265,9 +265,9 @@ first takes the skeleton and the decision packets):
 - done-when: `gateprobe report <run>` writes one self-contained HTML file (no network requests when opened) with the flip table per relation × gate with 95% intervals, the reliability diagram, and the top-20 flip examples before/after; every number shows its repeat count; a test renders it from a fixture run and asserts no key-like string can appear in it.
 
 ### X1 — First full run: Jev + rule gate, 3 repeats, floor measured [API: OpenRouter]
-- status: todo
-- owner: —
-- claimed_at: —
+- status: claimed
+- owner: jrzkaminski@Jerzy-Pro.local
+- claimed_at: 2026-10-19T19:23:53Z
 - deps: G1 C4 C5 R1 R2 R3 R6
 - source: gateprobe_plan.md RQ1–RQ3; Tue DoD; risks "Decisions API instability", "Nondeterminism swamps the signal"
 - done-when: `docs/experiments/x1-jev-rules.md` is committed and pushed with `status: planned` (decision rules copied from `docs/RELATIONS.md`, $ cap stated) **before** the run; the full corpus × E/M/I/A variants × 3 repeats runs through Jev (mode per G1) and the rule gate under the config $ cap (the plan expects about $0.55–1.10 for Jev); the report then records per gate the floor, flip rates per relation with Wilson intervals, M risk inversions, A shifts, spend and wall-clock, with distilled CSVs in `results/`, each relation classified positive / neutral / negative; a Jev floor above 10% is flagged for the plan's 5-repeat rerun in X4; if the Decisions API stays unreachable, mark blocked — the 12-hour fallback (Clef and the judge only) is a human call.
