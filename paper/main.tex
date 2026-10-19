@@ -1,0 +1,74 @@
+% GateProbe -- ICSE 2027 Tool Demonstration and Data Showcase track.
+%
+% Format rules (docs/icse27-demo-cfp.md; enforced by scripts/check_paper.py):
+%   - IEEEtran with exactly [10pt,conference]; no compsoc/compsocconf option.
+%   - At most 4 pages INCLUDING references, figures and tables.
+%   - No changes to spacing, margins or font sizes (risk of desk rejection).
+%   - Single-anonymous: author names and affiliations stay in.
+%   - The abstract ends with the video URL; the paper links the public tool.
+%
+% One section per file: this file only sets up the document and \input's
+% sections/*.tex in order. Build with `bash scripts/build_paper.sh`; add
+% `--final` before submitting (it also fails on any \todo left).
+% IEEEtran.cls (V1.8b) and IEEEtran.bst (1.12) are the official IEEE files,
+% vendored unchanged so the build doesn't depend on the local TeX install.
+
+\documentclass[10pt,conference]{IEEEtran}
+
+\usepackage{cite}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{graphicx}
+\usepackage{textcomp}
+\usepackage{xcolor}
+\usepackage{booktabs}
+\usepackage{url}
+\usepackage[hidelinks]{hyperref}
+
+\newcommand{\tool}{GateProbe}
+\newcommand{\toolurl}{\url{https://github.com/TODO/gateprobe}} % H5: the public repo
+\newcommand{\videourl}{\url{https://youtu.be/TODO}}             % H6: the YouTube video
+\newcommand{\todo}[1]{\textcolor{red}{[TODO: #1]}}
+
+\begin{document}
+
+% Working title -- confirm at G1. No subtitle (IEEE Xplore drops subtitles).
+\title{GateProbe: Metamorphic Testing of the Permission Gates of Coding Agents}
+
+% Four authors (gateprobe_plan.md, Team); names and ORCIDs are settled at G1/H1.
+\author{%
+\IEEEauthorblockN{Jerzy Kami\'nski}
+\IEEEauthorblockA{\textit{ITMO University}\\
+Saint Petersburg, Russia\\
+\todo{email or ORCID}}
+\and
+\IEEEauthorblockN{\todo{Author 2}}
+\IEEEauthorblockA{\textit{\todo{Affiliation}}\\
+\todo{City, Country}\\
+\todo{email or ORCID}}
+\and
+\IEEEauthorblockN{\todo{Author 3}}
+\IEEEauthorblockA{\textit{\todo{Affiliation}}\\
+\todo{City, Country}\\
+\todo{email or ORCID}}
+\and
+\IEEEauthorblockN{\todo{Author 4}}
+\IEEEauthorblockA{\textit{\todo{Affiliation}}\\
+\todo{City, Country}\\
+\todo{email or ORCID}}
+}
+
+\maketitle
+
+\input{sections/abstract}
+\input{sections/introduction}
+\input{sections/design}
+\input{sections/relations}
+\input{sections/workflow}
+\input{sections/validation}
+\input{sections/related_work}
+\input{sections/conclusion}
+
+\bibliographystyle{IEEEtran}
+\bibliography{references}
+
+\end{document}

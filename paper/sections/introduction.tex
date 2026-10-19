@@ -1,0 +1,29 @@
+% Introduction. Budget: ~0.55 page. Owner: W2.
+% CFP must-haves covered here: the SE challenge and the envisioned users.
+% Source: gateprobe_plan.md, "Problem and envisioned users" and the SE framing
+% (a gate is a security component whose specification is the policy; GateProbe
+% is its test suite -- metamorphic testing of an ML component, DeepTest-style,
+% for a new component class with a natural risk order).
+% Every fragility claim cites a source checked to exist (W2 done-when).
+
+\section{Introduction}\label{sec:intro}
+
+\todo{The SE challenge: coding agents route every tool call through a permission
+gate; the newest gates are untested ML components in a security-critical
+position; known fragility (option-name and rubric swaps, injected
+pre-approval, probability drift between identical calls).}
+
+\paragraph{Envisioned users}
+\todo{Platform and DevEx engineers configuring an auto-approver; authors of
+gates and middleware who need a regression suite; researchers comparing
+decision models, LLM judges and rule sets.}
+
+\paragraph{Contributions}
+\todo{The positioning sentence: the first reusable metamorphic test suite for
+coding-agent permission gates, vendor-neutral across the Decisions API, LLM
+judges and rule sets.}
+\begin{itemize}
+  \item \todo{Contribution 1: the tool (CLI, adapters, report, CI mode, hook).}
+  \item \todo{Contribution 2: five relation classes, oracle-free for E, M, I, A.}
+  \item \todo{Contribution 3: a validation on four gates with noise floors.}
+\end{itemize}

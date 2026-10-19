@@ -82,7 +82,11 @@ raise it** instead of working around it.
     cited neutrally; no tool details are lifted from them and their systematic
     findings stay for the planned A\* paper. The paper is 4 pages including
     references, `\documentclass[10pt,conference]{IEEEtran}`, no compsoc,
-    margins and spacing untouched, single-anonymous (author names in).
+    margins and spacing untouched, single-anonymous (author names in) — the
+    CFP text is `docs/icse27-demo-cfp.md`. **One section per .tex file**
+    (human rule): `paper/main.tex` only `\input`s `paper/sections/*.tex`;
+    `scripts/check_paper.py` enforces this and the format rules in the gate,
+    and `bash scripts/build_paper.sh [--final]` adds the 4-page check.
 14. **The public artifact is a cleaned release** (step I6): no agent pipeline,
     `memory/`, `STATUS.md`, internal hostnames or storage paths. This dev repo
     stays private.
@@ -108,7 +112,8 @@ integrations/            # (I2) Claude Code PreToolUse hook
 deploy/vllm-judge/       # (R5) compose file for the judge on the H100
 cache/  runs/            # git-ignored: response cache (= replay bundle) and run JSONL
 results/                 # distilled CSVs, append-only, committed
-paper/  video/           # (W1, W6) IEEEtran LaTeX; storyboard, voice-over, captions
+paper/                   # IEEEtran (vendored), main.tex + sections/ (one section per file), references.bib
+video/                   # (W6) storyboard, voice-over, captions
 scripts/                 # loop mechanics + thin wrappers
 ```
 

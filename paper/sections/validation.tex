@@ -1,0 +1,46 @@
+% Validation and planned study. Budget: ~1.0 page incl. the three figures. Owner: W4.
+% CFP must-have covered here: validation results, and the design of the
+% planned study (the CFP accepts a planned study for early prototypes).
+% Numbers ONLY from the G3 freeze (docs/gates/g3-results-freeze.md); every
+% number with its repeats and a Wilson 95% interval; figures come from R7's
+% scripts, never hand-edited. If E flips sit at the floor, lead with M and A.
+
+\section{Validation}\label{sec:validation}
+
+\todo{Setup: the four gates (Jev 1.14 pinned as typesafe/jev-1.14, the
+second decision model chosen at G1, the Gemma 4 31B-it judge on vLLM, the rule
+gate), corpus size, variants per probe, repeats.}
+
+\paragraph{RQ1 Invariance} \todo{E and I flip rates above the floor.}
+\paragraph{RQ2 Monotonicity} \todo{Share of M variants with a risk inversion.}
+\paragraph{RQ3 Adversarial} \todo{A flips and mean $p_\mathrm{block}$ shift.}
+\paragraph{RQ4 Cost} \todo{Dollars and wall-clock per 1,000 probes per gate.}
+
+% Figure 1 of 3 (R7): flip rates, relation x gate, 95% intervals.
+\begin{table}[t]
+\centering
+\caption{Flip rate above the test--retest floor, per relation and gate}
+\label{tab:flips}
+\todo{R7 table}
+\end{table}
+
+% Figure 2 of 3 (R7): reliability diagram, Jev vs. the judge, labeled subset.
+\begin{figure}[t]
+\centering
+\fbox{\parbox{0.9\columnwidth}{\centering\todo{R7 reliability diagram}}}
+\caption{Reliability of Jev and the judge on the hand-labeled subset}
+\label{fig:reliability}
+\end{figure}
+
+% Figure 3 of 3 (R7, from X5): the before/after case-study box.
+\begin{figure}[t]
+\centering
+\fbox{\parbox{0.9\columnwidth}{\centering\todo{X5 case study: before / after}}}
+\caption{A destructive call auto-approved after a rewrite}
+\label{fig:case}
+\end{figure}
+
+\paragraph{Planned study}
+\todo{8--10 developers configure a gate with and without GateProbe's report;
+we record the threshold they pick and how many dangerous corpus calls it
+admits. Described, not run.}

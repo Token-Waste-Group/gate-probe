@@ -172,8 +172,8 @@ first takes the skeleton and the decision packets):
 - owner: —
 - claimed_at: —
 - deps: E0.1
-- source: gateprobe_plan.md § Submission checklist; Mon DoD "paper skeleton"
-- done-when: `paper/main.tex` uses `\documentclass[10pt,conference]{IEEEtran}` with no compsoc option and untouched margins and spacing; sections cover what a demo must communicate (envisioned users, the SE challenge, the workflow, validation results plus the planned-study design, related work, the carbon-footprint sentence); author names and affiliations present; `paper/references.bib` seeded with the works in the plan's novelty table, DeepTest, and the authority and supersession preprints — each entry checked to exist (arXiv/DOI) before it is added; `scripts/build_paper.sh` builds with latexmk and fails when the PDF exceeds 4 pages including references.
+- source: gateprobe_plan.md § Submission checklist; Mon DoD "paper skeleton"; docs/icse27-demo-cfp.md; human rule 2026-10-19 (one section per .tex file)
+- done-when: the official IEEE `IEEEtran.cls` and `IEEEtran.bst` are vendored unchanged in `paper/`; `paper/main.tex` uses `\documentclass[10pt,conference]{IEEEtran}` with no compsoc option and untouched margins and spacing, and only `\input`s `paper/sections/*.tex` — one section per file; `scripts/check_paper.py` lints all of this in the gate; sections cover what a demo must communicate (envisioned users, the SE challenge, the workflow, validation results plus the planned-study design, related work, the carbon-footprint sentence); author names and affiliations present; `paper/references.bib` seeded with the works in the plan's novelty table, DeepTest, and the authority and supersession preprints — each entry checked to exist (arXiv/DOI) before it is added; `scripts/build_paper.sh` builds with latexmk and fails when the PDF exceeds 4 pages including references.
 
 ### H1 — HotCRP accounts and ORCIDs for all four authors [HUMAN]
 - status: todo
@@ -461,7 +461,7 @@ first takes the skeleton and the decision packets):
 - claimed_at: —
 - deps: W5 H5 H6
 - source: gateprobe_plan.md § Submission checklist; Fri DoD
-- done-when: the video URL is appended to the end of the abstract; the H5 links are in the paper; model versions pinned and repeats/intervals present for every number; the 4-page check passes; every submission-checklist item is ticked or assigned in the PR; the final PDF is built.
+- done-when: the video URL is appended to the end of the abstract; the H5 links are in the paper; model versions pinned and repeats/intervals present for every number; `bash scripts/build_paper.sh --final` passes (lint, no `\todo` left, ≤ 4 pages); every submission-checklist item is ticked or assigned in the PR; the final PDF is built.
 
 ### H7 — Submit on HotCRP (Fri 23 evening; hard stop Sat 24 13:59 CEST) [HUMAN]
 - status: todo
