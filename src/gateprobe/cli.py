@@ -1,26 +1,34 @@
 """The `gateprobe` command: expand, run, report, ci, replay.
 
-Scope of v0: the command surface only — every subcommand has `--help`, and each
-one not built yet exits with status 3 and names the plan step that builds it.
-Out of scope: the subcommands' behavior (see the steps in `PLANNED`).
+Scope of v0: `run` and `replay` (R2) send a variants file through one gate and
+write the rows to runs/<run_id>.jsonl; the others have `--help` and exit with
+status 3, naming the plan step that builds them. Out of scope: the planned
+subcommands' behavior (see `PLANNED`).
 """
 
 from __future__ import annotations
 
 import argparse
+import datetime
+import json
 import sys
+from collections import Counter
+from pathlib import Path
 
 from gateprobe import __version__
 
 NOT_IMPLEMENTED = 3
+ROOT = Path(__file__).resolve().parents[2]
 
 # subcommand -> (help text, plan step that implements it)
 PLANNED: dict[str, tuple[str, str]] = {
     "expand": ("generate relation variants from the probe corpus", "C4/C5"),
-    "run": ("send variants x repeats through a gate", "R2"),
     "report": ("render a run as a single-file HTML report", "I1"),
     "ci": ("fail when a relation's flip rate exceeds --max-flip", "I3"),
-    "replay": ("re-run from the response cache, with no API key", "R2"),
+}
+RUNS = {
+    "run": "send a variants file x repeats through one gate (cache first, then the gate, under the $ cap)",
+    "replay": "re-run a variants file from the response cache only; needs no API key, fails on any miss",
 }
 
 
@@ -29,10 +37,68 @@ def build_parser() -> argparse.ArgumentParser:
         prog="gateprobe", description="Metamorphic testing of coding-agent permission gates."
     )
     parser.add_argument("--version", action="version", version=f"gateprobe {__version__}")
-    sub = parser.add_subparsers(dest="command", metavar="{" + ",".join(PLANNED) + "}")
+    names = [*PLANNED, *RUNS]
+    sub = parser.add_subparsers(dest="command", metavar="{" + ",".join(sorted(names)) + "}")
     for name, (help_text, step) in PLANNED.items():
         sub.add_parser(name, help=help_text, description=f"{help_text} (built in step {step}).")
+    for name, help_text in RUNS.items():
+        p = sub.add_parser(name, help=help_text, description=help_text)
+        p.add_argument("--gate", required=True, help="gate name in configs/gates.yaml, e.g. jev")
+        p.add_argument("--variants", required=True, type=Path, help="variants JSONL (base items included)")
+        p.add_argument("--repeats", type=int, help="override configs/run.yaml repeats")
+        p.add_argument("--run-id", help="default: <gate>-<UTC timestamp>")
+        p.add_argument("--limit", type=int, help="only the first N variants (smoke runs)")
+        p.add_argument("--gates-config", type=Path, default=ROOT / "configs" / "gates.yaml")
+        p.add_argument("--run-config", type=Path, default=ROOT / "configs" / "run.yaml")
     return parser
+
+
+def cmd_run(args: argparse.Namespace, replay: bool) -> int:
+    from gateprobe.config import load_gates, load_run
+    from gateprobe.corpus.schema import Variant, load_jsonl
+    from gateprobe.env import load_dotenv
+    from gateprobe.gates.factory import make_gate
+    from gateprobe.runner.cache import Cache
+    from gateprobe.runner.run import CapReached, ReplayMiss, config_hash, run_gate
+
+    gates = load_gates(args.gates_config)
+    run_cfg = load_run(args.run_config, gates=gates)
+    if args.gate not in gates:
+        print(f"gateprobe: no gate {args.gate!r} in {args.gates_config}", file=sys.stderr)
+        return 2
+    if not replay:
+        load_dotenv()
+    cfg = gates[args.gate]
+    gate = make_gate(cfg)
+    variants = load_jsonl(args.variants, Variant)[: args.limit]
+    stamp = datetime.datetime.now(datetime.UTC).strftime("%Y%m%dT%H%M%SZ")
+    run_id = args.run_id or f"{cfg.name}-{stamp}"
+    out = ROOT / run_cfg.runs_dir / f"{run_id}.jsonl"
+    out.parent.mkdir(parents=True, exist_ok=True)
+    counts: Counter[str] = Counter()
+    code = 0
+    with out.open("w", encoding="utf-8") as f:
+        try:
+            for row in run_gate(
+                variants,
+                gate,
+                repeats=args.repeats or run_cfg.repeats,
+                cache=Cache(ROOT / run_cfg.cache_dir),
+                run_id=run_id,
+                cap_usd=run_cfg.caps_usd[cfg.name],
+                config_digest=config_hash(cfg, run_cfg),
+                replay=replay,
+                retry=run_cfg.retry,
+                spend_csv=ROOT / run_cfg.spend_csv,
+            ):
+                f.write(json.dumps(row, ensure_ascii=False) + "\n")
+                counts[row["status"] + ("/cached" if row.get("cached") else "")] += 1
+        except (CapReached, ReplayMiss) as e:
+            print(f"gateprobe {args.command}: stopped: {e}", file=sys.stderr)
+            code = 1
+    shown = out.relative_to(ROOT) if out.is_relative_to(ROOT) else out
+    print(f"{run_id}: {dict(sorted(counts.items()))} -> {shown}")
+    return code
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -41,6 +107,8 @@ def main(argv: list[str] | None = None) -> int:
     if args.command is None:
         parser.print_help()
         return 2
+    if args.command in RUNS:
+        return cmd_run(args, replay=args.command == "replay")
     step = PLANNED[args.command][1]
     print(
         f"gateprobe {args.command}: not implemented yet — step {step} in docs/PLAN.md builds it",

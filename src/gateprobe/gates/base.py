@@ -9,6 +9,7 @@ and any vendor specifics (one adapter module per gate).
 
 from __future__ import annotations
 
+import json
 import math
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
@@ -75,3 +76,9 @@ class GateAdapter(ABC):
     @abstractmethod
     def decide(self, request: GateRequest) -> GateDecision:
         """Ask the gate once. Repeats, retries and caching are the runner's job."""
+
+    def request_bytes(self, request: GateRequest) -> bytes:
+        """The exact request this gate would send, as canonical bytes: the core of the cache key.
+        Adapters with a wire format override it with their request body. It never holds a secret."""
+        fields = [request.policy, request.call.tool, request.call.args, request.context, request.option_names]
+        return json.dumps(fields, sort_keys=True, ensure_ascii=False).encode("utf-8")

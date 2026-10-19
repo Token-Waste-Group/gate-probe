@@ -47,6 +47,7 @@ class RunConfig:
     caps_usd: dict[str, float]
     cache_dir: str
     runs_dir: str
+    spend_csv: str
 
 
 def _read(path: Path) -> dict[str, Any]:
@@ -86,6 +87,7 @@ def load_run(path: Path = CONFIGS / "run.yaml", gates: dict[str, GateConfig] | N
             caps_usd={k: float(v) for k, v in data["caps_usd"].items()},
             cache_dir=str(data.get("cache_dir", "cache")),
             runs_dir=str(data.get("runs_dir", "runs")),
+            spend_csv=str(data.get("spend_csv", "results/spend.csv")),
         )
     except (KeyError, TypeError, ValueError) as e:
         raise ConfigError(f"{path}: {e!r}") from e
