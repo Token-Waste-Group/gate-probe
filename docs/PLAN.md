@@ -169,7 +169,7 @@ first takes the skeleton and the decision packets):
 - done-when: a compose file under `deploy/vllm-judge/` serves Gemma 4 31B-it with vLLM on d.dgx **GPU #7 only**, every file under `/data/storage/kaluzhnaya_jhub/gate-probe/`, occupancy checked first; the weight fit is recorded — bf16 weights are ~62 GB, more than the ~40 GB share next to `kaluzhnaya_stale_runner`, so either GPU 7 is free or an FP8 checkpoint is used (record which; never stop that container; if neither works, block and ask); the R4 adapter returns verdicts for 10 corpus probes through `d.dgx:<port>`; served model name, revision and dtype recorded in `configs/gates.yaml`; bring-up and teardown commands documented in `deploy/vllm-judge/README.md`.
 
 ### W1 — Paper skeleton (IEEEtran, 4 pages, single-anonymous)
-- status: in_review (#1)
+- status: done
 - note: taken on direct request from jrzkaminski (paper template, one section per file)
 - owner: —
 - claimed_at: —
