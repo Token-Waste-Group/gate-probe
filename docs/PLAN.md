@@ -288,7 +288,7 @@ first takes the skeleton and the decision packets):
 - done-when: `docs/experiments/x7-claude-judge.md` is pushed as `planned` before any call (decision rules copied from `docs/RELATIONS.md`; the $ cap, at most $200 minus the Claude spend so far); a ~50-call pilot measures input and output tokens (thinking included) and projects the full run's cost into the report — if the projection exceeds the cap, mark blocked and ask; the full corpus × E/M/I/A variants × 3 repeats then goes to `claude-opus-5-5` as Message Batches with the frozen judge prompt and pinned effort; refusals are counted as their own outcome; the report gives the same outputs as X1 (floor, flip rates with Wilson intervals, M inversions, A shifts, spend, wall-clock), says that p_block is a stated probability, and classifies each relation positive / neutral / negative.
 
 ### W2 — Abstract, introduction and related work
-- status: in_review (#21)
+- status: done
 - owner: jrzkaminski@Jerzy-Pro.local
 - claimed_at: 2026-10-19T18:22:47Z
 - deps: W1
