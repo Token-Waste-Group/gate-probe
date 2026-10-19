@@ -97,7 +97,7 @@ first takes the skeleton and the decision packets):
 - done-when: `src/gateprobe/` subpackages `corpus`, `relations`, `gates`, `runner`, `analysis`, `report`, `hook` exist with module stubs whose docstrings state purpose + v0 scope; `gateprobe/gates/base.py` defines the adapter contract every gate implements (policy, tool call, context → verdict ∈ {allow, ask, deny}, p_block, raw response, gate id, pinned model id, latency, cost) plus a deterministic `fake` adapter for tests; a `gateprobe` console script with `expand | run | report | ci | replay` subcommands (`--help` works; unimplemented ones exit non-zero with a clear message); `configs/gates.yaml` (Jev pinned as `typesafe/jev-1.14`, judge model + endpoint as config keys, rules gate; no floating aliases) and `configs/run.yaml` (repeats 3, seed, per-gate $ caps, retry/backoff); `probes/`, `policies/`, `variants/`, `results/` tracked with .gitkeep, `cache/` and `runs/` git-ignored; tests for the CLI and config loading.
 
 ### C1 — Relation spec, scoring rules, corpus schema (frozen at G1)
-- status: in_review (#3)
+- status: done
 - owner: jrzkaminski@Jerzy-Pro.local
 - claimed_at: 2026-10-19T17:12:15Z
 - deps: S1
