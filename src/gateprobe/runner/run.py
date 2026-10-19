@@ -14,6 +14,7 @@ import csv
 import datetime
 import hashlib
 import json
+import os
 import subprocess
 import time
 from collections.abc import Callable, Iterator
@@ -39,12 +40,22 @@ class CapReached(RuntimeError):
 
 
 def git_hash(root: Path = ROOT) -> str:
-    r = subprocess.run(["git", "rev-parse", "HEAD"], cwd=root, capture_output=True, text=True)
-    sha = r.stdout.strip() or "unknown"
-    dirty = subprocess.run(
-        ["git", "status", "--porcelain", "--untracked-files=no"], cwd=root, capture_output=True, text=True
-    ).stdout.strip()
-    return sha + ("-dirty" if dirty else "")
+    """The commit the code runs from (+ "-dirty"). Without git (the Docker image), the commit baked
+    in at build time (GATEPROBE_GIT_HASH), else "unknown"; provenance never crashes a run."""
+    try:
+        r = subprocess.run(["git", "rev-parse", "HEAD"], cwd=root, capture_output=True, text=True)
+        sha = r.stdout.strip()
+        if sha:
+            dirty = subprocess.run(
+                ["git", "status", "--porcelain", "--untracked-files=no"],
+                cwd=root,
+                capture_output=True,
+                text=True,
+            ).stdout.strip()
+            return sha + ("-dirty" if dirty else "")
+    except OSError:
+        pass
+    return os.environ.get("GATEPROBE_GIT_HASH") or "unknown"
 
 
 def config_hash(*configs: Any) -> str:

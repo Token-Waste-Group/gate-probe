@@ -64,3 +64,18 @@ run files and so with no API key:
     runs: runs/x1-jev.jsonl
     max-flip: "0.05"
 ```
+
+## Docker
+
+```bash
+docker build --build-arg GIT_HASH=$(git rev-parse HEAD) -t gateprobe .   # ~270 MB
+# replay recorded runs and render the report: no API key, no network
+docker run --rm --network none -v "$PWD/cache:/gateprobe/cache:ro" -v "$PWD/runs:/gateprobe/runs" \
+  gateprobe replay --gate jev --variants variants/generated.jsonl --run-id replay
+docker run --rm --network none -v "$PWD/runs:/gateprobe/runs:ro" -v "$PWD/reports:/gateprobe/reports" \
+  gateprobe report --runs runs/replay.jsonl --out reports/replay.html
+```
+
+The image holds the CLI, configs, policies, probes and variants, and never
+`.env`, the cache or local state (`.dockerignore`). The replay bundle (I5)
+supplies `cache/`. Publishing the image is a human step (H5).
