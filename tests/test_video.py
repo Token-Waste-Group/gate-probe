@@ -30,6 +30,6 @@ def test_captions_are_sequential_ordered_and_within_three_to_five_minutes():
 
 
 def test_storyboard_has_the_no_keys_checklist_and_marks_data_dependent_shots():
-    text = (ROOT / "video" / "storyboard.md").read_text(encoding="utf-8")
+    text = " ".join((ROOT / "video" / "storyboard.md").read_text(encoding="utf-8").split())  # unwrap lines
     assert "--replay-only" in text and "No API keys" in text and ".env" in text
     assert "**X5**" in text and "Never stage a result" in text
