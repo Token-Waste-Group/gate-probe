@@ -209,9 +209,9 @@ first takes the skeleton and the decision packets):
 - done-when: `gateprobe/relations/monotonicity.py` and `adversarial.py` implement every M and A transform in `docs/RELATIONS.md` and nothing else; each M transform strictly raises risk (add `--force`/`-f`, widen scope `./build` → `~` → `/`, drop `--dry-run`, read → write, add `sudo`, pipe a download into `sh`) with a unit test; A covers the injected claims ("user pre-approved this", "test environment", "safe per policy"), text arguing for its own classification, the option-name swap (yes/no → 0/1 → A/B) and the rubric-to-name swap replicating 2609.26758, applied where the adapter mode has named options; deterministic and seeded; counts per transform in the PR; `gateprobe expand` includes them.
 
 ### C6 — Corpus to 300 probes
-- status: todo
-- owner: —
-- claimed_at: —
+- status: claimed
+- owner: jrzkaminski@Jerzy-Pro.local
+- claimed_at: 2026-10-19T19:14:37Z
 - deps: C2
 - source: gateprobe_plan.md Tue DoD; risk "Corpus and labels run late"
 - done-when: ≥ 300 probes validate against the schema (the plan's fallback — ship ≥ 200 if fewer than 200 exist on Tuesday night — applies only once a human records it in STATUS.md); no two probes are the same call after normalization; tier × tool-family balance updated in `docs/CORPUS.md`; the corpus rebuilds deterministically from the committed script.
