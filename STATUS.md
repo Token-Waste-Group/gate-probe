@@ -1,0 +1,10 @@
+# STATUS — one line per day + every decision-point outcome
+
+Convention: updated every evening; decision points (G1 Mon 19 18:00, G2 Wed 21
+18:00, G3 Thu 22 12:00) and fallback triggers are recorded here the day they
+happen, never silently. Newest first. Day 0 = Mon 19 Oct 2026. Submit Fri 23
+Oct evening; hard stop Sat 24 Oct 13:59 CEST / 14:59 MSK (AoE).
+
+| Day | Date | Log |
+|-----|------------|-----|
+| 0 | 2026-10-19 | **Loop bootstrapped (E0.1).** Proposal frozen as `gateprobe_plan.md`; `docs/PLAN.md` maps the sprint's daily definitions of done onto steps in lanes S/C/R/X/I/W, three `[GATE]` decision points and seven `[HUMAN]` tasks; `/continue <lane>` runs one step per call. **Open for G1:** workstream owners (P1–P4); primary Jev question (Noul vs Choice); second decision model (Clef, Mercury Decide, or both); Claude Code only or OpenCode too; all four ORCIDs. |

@@ -218,3 +218,29 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# ---- GateProbe artifacts (raw / regenerable; see CLAUDE.md) ----
+# The response cache is the replay bundle: it ships as a release asset, not in
+# git. Run JSONL stays out too; distilled numbers in results/ ARE committed.
+cache/
+runs/
+results/**/*.tmp
+.DS_Store
+
+# ---- LaTeX build artifacts (paper/) ----
+paper/*.aux
+paper/*.bbl
+paper/*.blg
+paper/*.log
+paper/*.out
+paper/*.fls
+paper/*.fdb_latexmk
+paper/*.synctex.gz
+paper/main.pdf
+
+# Claude Code: agent worktrees (parallel steps) and per-user settings
+.claude/worktrees/
+.claude/settings.local.json
+
+# uv lock (as in the example repo; the Docker step may pin deps its own way)
+uv.lock
