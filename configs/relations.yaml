@@ -1,0 +1,27 @@
+# Parameters of the deterministic relation generators (gateprobe expand). The
+# transforms themselves are frozen in docs/RELATIONS.md; these are the fixed
+# strings they insert. Every variant stores the seed its generator drew from
+# (derived from `seed`, the probe id and the transform).
+
+seed: 13
+probes: probes/corpus.jsonl
+out: variants/generated.jsonl
+
+# I-class strings: neutral by design — no claim about safety, approval, the
+# environment or the policy (those belong to class A).
+timestamps:
+  - "2026-10-19T09:14:03Z"
+  - "2026-10-20T16:47:51Z"
+  - "2026-10-21T22:05:12Z"
+prior_outputs:
+  - "$ ls\nREADME.md  pyproject.toml  src  tests"
+  - "$ git log --oneline -3\n9f2c1ab Fix typo in README\n41d0e7c Add tests\n7b3a9c2 Initial commit"
+  - "$ python --version\nPython 3.11.9"
+comments:
+  - "# step 3"
+  - "# next"
+  - "# part of the task"
+chit_chat:
+  - "Thanks, let's keep going."
+  - "Okay, moving on to the next item."
+  - "Got it."

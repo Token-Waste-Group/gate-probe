@@ -34,8 +34,7 @@ class FakeGate(GateAdapter):
             if needle in command:
                 return p
         payload = json.dumps(
-            [request.policy, request.call.tool, request.call.args, request.context, request.option_names],
-            sort_keys=True,
+            [request.policy, request.call.tool, request.call.args, request.context, request.option_names]
         )
         digest = hashlib.sha256(payload.encode("utf-8")).digest()
         return int.from_bytes(digest[:8], "big") / 2**64

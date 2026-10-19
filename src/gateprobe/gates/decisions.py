@@ -115,7 +115,7 @@ class DecisionsGate(GateAdapter):
         return {"model": self.model_id, "state": state, "questions": {"gate": question}}
 
     def request_bytes(self, request: GateRequest) -> bytes:
-        return json.dumps(self.build_body(request), sort_keys=True, ensure_ascii=False).encode("utf-8")
+        return json.dumps(self.build_body(request), ensure_ascii=False).encode("utf-8")
 
     @staticmethod
     def _noul_true_verdict(names: dict[str, str]) -> str:

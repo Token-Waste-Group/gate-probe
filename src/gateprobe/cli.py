@@ -1,7 +1,8 @@
 """The `gateprobe` command: expand, run, report, ci, replay.
 
-Scope of v0: `run` and `replay` (R2) send a variants file through one gate and
-write the rows to runs/<run_id>.jsonl; the others have `--help` and exit with
+Scope of v0: `expand` (C4) writes base items and the deterministic variants;
+`run` and `replay` (R2) send a variants file through one gate and write the
+rows to runs/<run_id>.jsonl; the others have `--help` and exit with
 status 3, naming the plan step that builds them. Out of scope: the planned
 subcommands' behavior (see `PLANNED`).
 """
@@ -22,7 +23,6 @@ ROOT = Path(__file__).resolve().parents[2]
 
 # subcommand -> (help text, plan step that implements it)
 PLANNED: dict[str, tuple[str, str]] = {
-    "expand": ("generate relation variants from the probe corpus", "C4/C5"),
     "report": ("render a run as a single-file HTML report", "I1"),
     "ci": ("fail when a relation's flip rate exceeds --max-flip", "I3"),
 }
@@ -37,10 +37,16 @@ def build_parser() -> argparse.ArgumentParser:
         prog="gateprobe", description="Metamorphic testing of coding-agent permission gates."
     )
     parser.add_argument("--version", action="version", version=f"gateprobe {__version__}")
-    names = [*PLANNED, *RUNS]
+    names = [*PLANNED, *RUNS, "expand"]
     sub = parser.add_subparsers(dest="command", metavar="{" + ",".join(sorted(names)) + "}")
     for name, (help_text, step) in PLANNED.items():
         sub.add_parser(name, help=help_text, description=f"{help_text} (built in step {step}).")
+    ex = sub.add_parser(
+        "expand",
+        help="generate base items and the deterministic relation variants from the probe corpus",
+        description="Write variants/generated.jsonl (base items + all applicable variants); print counts.",
+    )
+    ex.add_argument("--config", type=Path, default=ROOT / "configs" / "relations.yaml")
     for name, help_text in RUNS.items():
         p = sub.add_parser(name, help=help_text, description=help_text)
         p.add_argument("--gate", required=True, help="gate name in configs/gates.yaml, e.g. jev")
@@ -101,12 +107,25 @@ def cmd_run(args: argparse.Namespace, replay: bool) -> int:
     return code
 
 
+def cmd_expand(args: argparse.Namespace) -> int:
+    from gateprobe.relations.expand import counts_table, run, to_jsonl
+
+    variants, skips, out = run(args.config, ROOT)
+    out.parent.mkdir(parents=True, exist_ok=True)
+    out.write_text(to_jsonl(variants), encoding="utf-8")
+    print(counts_table(variants, skips))
+    print(f"{len(variants)} items -> {out.relative_to(ROOT) if out.is_relative_to(ROOT) else out}")
+    return 0
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = build_parser()
     args = parser.parse_args(argv)
     if args.command is None:
         parser.print_help()
         return 2
+    if args.command == "expand":
+        return cmd_expand(args)
     if args.command in RUNS:
         return cmd_run(args, replay=args.command == "replay")
     step = PLANNED[args.command][1]
