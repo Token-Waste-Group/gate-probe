@@ -1,0 +1,2 @@
+run_id,gate_id,model_id,calls,input_tokens,output_tokens,usd,ended_at
+r2-smoke-live,jev,typesafe/jev-1.14-20261014,4,2550,80,0.000107,2026-10-19T17:33:08.825914Z

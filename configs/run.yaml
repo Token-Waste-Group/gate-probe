@@ -19,3 +19,4 @@ caps_usd:
 
 cache_dir: cache        # content-addressed response cache = the replay bundle (git-ignored)
 runs_dir: runs          # run JSONL (git-ignored)
+spend_csv: results/spend.csv   # append-only spend log, committed
