@@ -21,8 +21,9 @@ self-edits the plan's structure.
 CEST / 14:59 MSK** (Fri 23 Oct AoE). Day 0 = Mon 19 Oct. Sat 24 is buffer only:
 nothing new after 12:00 CEST.
 **Frozen scope:** `gateprobe_plan.md` — relation classes E, M, I, A, P; RQ1–RQ4;
-four gates, plus the Claude Opus 5.5 judge the humans added on 2026-10-19
-(R8, X7); three figures. No new relation classes after G1.
+gates: Jev 1.14, three further decision models (GPT-6 Luna Decisions, pplx-decider
+v1.2, drex v1.5; G1), the Claude Opus 5.5 judge (R8, X7), the rule gate, and the
+Gemma 4 judge once the H100 frees (X2); three figures. No new relation classes after G1.
 **Decision points (human):** G1 Mon 19 18:00 spec freeze · G2 Wed 21 18:00
 go/no-go (full / reduced / pivot to ToolSense) · G3 Thu 22 12:00 results freeze.
 After G3 only the paper and the video move.
@@ -307,13 +308,13 @@ first takes the skeleton and the decision packets):
 
 ## Day 2 — Wed 21 Oct: second decision model, hook end to end, Docker builds, go/no-go at 18:00
 
-### X3 — Second decision model(s) [API: OpenRouter]
+### X3 — The three further decision models chosen at G1 [API: OpenRouter]
 - status: todo
 - owner: —
 - claimed_at: —
 - deps: X1
 - source: gateprobe_plan.md § Validation plan; open question 3; § Budget and compute
-- done-when: the model(s) G1 chose (Cloudflare Clef and/or Mercury Decide; GPT-6 Luna Decisions only if its pricing, checked and recorded first, keeps the run under a $20 cap) are pinned in `configs/gates.yaml`; `docs/experiments/x3-second-decision-model.md` is pushed as `planned` before the run; same protocol and outputs as X1.
+- done-when: the models G1 chose (human, 2026-10-19) — `openai/gpt-6-luna-decisions`, `perplexity/pplx-decider-v1.2`, `nace-ai/drex-v1.5` — run pinned to the dated snapshots the API serves (`-20261006`, `-20261016`, `-20261009`; pinned in `configs/gates.yaml` at G1, measured prices recorded there: about $0.00007, $0.000013 and $0.000024 per call, so GPT-6 Luna Decisions passes its $20 cap with room); `docs/experiments/x3-decision-models.md` is pushed as `planned` before the run; same protocol and outputs as X1, one gate at a time.
 
 ### I2 — Claude Code PreToolUse hook (live demo)
 - status: done
@@ -371,8 +372,9 @@ first takes the skeleton and the decision packets):
 - status: todo
 - owner: —
 - claimed_at: —
-- deps: X1 X2 X3 X7 C8
+- deps: X1 X3 X7 C8
 - source: gateprobe_plan.md RQ1–RQ4; risk "Nondeterminism swamps the signal" (floor above 10% → 5 repeats)
+- note: X2 (the Gemma judge) no longer blocks X4 (human, 2026-10-19: Claude judge first; Gemma joins when the H100 frees). If X2 is done by then, X4 includes it.
 - done-when: `docs/experiments/x4-final-results.md` pushed as `planned` first; the P variants run on every in-scope gate; any gate whose floor exceeded 10% is rerun with 5 repeats; RQ4 gives dollars and wall-clock per 1,000 probes per gate from the logged spend and timings; consolidated CSVs in `results/` and the report give RQ1–RQ4 per gate with every number's repeat count and 95% interval; ready for the 12:00 freeze.
 
 ### G3 — Decision point 3: results frozen (Thu 22, 12:00) [GATE]
@@ -431,6 +433,14 @@ first takes the skeleton and the decision packets):
 - source: gateprobe_plan.md § Tool design (Packaging); Thu DoD "Docker verified on a clean machine"
 - done-when: one command builds the replay bundle (frozen `cache/` + run JSONL + sha256 manifest); the report for the frozen runs is generated as a static page ready for GitHub Pages; on a clean machine or a fresh container, the README's reviewer path — pull the image, fetch the bundle, `gateprobe replay`, `gateprobe report` — works with no key and nothing to build; publishing is H5.
 
+### I8 — Interactive replay demo as a Hugging Face Space
+- status: todo
+- owner: —
+- claimed_at: —
+- deps: I5
+- source: human decision 2026-10-19 (HF Space hosting an interactive replay demo; `HF_PERSONAL_TOKEN` in `.env`); CFP § Tool ("an active website")
+- done-when: a Space app under `integrations/hf-space/` (small, self-contained, no API key) loads the frozen replay bundle and lets a visitor pick a gate, a relation class and a transform, browse the flip table with intervals, and open any flip with its parent and variant side by side; it runs locally with one command and in a fresh container, has tests for its data loading, and never calls a live gate; publishing the Space is part of H5 (human), never this step.
+
 ### I6 — Public release branch (reproduction-only, identity-clean)
 - status: todo
 - owner: —
@@ -459,13 +469,13 @@ first takes the skeleton and the decision packets):
 
 ## Day 4 — Fri 23 Oct: video uploaded, URL in the abstract, 4-page check, submitted in the evening
 
-### H5 — Publish: public repo, Docker image, hosted report, replay bundle [HUMAN]
+### H5 — Publish: public repo, Docker image, hosted report, HF Space, replay bundle [HUMAN]
 - status: todo
 - owner: —
 - claimed_at: —
-- deps: I6
+- deps: I6 I8
 - source: gateprobe_plan.md § Submission checklist (reviewers must not have to build code)
-- done-when: the humans pick the namespaces and publish the public repo from the I6 release, the image (Docker Hub or GHCR), the report page and a GitHub Release carrying the replay bundle; links recorded in STATUS.md and the public README.
+- done-when: the humans pick the namespaces and publish the public repo from the I6 release, the image (Docker Hub or GHCR), the report page, the I8 Hugging Face Space and a GitHub Release carrying the replay bundle; links recorded in STATUS.md and the public README.
 
 ### H6 — Record, edit and upload the video [HUMAN]
 - status: todo

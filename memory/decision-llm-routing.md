@@ -10,10 +10,13 @@ of what is being tested:**
 
 1. **Decision models → the OpenRouter Decisions API** (`decisions` adapter,
    `OPENROUTER_API_KEY`): Jev 1.14 pinned as the dated snapshot `typesafe/jev-1.14-20261014`, plus the
-   second model(s) chosen at G1 (Cloudflare Clef, Mercury Decide). Clef has open
-   weights, but it is still tested through the Decisions API. GPT-6 Luna
-   Decisions only after its pricing is checked and recorded, under a $20 cap.
-2. **The LLM judge → vLLM on the H100** (`judge` adapter, Gemma 4 31B-it on
+   three models chosen at G1 (human, 2026-10-19), each pinned to the dated
+   snapshot the API serves: `openai/gpt-6-luna-decisions-20261006` (price
+   checked at G1: ~$0.00007 per call, well under its $20 cap),
+   `perplexity/pplx-decider-v1.2-20261016`, `nace-ai/drex-v1.5-20261009`.
+2. **The Gemma judge → vLLM on the H100, later** (human, 2026-10-19: the
+   Claude judge first; Gemma when a colleague frees the H100; R5 stays blocked
+   until then) (`judge` adapter, Gemma 4 31B-it on
    d.dgx GPU #7 per [[reference-dgx-usage]]). Other judges, if a human adds
    one, may go through OpenRouter's chat endpoint.
 3. **Rule gate → local**, no model.

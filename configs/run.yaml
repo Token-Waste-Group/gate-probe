@@ -13,6 +13,9 @@ retry:
 # Budgets: OpenRouter < $20 in total; Claude about $200 in total.
 caps_usd:
   jev: 5.0
+  gpt-6-luna-decisions: 5.0
+  pplx-decider: 5.0
+  drex: 5.0
   judge-gemma: 0.0      # local vLLM, no API spend
   judge-claude: 100.0   # X7 sets the real cap from its pilot, within the $200 budget
   rules: 0.0

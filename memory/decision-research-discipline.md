@@ -5,8 +5,10 @@
 These rules keep the demo's claims reviewable on a five-day clock
 (`gateprobe_plan.md`). They are hard invariants, mirrored in `CLAUDE.md`:
 
-- **Scope is frozen:** relation classes E, M, I, A, P; RQ1–RQ4; four gates
-  plus the Claude Opus 5.5 judge the humans added on 2026-10-19; three figures. No relation class after G1 (Mon 19 18:00). Stretch items
+- **Scope is frozen:** relation classes E, M, I, A, P; RQ1–RQ4; the gates
+  fixed at G1 (Jev 1.14, GPT-6 Luna Decisions, pplx-decider v1.2, drex v1.5,
+  the Claude Opus 5.5 judge, the rule gate; the Gemma judge when the H100
+  frees); three figures. No relation class after G1 (Mon 19 18:00). Stretch items
   (P sandbox validation, OpenCode plugin, PolicyForge) only after G2 says full.
 - **Decision points are human decisions.** G1 spec freeze, G2 go/no-go (full /
   reduced / pivot to ToolSense), G3 results freeze (Thu 22 12:00), and every
