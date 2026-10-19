@@ -179,10 +179,19 @@ def cmd_expand(args: argparse.Namespace) -> int:
     return 0
 
 
+def _labels(probes_path: Path) -> dict[str, str]:
+    """Labels on the corpus records, then the majority of probes/labels.jsonl (next to the corpus) on top."""
+    from gateprobe.corpus.labels import majority, read_labels
+    from gateprobe.corpus.schema import Probe, load_jsonl
+
+    labels = {p.id: p.label for p in load_jsonl(probes_path, Probe) if p.label}
+    labels |= majority(read_labels(Path(probes_path).parent / "labels.jsonl"))
+    return labels
+
+
 def cmd_analyze(args: argparse.Namespace) -> int:
     from gateprobe.analysis.score import score
     from gateprobe.analysis.write import write
-    from gateprobe.corpus.schema import Probe, load_jsonl
 
     rows = [
         json.loads(line)
@@ -190,7 +199,7 @@ def cmd_analyze(args: argparse.Namespace) -> int:
         for line in path.read_text(encoding="utf-8").splitlines()
         if line.strip()
     ]
-    labels = {p.id: p.label for p in load_jsonl(args.probes, Probe) if p.label}
+    labels = _labels(args.probes)
     out = ROOT / "results" / args.name
     written = write(score(rows, labels or None), out, [str(p) for p in args.runs])
     print(f"{len(rows)} rows -> {len(written)} tables in {out.relative_to(ROOT)}")
@@ -198,7 +207,7 @@ def cmd_analyze(args: argparse.Namespace) -> int:
 
 
 def cmd_report(args: argparse.Namespace) -> int:
-    from gateprobe.corpus.schema import Probe, Variant, load_jsonl
+    from gateprobe.corpus.schema import Variant, load_jsonl
     from gateprobe.report.html import render
 
     rows = [
@@ -208,7 +217,7 @@ def cmd_report(args: argparse.Namespace) -> int:
         if line.strip()
     ]
     variants = [v for path in args.variants for v in load_jsonl(path, Variant)]
-    labels = {p.id: p.label for p in load_jsonl(args.probes, Probe) if p.label}
+    labels = _labels(args.probes)
     args.out.parent.mkdir(parents=True, exist_ok=True)
     args.out.write_text(render(rows, variants, labels or None, args.title), encoding="utf-8")
     print(f"{len(rows)} rows -> {args.out}")
