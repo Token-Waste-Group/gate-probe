@@ -324,7 +324,7 @@ first takes the skeleton and the decision packets):
 - done-when: `integrations/claude-code/` has a `PreToolUse` hook and a settings snippet that send the real tool call to the configured gate, print the verdict and p_block, and warn when a relation known to be fragile for that gate applies (read from a run's results); the hook can run from the cache (replay) so the demo never depends on the live API; tested end to end in a scratch project with recorded responses; it never prints or logs a key; install steps in the README.
 
 ### I3 — CI mode and GitHub Action
-- status: claimed
+- status: in_review (#19)
 - owner: jrzkaminski@Jerzy-Pro.local
 - claimed_at: 2026-10-19T18:16:21Z
 - deps: R6
