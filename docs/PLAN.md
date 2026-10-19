@@ -89,9 +89,9 @@ first takes the skeleton and the decision packets):
 ## Day 0 — Mon 19 Oct: scope frozen, skeleton, 150 probes, pinned Jev answers, judge prompt, paper skeleton
 
 ### S1 — Package skeleton, adapter contract, CLI entry point, configs
-- status: todo
-- owner: —
-- claimed_at: —
+- status: claimed
+- owner: jrzkaminski@Jerzy-Pro.local
+- claimed_at: 2026-10-19T16:52:35Z
 - deps: E0.1
 - source: gateprobe_plan.md § Tool design; Mon DoD "repo skeleton"
 - done-when: `src/gateprobe/` subpackages `corpus`, `relations`, `gates`, `runner`, `analysis`, `report`, `hook` exist with module stubs whose docstrings state purpose + v0 scope; `gateprobe/gates/base.py` defines the adapter contract every gate implements (policy, tool call, context → verdict ∈ {allow, ask, deny}, p_block, raw response, gate id, pinned model id, latency, cost) plus a deterministic `fake` adapter for tests; a `gateprobe` console script with `expand | run | report | ci | replay` subcommands (`--help` works; unimplemented ones exit non-zero with a clear message); `configs/gates.yaml` (Jev pinned as `typesafe/jev-1.14`, judge model + endpoint as config keys, rules gate; no floating aliases) and `configs/run.yaml` (repeats 3, seed, per-gate $ caps, retry/backoff); `probes/`, `policies/`, `variants/`, `results/` tracked with .gitkeep, `cache/` and `runs/` git-ignored; tests for the CLI and config loading.
