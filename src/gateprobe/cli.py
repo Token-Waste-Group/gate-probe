@@ -2,7 +2,8 @@
 
 Scope of v0: `expand` (C4) writes base items and the deterministic variants;
 `run` and `replay` (R2) send a variants file through one gate and write the
-rows to runs/<run_id>.jsonl; the others have `--help` and exit with
+rows to runs/<run_id>.jsonl; `analyze` (R6) and `report` (I1) score and
+render them; the others have `--help` and exit with
 status 3, naming the plan step that builds them. Out of scope: the planned
 subcommands' behavior (see `PLANNED`).
 """
@@ -23,7 +24,6 @@ ROOT = Path(__file__).resolve().parents[2]
 
 # subcommand -> (help text, plan step that implements it)
 PLANNED: dict[str, tuple[str, str]] = {
-    "report": ("render a run as a single-file HTML report", "I1"),
     "ci": ("fail when a relation's flip rate exceeds --max-flip", "I3"),
 }
 RUNS = {
@@ -37,7 +37,7 @@ def build_parser() -> argparse.ArgumentParser:
         prog="gateprobe", description="Metamorphic testing of coding-agent permission gates."
     )
     parser.add_argument("--version", action="version", version=f"gateprobe {__version__}")
-    names = [*PLANNED, *RUNS, "expand", "analyze"]
+    names = [*PLANNED, *RUNS, "expand", "analyze", "report"]
     sub = parser.add_subparsers(dest="command", metavar="{" + ",".join(sorted(names)) + "}")
     for name, (help_text, step) in PLANNED.items():
         sub.add_parser(name, help=help_text, description=f"{help_text} (built in step {step}).")
@@ -47,6 +47,16 @@ def build_parser() -> argparse.ArgumentParser:
         description="Write variants/generated.jsonl (base items + all applicable variants); print counts.",
     )
     ex.add_argument("--config", type=Path, default=ROOT / "configs" / "relations.yaml")
+    rp = sub.add_parser(
+        "report",
+        help="render runs as one self-contained HTML report",
+        description="Flip table with intervals, reliability diagram, top-20 flips before/after, band, cost.",
+    )
+    rp.add_argument("--runs", nargs="+", required=True, type=Path, help="run JSONL files (any gates)")
+    rp.add_argument("--variants", nargs="+", type=Path, default=[ROOT / "variants" / "generated.jsonl"])
+    rp.add_argument("--probes", type=Path, default=ROOT / "probes" / "corpus.jsonl", help="for the labels")
+    rp.add_argument("--out", type=Path, default=ROOT / "reports" / "report.html")
+    rp.add_argument("--title", default="GateProbe report")
     an = sub.add_parser(
         "analyze",
         help="score run JSONL files as pre-registered in docs/RELATIONS.md and write results/<name>/*.csv",
@@ -162,6 +172,24 @@ def cmd_analyze(args: argparse.Namespace) -> int:
     return 0
 
 
+def cmd_report(args: argparse.Namespace) -> int:
+    from gateprobe.corpus.schema import Probe, Variant, load_jsonl
+    from gateprobe.report.html import render
+
+    rows = [
+        json.loads(line)
+        for path in args.runs
+        for line in path.read_text(encoding="utf-8").splitlines()
+        if line.strip()
+    ]
+    variants = [v for path in args.variants for v in load_jsonl(path, Variant)]
+    labels = {p.id: p.label for p in load_jsonl(args.probes, Probe) if p.label}
+    args.out.parent.mkdir(parents=True, exist_ok=True)
+    args.out.write_text(render(rows, variants, labels or None, args.title), encoding="utf-8")
+    print(f"{len(rows)} rows -> {args.out}")
+    return 0
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = build_parser()
     args = parser.parse_args(argv)
@@ -172,6 +200,8 @@ def main(argv: list[str] | None = None) -> int:
         return cmd_expand(args)
     if args.command == "analyze":
         return cmd_analyze(args)
+    if args.command == "report":
+        return cmd_report(args)
     if args.command in RUNS:
         return cmd_run(args, replay=args.command == "replay")
     step = PLANNED[args.command][1]
