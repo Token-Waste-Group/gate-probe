@@ -68,8 +68,10 @@ raise it** instead of working around it.
    id, pinned model id, repeat index, timestamp. Every experiment = one CLI
    invocation + one config; no notebook-only results.
 9. **Budget.** Every API-calling path reads a $ cap from config and logs spend
-   to `results/spend.csv`. The whole evaluation stays under $20 of API calls;
+   to `results/spend.csv`. OpenRouter (Decisions API) spend stays under $20;
    check GPT-6 Luna Decisions pricing before any run and cap it at $20.
+   Claude via `ANTHROPIC_API_KEY` has a separate budget of about $200
+   (human, 2026-10-19) — see `memory/decision-llm-routing.md`.
 10. **Results freeze at G3** (Thu 22 12:00): afterwards `results/` gets no new
     rows, the paper and the video use only those numbers, and only W-lane steps
     and packaging fixes that change no number land.
