@@ -281,9 +281,9 @@ first takes the skeleton and the decision packets):
 - done-when: same protocol as X1 in `docs/experiments/x2-judge.md` (planned report pushed before launch); launched Tuesday evening so it finishes overnight; served model, revision and dtype recorded; after the run, `docker compose down` and cleanup per memory/reference-dgx-usage.md.
 
 ### X7 — Claude judge full run: Opus 5.5 via the Batch API, 3 repeats [API: Anthropic]
-- status: todo
-- owner: —
-- claimed_at: —
+- status: claimed
+- owner: jrzkaminski@Jerzy-Pro.local
+- claimed_at: 2026-10-19T19:56:21Z
 - deps: G1 C4 C5 R2 R6 R8
 - source: human decision 2026-10-19; RQ1–RQ3; memory/decision-llm-routing.md
 - done-when: `docs/experiments/x7-claude-judge.md` is pushed as `planned` before any call (decision rules copied from `docs/RELATIONS.md`; the $ cap, at most $200 minus the Claude spend so far); a ~50-call pilot measures input and output tokens (thinking included) and projects the full run's cost into the report — if the projection exceeds the cap, mark blocked and ask; the full corpus × E/M/I/A variants × 3 repeats then goes to `claude-opus-5-5` as Message Batches with the frozen judge prompt and pinned effort; refusals are counted as their own outcome; the report gives the same outputs as X1 (floor, flip rates with Wilson intervals, M inversions, A shifts, spend, wall-clock), says that p_block is a stated probability, and classifies each relation positive / neutral / negative.
