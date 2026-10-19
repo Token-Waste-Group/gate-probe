@@ -265,7 +265,7 @@ first takes the skeleton and the decision packets):
 - done-when: `gateprobe report <run>` writes one self-contained HTML file (no network requests when opened) with the flip table per relation × gate with 95% intervals, the reliability diagram, and the top-20 flip examples before/after; every number shows its repeat count; a test renders it from a fixture run and asserts no key-like string can appear in it.
 
 ### X1 — First full run: Jev + rule gate, 3 repeats, floor measured [API: OpenRouter]
-- status: claimed
+- status: in_review (#29)
 - owner: jrzkaminski@Jerzy-Pro.local
 - claimed_at: 2026-10-19T19:23:53Z
 - deps: G1 C4 C5 R1 R2 R3 R6
