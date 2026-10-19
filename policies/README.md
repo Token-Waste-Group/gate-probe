@@ -29,5 +29,11 @@ model for entity authorization, and none of them produces YAML or bullets.
 So no rendering was reused; all four come from `gateprobe/corpus/render.py`.
 That codebase is unpublished and is not cited (`CLAUDE.md` invariant 13).
 
-**Rule sets** for the rule gate (`policies/<id>/rules.yaml`, Claude Code-style
-permission patterns) are hand-written per policy in step R3.
+**Rule sets.** `policies/<id>/rules.yaml` holds the rule gate's allow and deny
+lists in Claude Code permission syntax (R3). They are **hand-written** to match
+each policy: not generated from it, and not guaranteed equivalent to it. They
+are what an administrator would plausibly configure. The rule gate reads the
+policy id, never a rendering, so the `policy_format` transform can't flip it by
+construction. Command-text patterns can still flip on flag, whitespace or path
+spellings, and those are exactly the coverage gaps the baseline is meant to
+show. Semantics: `gateprobe/gates/rules.py`.

@@ -67,6 +67,7 @@ def gate_request(variant: Variant, policies_dir: Path = ROOT / "policies") -> Ga
         call=ToolCall(variant.tool, variant.call),
         context=variant.context,
         option_names=variant.option_names,
+        policy_id=variant.policy_id,
     )
 
 
