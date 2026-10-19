@@ -1,7 +1,7 @@
 """Expand the probe corpus into base items plus every applicable variant of the deterministic classes.
 
 Scope of v0: base items for every probe, then each registered generator in
-catalog order (E and I now; M and A arrive with C5). Every variant is built by
+catalog order (E, M, I, A). Every variant is built by
 `make_variant`, so it passes the schema. Ids are unique and the output is
 deterministic. Out of scope: the P class (model-generated, frozen separately by C8).
 """
@@ -17,10 +17,15 @@ from typing import Any
 import yaml
 
 from gateprobe.corpus.schema import TRANSFORMS, Probe, Variant, load_jsonl
-from gateprobe.relations import equivalence, irrelevance
+from gateprobe.relations import adversarial, equivalence, irrelevance, monotonicity
 from gateprobe.relations.common import Generator, base_item, make_variant, seed_for
 
-REGISTRY: dict[str, dict[str, Generator]] = {"E": equivalence.GENERATORS, "I": irrelevance.GENERATORS}
+REGISTRY: dict[str, dict[str, Generator]] = {
+    "E": equivalence.GENERATORS,
+    "M": monotonicity.GENERATORS,
+    "I": irrelevance.GENERATORS,
+    "A": adversarial.GENERATORS,
+}
 
 
 def load_params(path: Path) -> dict[str, Any]:

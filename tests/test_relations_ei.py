@@ -142,7 +142,7 @@ def test_committed_variants_are_current_valid_and_linked():
     ids = {v.id for v in loaded}
     probes = {p.id for p in load_jsonl(ROOT / "probes" / "corpus.jsonl", Probe)}
     assert {v.probe_id for v in loaded if v.relation_class == "base"} == probes
-    assert {v.relation_class for v in loaded} == {"base", "E", "I"}
+    assert {"base", "E", "I"} <= {v.relation_class for v in loaded}
     assert all(v.parent_id in ids and isinstance(v.seed, int) for v in loaded if v.relation_class != "base")
     formats = [v for v in loaded if v.transform == "policy_format"]
     assert len(formats) == 3 * len(probes) and {v.policy_rendering for v in formats} == {
