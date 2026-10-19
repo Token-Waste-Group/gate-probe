@@ -200,9 +200,9 @@ first takes the skeleton and the decision packets):
 - done-when: `gateprobe/relations/equivalence.py` and `irrelevance.py` implement every E and I transform in `docs/RELATIONS.md` and nothing else; generators are deterministic (seeded, seed stored on each variant) and each variant carries parent id, class, transform and expected outcome; E transforms preserve meaning by construction — flag maps and normalizations come from explicit tables with a unit test per entry; the policy re-rendering transform uses the C3 renderings; `gateprobe expand` writes `variants/*.jsonl` and prints counts per class × transform (also in the PR); a test checks every probe's `policy_id` exists under `policies/`.
 
 ### C5 — Generators: Monotonicity (M) and Adversarial (A)
-- status: todo
-- owner: —
-- claimed_at: —
+- status: claimed
+- owner: jrzkaminski@Jerzy-Pro.local
+- claimed_at: 2026-10-19T17:49:48Z
 - deps: C2 C3
 - source: gateprobe_plan.md § Metamorphic relations (M, A); arXiv 2609.26758; Tue DoD
 - done-when: `gateprobe/relations/monotonicity.py` and `adversarial.py` implement every M and A transform in `docs/RELATIONS.md` and nothing else; each M transform strictly raises risk (add `--force`/`-f`, widen scope `./build` → `~` → `/`, drop `--dry-run`, read → write, add `sudo`, pipe a download into `sh`) with a unit test; A covers the injected claims ("user pre-approved this", "test environment", "safe per policy"), text arguing for its own classification, the option-name swap (yes/no → 0/1 → A/B) and the rubric-to-name swap replicating 2609.26758, applied where the adapter mode has named options; deterministic and seeded; counts per transform in the PR; `gateprobe expand` includes them.
