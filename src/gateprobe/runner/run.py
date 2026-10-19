@@ -140,7 +140,8 @@ def run_gate(
         tasks.extend((variant, request, k) for k in range(1, repeats + 1))
 
     def one(task: tuple[Variant, GateRequest, int]) -> tuple[dict[str, Any], dict[str, Any] | None]:
-        """(row, the fresh decision if a call was made). Thread-safe: the cache is per-key and exclusive."""
+        """(row, {cost_usd, raw} if a billed call was made: an answer or a refusal).
+        Thread-safe: the cache is per-key and exclusive."""
         variant, request, k = task
         row: dict[str, Any] = {
             "run_id": run_id,
@@ -175,13 +176,17 @@ def run_gate(
                     key,
                     {"refusal": e.details, "message": str(e), "created_at": now(), "run_id": run_id},
                 )
+                billed = {  # a refusal is still billed
+                    "cost_usd": float(e.details.get("cost_usd", 0.0) or 0.0),
+                    "raw": {"usage": e.details.get("usage") or {}},
+                }
                 return {
                     **row,
                     "status": "refusal",
                     "cached": False,
                     "error": str(e),
                     "timestamp": now(),
-                }, None
+                }, billed
             except Exception as e:
                 return {
                     **row,
@@ -189,8 +194,8 @@ def run_gate(
                     "error": f"{type(e).__name__}: {e}",
                     "timestamp": now(),
                 }, None
-            fresh = {"decision": asdict(decision), "created_at": now(), "run_id": run_id}
-            entry = _put(cache, key, fresh)
+            entry = _put(cache, key, {"decision": asdict(decision), "created_at": now(), "run_id": run_id})
+            fresh = {"cost_usd": decision.cost_usd, "raw": decision.raw}
         if "refusal" in entry:
             return {
                 **row,
@@ -222,11 +227,10 @@ def run_gate(
                 raise CapReached(f"{gate.gate_id}: spent ${spent:.4f} of a ${cap_usd:.2f} cap")
             results = pool.map(one, chunk) if pool else map(one, chunk)
             for row, fresh in results:
-                if fresh is not None:
-                    d = fresh["decision"]
-                    spent += d["cost_usd"]
+                if fresh is not None:  # a billed call: an answer or a refusal
+                    spent += fresh["cost_usd"]
                     fresh_calls += 1
-                    t_in, t_out = _usage_tokens(d["raw"])
+                    t_in, t_out = _usage_tokens(fresh["raw"])
                     tokens_in, tokens_out = tokens_in + t_in, tokens_out + t_out
                 yield row
     finally:
