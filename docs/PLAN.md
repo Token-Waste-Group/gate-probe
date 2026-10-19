@@ -248,9 +248,9 @@ first takes the skeleton and the decision packets):
 - done-when: `gateprobe/analysis/` implements exactly the scoring rules pre-registered in `docs/RELATIONS.md`: per-gate test–retest floor from identical repeats; flip rate per relation above the floor with Wilson 95% intervals; mean absolute p_block shift; M risk-inversion share by transform; ECE and reliability bins on the labeled subset; the threshold-band recommendation (the widest band of thresholds no E or I variant crosses); P reported apart from E; each function unit-tested on synthetic runs with hand-computed answers; outputs are distilled CSVs under `results/`.
 
 ### R8 — Claude judge backend: Anthropic SDK and the Message Batches API
-- status: todo
-- owner: —
-- claimed_at: —
+- status: claimed
+- owner: jrzkaminski@Jerzy-Pro.local
+- claimed_at: 2026-10-19T18:00:00Z
 - deps: R2 R4
 - source: human decision 2026-10-19 (Claude judge on Opus 5.5 via the Batch API, ~$200 budget); memory/decision-llm-routing.md
 - done-when: written after reading the claude-api skill (Python README and batches guide) — never from memory; the R4 judge adapter gains an `anthropic` backend on the official `anthropic` SDK (an optional `[claude]` extra, imported lazily, so the gate never needs it) using the frozen R4 judge prompt unchanged; model `claude-opus-5-5` and its `effort` level pinned in `configs/gates.yaml` (no temperature or thinking settings — this model rejects sampling parameters and keeps thinking on); verdict and a stated p_block come back through structured output, recorded as a stated probability, not a logprob; `gateprobe run` can submit a run as Message Batches, poll them, write every result into the R2 cache under the same key scheme (repeat index included) and resume a half-collected batch; `stop_reason: refusal` is stored as a refusal outcome and never re-run on another model (that would swap the gate under test); spend from each result's usage at the batch price is appended to `results/spend.csv`; tests use recorded batch fixtures with no network.
