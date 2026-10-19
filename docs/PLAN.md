@@ -416,9 +416,9 @@ first takes the skeleton and the decision packets):
 - done-when: the complete draft builds with `scripts/build_paper.sh` at ≤ 4 pages including references; the PR description ticks each submission-checklist item the PDF itself satisfies and lists the rest with their owner.
 
 ### W6 — Video storyboard, voice-over script, captions
-- status: todo
-- owner: —
-- claimed_at: —
+- status: claimed
+- owner: jrzkaminski@Jerzy-Pro.local
+- claimed_at: 2026-10-19T18:29:43Z
 - deps: W1
 - source: gateprobe_plan.md Thu DoD "storyboard written"; § Submission checklist (video)
 - done-when: `video/storyboard.md` plans 3–5 minutes that show the tool running (CLI run, report, CI mode, the live hook segment), not slides; `video/voiceover.md` and `video/captions.srt` timed to the script; a pre-recording checklist (no keys or `.env` on screen, clean terminal history, the hook against the cached gate); the case-study shots use X5 once it lands.
