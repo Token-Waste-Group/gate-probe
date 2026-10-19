@@ -248,7 +248,7 @@ first takes the skeleton and the decision packets):
 - done-when: `gateprobe/analysis/` implements exactly the scoring rules pre-registered in `docs/RELATIONS.md`: per-gate test–retest floor from identical repeats; flip rate per relation above the floor with Wilson 95% intervals; mean absolute p_block shift; M risk-inversion share by transform; ECE and reliability bins on the labeled subset; the threshold-band recommendation (the widest band of thresholds no E or I variant crosses); P reported apart from E; each function unit-tested on synthetic runs with hand-computed answers; outputs are distilled CSVs under `results/`.
 
 ### R8 — Claude judge backend: Anthropic SDK and the Message Batches API
-- status: in_review (#15)
+- status: done
 - owner: jrzkaminski@Jerzy-Pro.local
 - claimed_at: 2026-10-19T18:00:00Z
 - deps: R2 R4
