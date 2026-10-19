@@ -122,7 +122,7 @@ first takes the skeleton and the decision packets):
 - done-when: ≥ 150 probes in `probes/*.jsonl` that validate against the C1 schema, spanning shell, git, filesystem, package managers and network, with every risk tier represented; every probe has a `source` — a public agent-trace reference with its license, or `template:<name>`; templated synthesis is a committed deterministic script (`scripts/build_corpus.py` + `configs/corpus.yaml`, seed recorded); `docs/CORPUS.md` datasheet with counts per tool family × risk tier × source (also in the PR description); a schema test runs over the committed files.
 
 ### C3 — Policies in four renderings (YAML, JSON, prose, bullets)
-- status: in_review (#6)
+- status: done
 - owner: jrzkaminski@Jerzy-Pro.local
 - claimed_at: 2026-10-19T17:22:19Z
 - deps: S1
