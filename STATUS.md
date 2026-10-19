@@ -7,6 +7,7 @@ Oct evening; hard stop Sat 24 Oct 13:59 CEST / 14:59 MSK (AoE).
 
 | Day | Date | Log |
 |-----|------------|-----|
+| 0c | 2026-10-19 | **Late evening: 21 steps done.** Added since 0b: **I1** HTML report (#17), **I2** Claude Code hook, advisory and cache-first (#18), **I3** `gateprobe ci` + GitHub Action (#19), **I4** Docker image, checked with `--network none` and no key (#20; it caught a git-less provenance bug, now fixed), **W2** abstract/intro/related work (#21), **W3** tool design, relations, workflow (#22; adds Newcombe 1998, verified), **W6** storyboard, voice-over, captions (#23). The paper builds at 4/4 pages, with page 4 only 6 lines of reference spillover. **The loop is now idle on human decisions:** G1 (full runs), R5 (judge hosting), C6 (corpus to 300, plus multi-operand commands), H1. **Second slip:** a red commit pushed to PR #23; the merge guard held and the lesson is updated. |
 | 0b | 2026-10-19 | **Evening: 14 steps done** (E0.1 W1 S1 C1 C2 C3 R1 R2 R3 R4 C4 C5 R6 R8; PRs #1–#15). In place:
 - the frozen spec and scoring rules (`docs/RELATIONS.md`: 26 transforms, matched-call floor, Newcombe intervals);
 - 150 probes under 4 policies in 4 renderings, plus rule sets;
