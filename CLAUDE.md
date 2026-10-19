@@ -36,7 +36,8 @@ wrong even if it runs. If a task seems to require breaking one, **stop and
 raise it** instead of working around it.
 
 1. **Scope is frozen** (`gateprobe_plan.md`): five relation classes, four
-   gates, RQ1–RQ4, three figures. **No new relation class after G1**
+   gates plus the Claude Opus 5.5 judge the humans added on 2026-10-19 (steps
+   R8, X7; Batch API), RQ1–RQ4, three figures. **No new relation class after G1**
    (Mon 19 18:00) — it goes to the paper's future work. Stretch items (P
    sandbox validation, OpenCode plugin, PolicyForge) only after G2 records full
    scope.
@@ -80,9 +81,11 @@ raise it** instead of working around it.
     report, hook output, or the screen in the video. `cache/` and `runs/` are
     git-ignored; `results/` CSVs are append-only and committed.
 12. **Negative results are committed, never dropped.** See the Results rule.
-13. **Prior work and format.** The authority and supersession preprints are
-    cited neutrally; no tool details are lifted from them and their systematic
-    findings stay for the planned A\* paper. The paper is 4 pages including
+13. **Prior work and format.** The authority and supersession work is
+    unpublished: **never cite or mention it** in the paper, the video or the
+    public release (human rule, 2026-10-19, overriding the proposal); lift no
+    tool details from it, and its systematic findings stay for the planned A\*
+    paper. The paper is 4 pages including
     references, `\documentclass[10pt,conference]{IEEEtran}`, no compsoc,
     margins and spacing untouched, single-anonymous (author names in) — the
     CFP text is `docs/icse27-demo-cfp.md`. **One section per .tex file**
@@ -187,8 +190,8 @@ Conventions that keep parallel agents safe:
 - One claimed step per agent; stay within its scope. **Plan changes (new /
   split / re-sequenced steps) need human confirmation** — propose, don't
   self-edit.
-- **Hardware-aware claiming:** don't claim `[GPU: …]` / `[API: OpenRouter]`
-  steps on a machine that can't run them (`claim.py --skip-tag GPU`); release
+- **Hardware-aware claiming:** don't claim `[GPU: …]` / `[API: OpenRouter]` /
+  `[API: Anthropic]` steps on a machine that can't run them (`claim.py --skip-tag GPU`); release
   a mis-claim with `mark.py <id> todo "<reason>"`. `[HUMAN]` steps are never
   claimed; `[GATE]` steps end `blocked` until a human decides.
 - **Cadence:** one step per `/continue`; announce before you start; then report

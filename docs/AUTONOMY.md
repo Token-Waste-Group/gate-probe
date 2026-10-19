@@ -103,15 +103,16 @@ numbers and stops.
 ## Hardware-aware claiming
 
 This project spans: laptops (code, tests, corpus, paper), the OpenRouter
-Decisions API (`[API: OpenRouter]`: Jev and the other decision models), and
-the H100 (`[GPU: H100]`: the vLLM judge; the paraphrase model, which may also
+Decisions API (`[API: OpenRouter]`: Jev and the other decision models), the
+Anthropic API (`[API: Anthropic]`: the Claude Opus 5.5 judge via the Batch API),
+and the H100 (`[GPU: H100]`: the vLLM judge; the paraphrase model, which may also
 fit the RTX boxes). The H100 is **driven from a laptop over ssh** with docker
 compose, so a `[GPU: H100]` step runs on any machine with the VPN up and the
 `d.dgx` alias — not only on a machine with a local GPU.
 
 **Before claiming, check whether this machine can actually run the next eligible
 step** (`claim.py --dry-run`). If it can't (no `OPENROUTER_API_KEY` with
-credit, no VPN/ssh to d.dgx), re-run with `--skip-tag API` / `--skip-tag GPU`
+credit, no `ANTHROPIC_API_KEY`, no VPN/ssh to d.dgx), re-run with `--skip-tag API` / `--skip-tag GPU`
 to find the next step it can do; if nothing fits, report which step is next and
 where it should run. If you discover the mismatch only *after* claiming,
 `scripts/mark.py <id> todo "needs <hw>, this machine lacks it"` to release it.
@@ -154,8 +155,9 @@ step. Model routing and budget: `memory/decision-llm-routing.md`.
   `uv pip install -e ".[dev]"`.
 - **gh** — must be authenticated (`gh auth login`) for PR + auto-merge.
   Bootstrap warns if not.
-- **`.env`** — `OPENROUTER_API_KEY` is required for `[API: OpenRouter]` steps;
-  `HF_READ_TOKEN` for pulling the judge weights. Code/test/paper steps need
+- **`.env`** — `OPENROUTER_API_KEY` is required for `[API: OpenRouter]` steps,
+  `ANTHROPIC_API_KEY` for `[API: Anthropic]` steps, `HF_READ_TOKEN` for pulling
+  the judge weights. Code/test/paper steps need
   neither. Copy `.env.example`.
 - **docker** for the image steps (I4, I5); **latexmk** for the paper (W steps).
 - **VPN + `d.dgx` ssh alias** for `[GPU: H100]` steps.

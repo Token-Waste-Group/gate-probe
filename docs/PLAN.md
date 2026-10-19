@@ -21,7 +21,8 @@ self-edits the plan's structure.
 CEST / 14:59 MSK** (Fri 23 Oct AoE). Day 0 = Mon 19 Oct. Sat 24 is buffer only:
 nothing new after 12:00 CEST.
 **Frozen scope:** `gateprobe_plan.md` — relation classes E, M, I, A, P; RQ1–RQ4;
-four gates; three figures. No new relation classes after G1.
+four gates, plus the Claude Opus 5.5 judge the humans added on 2026-10-19
+(R8, X7); three figures. No new relation classes after G1.
 **Decision points (human):** G1 Mon 19 18:00 spec freeze · G2 Wed 21 18:00
 go/no-go (full / reduced / pivot to ToolSense) · G3 Thu 22 12:00 results freeze.
 After G3 only the paper and the video move.
@@ -64,6 +65,7 @@ first takes the skeleton and the decision packets):
 | Tag | Means |
 |---|---|
 | `[API: OpenRouter]` | needs `OPENROUTER_API_KEY` with credit (Decisions API) |
+| `[API: Anthropic]` | needs `ANTHROPIC_API_KEY` (the Claude judge; ~$200 budget) |
 | `[GPU: H100]` | drives d.dgx GPU #7 over ssh — VPN up; read `memory/reference-dgx-usage.md` |
 | `[GPU: H100 or RTX]` | an open model small enough for the RTX boxes also works |
 | `[GATE]` | the loop writes `docs/gates/<id>-<slug>.md`, merges it, then marks the step `blocked "awaiting human decision"`; a human records the decision in `STATUS.md` and runs `mark.py <id> done` |
@@ -124,7 +126,7 @@ first takes the skeleton and the decision packets):
 - claimed_at: —
 - deps: S1
 - source: gateprobe_plan.md § Tool design (Policies); assumption 3
-- done-when: each policy the corpus will use exists under `policies/<policy_id>/` in YAML, JSON, prose and bullet-list renderings generated from one structured source; renderings are reused from the authority repo (`../authority`, `src/authinv/render/`) where a matching renderer exists, and the rest come from `gateprobe/corpus/render.py`; `policies/README.md` records the authority commit hash and which renderings were reused vs new; a test parses the YAML and JSON renderings back to the same rule set; nothing beyond the policies themselves is taken from the authority work (its preprint is cited, not lifted).
+- done-when: each policy the corpus will use exists under `policies/<policy_id>/` in YAML, JSON, prose and bullet-list renderings generated from one structured source; renderings are reused from the authority repo (`../authority`, `src/authinv/render/`) where a matching renderer exists, and the rest come from `gateprobe/corpus/render.py`; `policies/README.md` records the authority commit hash and which renderings were reused vs new; a test parses the YAML and JSON renderings back to the same rule set; nothing beyond the policies themselves is taken from the authority work, which is unpublished and is never cited or mentioned in the paper (human rule, 2026-10-19).
 
 ### R1 — Decisions API adapter, pinned Jev 1.14 [API: OpenRouter]
 - status: todo
@@ -173,7 +175,7 @@ first takes the skeleton and the decision packets):
 - claimed_at: —
 - deps: E0.1
 - source: gateprobe_plan.md § Submission checklist; Mon DoD "paper skeleton"; docs/icse27-demo-cfp.md; human rule 2026-10-19 (one section per .tex file)
-- done-when: the official IEEE `IEEEtran.cls` and `IEEEtran.bst` are vendored unchanged in `paper/`; `paper/main.tex` uses `\documentclass[10pt,conference]{IEEEtran}` with no compsoc option and untouched margins and spacing, and only `\input`s `paper/sections/*.tex` — one section per file; `scripts/check_paper.py` lints all of this in the gate; sections cover what a demo must communicate (envisioned users, the SE challenge, the workflow, validation results plus the planned-study design, related work, the carbon-footprint sentence); author names and affiliations present; `paper/references.bib` seeded with the works in the plan's novelty table, DeepTest, and the authority and supersession preprints — each entry checked to exist (arXiv/DOI) before it is added; `scripts/build_paper.sh` builds with latexmk and fails when the PDF exceeds 4 pages including references.
+- done-when: the official IEEE `IEEEtran.cls` and `IEEEtran.bst` are vendored unchanged in `paper/`; `paper/main.tex` uses `\documentclass[10pt,conference]{IEEEtran}` with no compsoc option and untouched margins and spacing, and only `\input`s `paper/sections/*.tex` — one section per file; `scripts/check_paper.py` lints all of this in the gate; sections cover what a demo must communicate (envisioned users, the SE challenge, the workflow, validation results plus the planned-study design, related work, the carbon-footprint sentence); author names and affiliations present; `paper/references.bib` seeded with the works in the plan's novelty table and DeepTest — each entry checked to exist (arXiv/DOI) before it is added, and never the unpublished authority or supersession work (human rule, 2026-10-19); `scripts/build_paper.sh` builds with latexmk and fails when the PDF exceeds 4 pages including references.
 
 ### H1 — HotCRP accounts and ORCIDs for all four authors [HUMAN]
 - status: todo
@@ -243,6 +245,14 @@ first takes the skeleton and the decision packets):
 - source: gateprobe_plan.md § Tool design (Analysis); RQ1–RQ3
 - done-when: `gateprobe/analysis/` implements exactly the scoring rules pre-registered in `docs/RELATIONS.md`: per-gate test–retest floor from identical repeats; flip rate per relation above the floor with Wilson 95% intervals; mean absolute p_block shift; M risk-inversion share by transform; ECE and reliability bins on the labeled subset; the threshold-band recommendation (the widest band of thresholds no E or I variant crosses); P reported apart from E; each function unit-tested on synthetic runs with hand-computed answers; outputs are distilled CSVs under `results/`.
 
+### R8 — Claude judge backend: Anthropic SDK and the Message Batches API
+- status: todo
+- owner: —
+- claimed_at: —
+- deps: R2 R4
+- source: human decision 2026-10-19 (Claude judge on Opus 5.5 via the Batch API, ~$200 budget); memory/decision-llm-routing.md
+- done-when: written after reading the claude-api skill (Python README and batches guide) — never from memory; the R4 judge adapter gains an `anthropic` backend on the official `anthropic` SDK (an optional `[claude]` extra, imported lazily, so the gate never needs it) using the frozen R4 judge prompt unchanged; model `claude-opus-5-5` and its `effort` level pinned in `configs/gates.yaml` (no temperature or thinking settings — this model rejects sampling parameters and keeps thinking on); verdict and a stated p_block come back through structured output, recorded as a stated probability, not a logprob; `gateprobe run` can submit a run as Message Batches, poll them, write every result into the R2 cache under the same key scheme (repeat index included) and resume a half-collected batch; `stop_reason: refusal` is stored as a refusal outcome and never re-run on another model (that would swap the gate under test); spend from each result's usage at the batch price is appended to `results/spend.csv`; tests use recorded batch fixtures with no network.
+
 ### I1 — HTML report v0
 - status: todo
 - owner: —
@@ -267,13 +277,21 @@ first takes the skeleton and the decision packets):
 - source: gateprobe_plan.md § Budget and compute ("start it Tuesday evening"); RQ1–RQ3
 - done-when: same protocol as X1 in `docs/experiments/x2-judge.md` (planned report pushed before launch); launched Tuesday evening so it finishes overnight; served model, revision and dtype recorded; after the run, `docker compose down` and cleanup per memory/reference-dgx-usage.md.
 
+### X7 — Claude judge full run: Opus 5.5 via the Batch API, 3 repeats [API: Anthropic]
+- status: todo
+- owner: —
+- claimed_at: —
+- deps: G1 C4 C5 R2 R6 R8
+- source: human decision 2026-10-19; RQ1–RQ3; memory/decision-llm-routing.md
+- done-when: `docs/experiments/x7-claude-judge.md` is pushed as `planned` before any call (decision rules copied from `docs/RELATIONS.md`; the $ cap, at most $200 minus the Claude spend so far); a ~50-call pilot measures input and output tokens (thinking included) and projects the full run's cost into the report — if the projection exceeds the cap, mark blocked and ask; the full corpus × E/M/I/A variants × 3 repeats then goes to `claude-opus-5-5` as Message Batches with the frozen judge prompt and pinned effort; refusals are counted as their own outcome; the report gives the same outputs as X1 (floor, flip rates with Wilson intervals, M inversions, A shifts, spend, wall-clock), says that p_block is a stated probability, and classifies each relation positive / neutral / negative.
+
 ### W2 — Abstract, introduction and related work
 - status: todo
 - owner: —
 - claimed_at: —
 - deps: W1
 - source: gateprobe_plan.md § Problem and envisioned users, § Novelty and related work
-- done-when: a draft abstract (needed for the H3 registration); the introduction states the envisioned users and the SE challenge (a gate is a security component whose specification is the policy; GateProbe is its test suite — metamorphic testing of an ML component applied to a new component class with a natural risk order); the related-work paragraph covers every row of the plan's novelty table and uses the positioning sentence; the authority and supersession preprints are cited neutrally with no tool details lifted; every factual claim about gate fragility (the 70.4-per-hundred swap and AUROC .94 → .23, the TypeSafe limitations page, the `rm -rf ~/.ssh` 0.76 → 0.48 test) cites a source checked to exist; still ≤ 4 pages.
+- done-when: a draft abstract (needed for the H3 registration); the introduction states the envisioned users and the SE challenge (a gate is a security component whose specification is the policy; GateProbe is its test suite — metamorphic testing of an ML component applied to a new component class with a natural risk order); the related-work paragraph covers every row of the plan's novelty table and uses the positioning sentence; the unpublished authority and supersession work is neither cited nor mentioned (human rule, 2026-10-19); every factual claim about gate fragility cites a source checked to exist and says what the source says — `paper/references.bib` and the introduction's header comment record where the sources differ from the proposal (e.g. 2609.26758: up to 70.4 pp more flips with yes/no names, AUC 93.8% → 23.2%; the limitations page is Jev 1.13's; the `rm -rf ~/.ssh` 0.76 → 0.48 drop is one integration test); still ≤ 4 pages.
 
 ### W3 — Tool design and workflow section
 - status: todo
@@ -347,11 +365,11 @@ first takes the skeleton and the decision packets):
 
 ## Day 3 — Thu 22 Oct: results frozen at 12:00, three figures, full draft, storyboard, Docker on a clean machine, hook segment
 
-### X4 — Final runs: P class, 5-repeat reruns, RQ4 cost, consolidated results [API: OpenRouter] [GPU: H100]
+### X4 — Final runs: P class, 5-repeat reruns, RQ4 cost, consolidated results [API: OpenRouter] [API: Anthropic] [GPU: H100]
 - status: todo
 - owner: —
 - claimed_at: —
-- deps: X1 X2 X3 C8
+- deps: X1 X2 X3 X7 C8
 - source: gateprobe_plan.md RQ1–RQ4; risk "Nondeterminism swamps the signal" (floor above 10% → 5 repeats)
 - done-when: `docs/experiments/x4-final-results.md` pushed as `planned` first; the P variants run on every in-scope gate; any gate whose floor exceeded 10% is rerun with 5 repeats; RQ4 gives dollars and wall-clock per 1,000 probes per gate from the logged spend and timings; consolidated CSVs in `results/` and the report give RQ1–RQ4 per gate with every number's repeat count and 95% interval; ready for the 12:00 freeze.
 
@@ -417,7 +435,7 @@ first takes the skeleton and the decision packets):
 - claimed_at: —
 - deps: I5
 - source: gateprobe_plan.md § Submission checklist (public repo); latent-underspecification-research A4.6 precedent
-- done-when: an orphan `release` branch (or an export for a separate public repo — the humans choose at H5) holds code, configs, probes, policies, variants, results, tests, the Dockerfile, the action and a reviewer README, without the agent pipeline (`.claude/`, `docs/PLAN.md`, `docs/AUTONOMY.md`, `memory/`, `STATUS.md`, `gateprobe_plan.md`); a scan finds no `.env`, keys, internal hostnames (d.dgx, a.dgx, b.dgx, gpubox, NSSLabPC), storage paths or private IPs; nothing is pushed public by this step.
+- done-when: an orphan `release` branch (or an export for a separate public repo — the humans choose at H5) holds code, configs, probes, policies, variants, results, tests, the Dockerfile, the action and a reviewer README, without the agent pipeline (`.claude/`, `docs/PLAN.md`, `docs/AUTONOMY.md`, `memory/`, `STATUS.md`, `gateprobe_plan.md`); a scan finds no `.env`, keys, internal hostnames (d.dgx, a.dgx, b.dgx, gpubox, NSSLabPC), storage paths, private IPs, or mention of the unpublished authority or supersession work (the policy provenance note in `policies/README.md` included — the humans decide what it says publicly); nothing is pushed public by this step.
 
 ### H3 — Register the submission on HotCRP (by Thu 22) [HUMAN]
 - status: todo

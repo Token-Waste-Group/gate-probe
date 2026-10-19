@@ -20,14 +20,15 @@ of what is being tested:**
 
 4. **Claude → the Anthropic API** (`ANTHROPIC_API_KEY` in `.env`; **about $200
    for the project**, human 2026-10-19; separate from the < $20 OpenRouter
-   budget). The human offered it for the experiments, e.g. as a judge. A Claude
-   judge **gate** is not among the plan's four, so adding one needs a
-   human-confirmed plan step first (proposed 2026-10-19). Notes for whoever
-   builds it (as of 2026-10-19, from the claude-api skill — re-check before a
-   run): use the official `anthropic` SDK, not an OpenAI-compatible shim; the
-   default model is `claude-opus-5-5` unless the humans pick another (prices
-   per MTok in/out: Opus 5.5 $4/$20, Sonnet 5.5 $2/$10, Haiku 5.5 $0.10/$0.50;
-   the Batch API halves them); no logprobs are documented, so p_block is a
+   budget). **Confirmed by the human the same day: a fifth gate, the Claude
+   judge, runs on `claude-opus-5-5` via the Message Batches API** (steps R8,
+   X7; ~$50 per 3-repeat full run if calls average ~200 output tokens — the
+   X7 pilot measures it). Notes for whoever builds it (as of 2026-10-19, from
+   the claude-api skill — re-check before a run): use the official `anthropic`
+   SDK, not an OpenAI-compatible shim (prices per MTok in/out: Opus 5.5
+   $4/$20; the Batch API halves them, and it does not take the server-side
+   refusal `fallbacks` parameter — record a refusal, never re-run it on another
+   model, since that would swap the gate under test); no logprobs are documented, so p_block is a
    stated probability via structured output — record it as such, it is weaker
    than a logprob-based one for the floor and ECE; Opus 5.5 can't disable
    thinking and rejects sampling parameters, so pin `effort` (e.g. `low`) in

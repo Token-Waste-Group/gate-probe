@@ -26,6 +26,8 @@ else
 fi
 { [ -f .env ] && grep -q '^OPENROUTER_API_KEY=.' .env; } \
   || echo "WARN: OPENROUTER_API_KEY not set in .env — [API: OpenRouter] steps (Decisions API runs) will fail; code/test steps are fine"
+{ [ -f .env ] && grep -q '^ANTHROPIC_API_KEY=.' .env; } \
+  || echo "WARN: ANTHROPIC_API_KEY not set in .env — [API: Anthropic] steps (the Claude judge) will fail; code/test steps are fine"
 command -v docker >/dev/null 2>&1 || echo "WARN: docker missing — the Docker image steps (I4, I5) can't run here"
 command -v latexmk >/dev/null 2>&1 || echo "WARN: latexmk missing — paper builds (W steps) can't run here"
 echo "NOTE: [GPU: H100] steps drive d.dgx over ssh (VPN up, alias in ~/.ssh/config) — read memory/reference-dgx-usage.md first"

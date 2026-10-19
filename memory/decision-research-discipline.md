@@ -5,8 +5,8 @@
 These rules keep the demo's claims reviewable on a five-day clock
 (`gateprobe_plan.md`). They are hard invariants, mirrored in `CLAUDE.md`:
 
-- **Scope is frozen:** relation classes E, M, I, A, P; RQ1–RQ4; four gates;
-  three figures. No relation class after G1 (Mon 19 18:00). Stretch items
+- **Scope is frozen:** relation classes E, M, I, A, P; RQ1–RQ4; four gates
+  plus the Claude Opus 5.5 judge the humans added on 2026-10-19; three figures. No relation class after G1 (Mon 19 18:00). Stretch items
   (P sandbox validation, OpenCode plugin, PolicyForge) only after G2 says full.
 - **Decision points are human decisions.** G1 spec freeze, G2 go/no-go (full /
   reduced / pivot to ToolSense), G3 results freeze (Thu 22 12:00), and every
@@ -24,12 +24,15 @@ These rules keep the demo's claims reviewable on a five-day clock
   hash + config hash + gate + model + repeat index on every row; the
   content-addressed cache (repeat index in the key) is the source of truth and
   the replay mode.
-- **Budget:** $ cap from config on every API path, spend logged; whole
-  evaluation under $20; price-check GPT-6 Luna Decisions before any run.
+- **Budget:** $ cap from config on every API path, spend logged; OpenRouter
+  under $20 (price-check GPT-6 Luna Decisions before any run); Claude about
+  $200 in total — see [[decision-llm-routing]].
 - **Negative results are committed** as `docs/experiments/` reports. E flips
   at the floor is a publishable outcome — the plan leads with M and A then.
-- **Prior work:** cite the authority and supersession preprints neutrally; lift
-  no tool details; keep systematic findings for the planned A\* paper.
+- **Prior work:** the authority and supersession work is unpublished — never
+  cite or mention it in the paper, video or public release (human rule,
+  2026-10-19, overriding the proposal); lift no tool details; keep systematic
+  findings for the planned A\* paper.
 
 **How to apply:** before any relation, analysis or run change, re-read the
 relevant `gateprobe_plan.md` section and `docs/RELATIONS.md`; push the planned

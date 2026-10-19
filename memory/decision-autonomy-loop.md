@@ -20,7 +20,8 @@ and the helpers in `scripts/`. Full spec: `docs/AUTONOMY.md`. Adapted on
 - **Never hand-edit step statuses** while working — `scripts/claim.py` /
   `scripts/mark.py` do it atomically (git push is the lock; losers re-pick).
   This is what makes parallel agents safe.
-- **Hardware-aware claiming:** `[API: OpenRouter]` needs the key with credit;
+- **Hardware-aware claiming:** `[API: OpenRouter]` needs the key with credit,
+  `[API: Anthropic]` needs `ANTHROPIC_API_KEY`;
   `[GPU: H100]` needs the VPN and the `d.dgx` alias (the H100 is driven over
   ssh from a laptop). Peek with `claim.py --dry-run`, skip what you can't run
   with `--skip-tag API|GPU`, release a mis-claim with `mark.py <id> todo
