@@ -154,9 +154,9 @@ first takes the skeleton and the decision packets):
 - done-when: `gateprobe/gates/rules.py` evaluates Claude Code-style permission patterns (e.g. `Bash(git push:*)`, `Read(./.env)`) with deny-over-allow precedence and p_block ∈ {0, 1}, deterministic; one rule set per policy at `policies/<policy_id>/rules.yaml`, hand-written to match the policy (stated as such in `policies/README.md`); unit tests on pattern semantics (prefix match, precedence, unmatched calls).
 
 ### R4 — Judge adapter and the fixed judge prompt
-- status: todo
-- owner: —
-- claimed_at: —
+- status: claimed
+- owner: jrzkaminski@Jerzy-Pro.local
+- claimed_at: 2026-10-19T17:38:19Z
 - deps: S1
 - source: gateprobe_plan.md § Tool design (judge); Mon DoD "judge prompt fixed"
 - done-when: `gateprobe/gates/judge.py` calls any OpenAI-compatible chat endpoint (base URL and model from config, key from the environment when one is needed) at temperature 0; the judge prompt is committed at `configs/judge_prompt.md` and is frozen once this step merges (changing it needs a human); p_block comes from the verdict-token logprobs where the endpoint returns them — if it can't, the fallback and the reason are recorded in config and the PR; tests run against a fake OpenAI-compatible endpoint.
