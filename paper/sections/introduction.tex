@@ -5,13 +5,26 @@
 % is its test suite -- metamorphic testing of an ML component, DeepTest-style,
 % for a new component class with a natural risk order).
 % Every fragility claim cites a source checked to exist (W2 done-when).
+% Reference check 2026-10-19 -- state these as the sources do, not as the plan does:
+%   - OpenRouter's two cookbooks pin typesafe/jev-1.13, not 1.14;
+%   - of the community projects only jevshield is a permission gate: jev-gateway
+%     routes tool selection, claude-jev-warden is a quality gate on Write/Edit,
+%     and the LangChain middleware is an unmerged pull request (#40556);
+%   - 2609.26758 (v3) reports flip rates up to 70.4 pp higher with yes/no names
+%     than with the 0/1 control, and mean AUC 93.8% -> 23.2%;
+%   - the 0.76 -> 0.48 block-probability drop for rm -rf ~/.ssh is one
+%     integration test by an Octomind engineer, Jev version unstated (VentureBeat);
+%   - the "injected instructions / misleading framing" wording is on TypeSafe's
+%     Jev 1.13 page; Jev 1.14 (since 14 Oct 2026) has no such page yet.
 
 \section{Introduction}\label{sec:intro}
 
 \todo{The SE challenge: coding agents route every tool call through a permission
-gate; the newest gates are untested ML components in a security-critical
-position; known fragility (option-name and rubric swaps, injected
-pre-approval, probability drift between identical calls).}
+gate~\cite{openrouter2026decisions,openrouter2026autoapprove,openrouter2026gatetoolcalls,lgy10272026jevshield};
+the newest gates are untested ML components in a security-critical position;
+known fragility (option-name and rubric swaps~\cite{sun2026typesafe}, injected
+pre-approval~\cite{columbus2026companies,typesafe2026jaggedness}, probability
+drift between identical calls).}
 
 \paragraph{Envisioned users}
 \todo{Platform and DevEx engineers configuring an auto-approver; authors of
