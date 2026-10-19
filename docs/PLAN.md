@@ -288,9 +288,9 @@ first takes the skeleton and the decision packets):
 - done-when: `docs/experiments/x7-claude-judge.md` is pushed as `planned` before any call (decision rules copied from `docs/RELATIONS.md`; the $ cap, at most $200 minus the Claude spend so far); a ~50-call pilot measures input and output tokens (thinking included) and projects the full run's cost into the report — if the projection exceeds the cap, mark blocked and ask; the full corpus × E/M/I/A variants × 3 repeats then goes to `claude-opus-5-5` as Message Batches with the frozen judge prompt and pinned effort; refusals are counted as their own outcome; the report gives the same outputs as X1 (floor, flip rates with Wilson intervals, M inversions, A shifts, spend, wall-clock), says that p_block is a stated probability, and classifies each relation positive / neutral / negative.
 
 ### W2 — Abstract, introduction and related work
-- status: todo
-- owner: —
-- claimed_at: —
+- status: claimed
+- owner: jrzkaminski@Jerzy-Pro.local
+- claimed_at: 2026-10-19T18:22:47Z
 - deps: W1
 - source: gateprobe_plan.md § Problem and envisioned users, § Novelty and related work
 - done-when: a draft abstract (needed for the H3 registration); the introduction states the envisioned users and the SE challenge (a gate is a security component whose specification is the policy; GateProbe is its test suite — metamorphic testing of an ML component applied to a new component class with a natural risk order); the related-work paragraph covers every row of the plan's novelty table and uses the positioning sentence; the unpublished authority and supersession work is neither cited nor mentioned (human rule, 2026-10-19); every factual claim about gate fragility cites a source checked to exist and says what the source says — `paper/references.bib` and the introduction's header comment record where the sources differ from the proposal (e.g. 2609.26758: up to 70.4 pp more flips with yes/no names, AUC 93.8% → 23.2%; the limitations page is Jev 1.13's; the `rm -rf ~/.ssh` 0.76 → 0.48 drop is one integration test); still ≤ 4 pages.
