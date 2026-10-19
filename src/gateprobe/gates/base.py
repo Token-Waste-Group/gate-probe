@@ -42,6 +42,7 @@ class GateRequest:
     call: ToolCall
     context: str = ""
     option_names: dict[str, str] = field(default_factory=lambda: dict(DEFAULT_OPTION_NAMES))
+    policy_id: str = ""  # which policy the text renders; only the rule gate reads it
 
 
 @dataclass(frozen=True)

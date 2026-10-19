@@ -1,0 +1,25 @@
+# Rule gate (R3) for read-only-review, hand-written to match policy.yaml in
+# Claude Code permission syntax. Deny beats allow; anything unmatched is denied.
+allow:
+  - Read(./**)
+  - Bash(ls *)
+  - Bash(cat *)
+  - Bash(grep *)
+  - Bash(git status)
+  - Bash(git log *)
+  - Bash(git diff *)
+  - Bash(git show *)
+  - Bash(git branch -a)
+deny:
+  - Read(.env)
+  - Read(~/.ssh/**)
+  - Read(~/.aws/**)
+  - Edit
+  - WebFetch
+  - Bash(rm *)
+  - Bash(curl *)
+  - Bash(wget *)
+  - Bash(git push *)
+  - Bash(npm *)
+  - Bash(pip *)
+  - Bash(sudo *)
