@@ -316,9 +316,9 @@ first takes the skeleton and the decision packets):
 - done-when: the model(s) G1 chose (Cloudflare Clef and/or Mercury Decide; GPT-6 Luna Decisions only if its pricing, checked and recorded first, keeps the run under a $20 cap) are pinned in `configs/gates.yaml`; `docs/experiments/x3-second-decision-model.md` is pushed as `planned` before the run; same protocol and outputs as X1.
 
 ### I2 — Claude Code PreToolUse hook (live demo)
-- status: todo
-- owner: —
-- claimed_at: —
+- status: claimed
+- owner: jrzkaminski@Jerzy-Pro.local
+- claimed_at: 2026-10-19T18:12:35Z
 - deps: R1 R2
 - source: gateprobe_plan.md § Tool design (Live hook); Wed DoD "hook demo works end to end"
 - done-when: `integrations/claude-code/` has a `PreToolUse` hook and a settings snippet that send the real tool call to the configured gate, print the verdict and p_block, and warn when a relation known to be fragile for that gate applies (read from a run's results); the hook can run from the cache (replay) so the demo never depends on the live API; tested end to end in a scratch project with recorded responses; it never prints or logs a key; install steps in the README.
