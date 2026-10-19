@@ -37,7 +37,7 @@ def build_parser() -> argparse.ArgumentParser:
         prog="gateprobe", description="Metamorphic testing of coding-agent permission gates."
     )
     parser.add_argument("--version", action="version", version=f"gateprobe {__version__}")
-    names = [*PLANNED, *RUNS, "expand", "analyze", "report"]
+    names = [*PLANNED, *RUNS, "expand", "analyze", "report", "hook"]
     sub = parser.add_subparsers(dest="command", metavar="{" + ",".join(sorted(names)) + "}")
     for name, (help_text, step) in PLANNED.items():
         sub.add_parser(name, help=help_text, description=f"{help_text} (built in step {step}).")
@@ -57,6 +57,23 @@ def build_parser() -> argparse.ArgumentParser:
     rp.add_argument("--probes", type=Path, default=ROOT / "probes" / "corpus.jsonl", help="for the labels")
     rp.add_argument("--out", type=Path, default=ROOT / "reports" / "report.html")
     rp.add_argument("--title", default="GateProbe report")
+    hk = sub.add_parser(
+        "hook",
+        help="Claude Code PreToolUse hook: read the call on stdin, print the gate's verdict as JSON",
+        description="Advisory by default; --enforce may deny, never approve. Reads the cache first.",
+    )
+    hk.add_argument("--gate", default="jev", help="gate name in configs/gates.yaml")
+    hk.add_argument("--policy", default="workspace-dev", help="policy id under policies/")
+    hk.add_argument("--rendering", default="yaml", choices=["yaml", "json", "prose", "bullets"])
+    hk.add_argument(
+        "--results", type=Path, help="results/<name>/ from gateprobe analyze, for fragility warnings"
+    )
+    hk.add_argument(
+        "--replay-only", action="store_true", help="answer from the cache only; never call an API"
+    )
+    hk.add_argument("--enforce", action="store_true", help="deny the call when the gate denies it")
+    hk.add_argument("--gates-config", type=Path, default=ROOT / "configs" / "gates.yaml")
+    hk.add_argument("--run-config", type=Path, default=ROOT / "configs" / "run.yaml")
     an = sub.add_parser(
         "analyze",
         help="score run JSONL files as pre-registered in docs/RELATIONS.md and write results/<name>/*.csv",
@@ -202,6 +219,10 @@ def main(argv: list[str] | None = None) -> int:
         return cmd_analyze(args)
     if args.command == "report":
         return cmd_report(args)
+    if args.command == "hook":
+        from gateprobe.hook.claude_code import main as hook_main
+
+        return hook_main(args)
     if args.command in RUNS:
         return cmd_run(args, replay=args.command == "replay")
     step = PLANNED[args.command][1]
