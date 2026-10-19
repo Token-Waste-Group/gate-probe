@@ -1,0 +1,2 @@
+gate_id,n_items,flips,f,f_lo,f_hi,delta,mean_retest_abs_dp,excluded,rows,excluded_flag,excluded_refusal
+judge-claude,5699,26,0.004562,0.003115,0.006677,0.050000,0.006807,461,17583,False,461

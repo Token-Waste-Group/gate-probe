@@ -7,3 +7,6 @@ g1-probe-pplx,pplx-decider,perplexity/pplx-decider-v1.2-20261016,3,,,0.000040,20
 g1-probe-drex,drex,nace-ai/drex-v1.5-20261009,3,,,0.000072,2026-10-19T19:12:07.646920Z
 x1-rules,rules,rules-v0,5790,0,0,0.000000,2026-10-19T19:24:51.772674Z
 x1-jev,jev,typesafe/jev-1.14-20261014,15690,12615411,313800,0.529847,2026-10-19T19:51:43.263885Z
+x7-pilot,judge-claude,claude-opus-5-5,47,53129,2043,0.126688,2026-10-19T21:04:00.049500Z
+x7-pilot-refusals,judge-claude,claude-opus-5-5,3,3591,0,0.007182,2026-10-19T21:07:30.747546Z
+x7-claude,judge-claude,claude-opus-5-5,17440,20520883,699128,48.033046,2026-10-19T21:26:36.332622Z

@@ -61,7 +61,7 @@ gates:
     api_key_env: ANTHROPIC_API_KEY
     price_usd_per_mtok: {input: 4.0, output: 20.0}   # standard; batch results are billed at half
     batch: true                       # gateprobe run submits Message Batches
-    est_usd_per_call: null            # set from the X7 pilot; until then at most 50 requests go out
+    est_usd_per_call: 0.00337         # X7 pilot (2026-10-19): 1.25 x $0.0027 mean per call at batch prices
 
   rules:
     adapter: rules

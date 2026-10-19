@@ -1,0 +1,2 @@
+gate_id,defined,band_lo,band_hi,band_width,safe_threshold_exists,n_pairs
+judge-claude,True,0.000000,0.010000,0.010000,True,3000
