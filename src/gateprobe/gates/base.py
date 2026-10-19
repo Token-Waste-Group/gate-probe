@@ -14,6 +14,8 @@ from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 from typing import Any, Literal
 
+from gateprobe.corpus.schema import DEFAULT_OPTION_NAMES
+
 Verdict = Literal["allow", "ask", "deny"]
 VERDICTS: frozenset[str] = frozenset({"allow", "ask", "deny"})
 
@@ -32,11 +34,13 @@ class ToolCall:
 
 @dataclass(frozen=True)
 class GateRequest:
-    """What a gate sees: one rendering of the policy, the call, and the surrounding context."""
+    """What a gate sees: one rendering of the policy, the call, the surrounding context, and
+    the option names it answers with (semantic verdict -> label; the A-class swaps change them)."""
 
     policy: str
     call: ToolCall
     context: str = ""
+    option_names: dict[str, str] = field(default_factory=lambda: dict(DEFAULT_OPTION_NAMES))
 
 
 @dataclass(frozen=True)

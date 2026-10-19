@@ -1,0 +1,16 @@
+{
+  "answers": {
+    "gate": {
+      "noul": 0.95,
+      "type": "noul"
+    }
+  },
+  "id": "gen-dec-1792430825-BaepV6eS9REXg2waR8H7",
+  "model": "typesafe/jev-1.14-20261014",
+  "provider": "TypeSafe",
+  "usage": {
+    "cost": 3.675e-05,
+    "input_tokens": 875,
+    "output_tokens": 20
+  }
+}

@@ -5,10 +5,15 @@
 gates:
   jev:
     adapter: decisions
-    model: typesafe/jev-1.14          # human decision 2026-10-19: 1.14, not 1.13
+    # Human decision 2026-10-19: 1.14, not 1.13. Pinned to the dated snapshot the API
+    # serves for "typesafe/jev-1.14" (R1), so the alias can't move under us; the
+    # adapter rejects any response served by a different model.
+    model: typesafe/jev-1.14-20261014
     mode: noul                        # noul | choice; plan proposal: noul for flips, choice for the hook (G1)
-    endpoint: https://openrouter.ai/api/alpha/decisions   # R1 confirms against the API reference
+    endpoint: https://openrouter.ai/api/alpha/decisions   # OpenRouter API reference, checked in R1
     api_key_env: OPENROUTER_API_KEY
+    threshold: 0.5                    # noul: deny when p_block >= threshold
+    price_usd_per_mtok: {input: 0.042, output: 0.0}       # fallback when a response carries no usage.cost
 
   # Second decision model(s): Clef and/or Mercury Decide, chosen at G1, pinned here by X3.
 

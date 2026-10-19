@@ -59,7 +59,7 @@ raise it** instead of working around it.
    from identical repeats (default 3; 5 on a gate whose floor exceeds 10%).
    **Every reported number states its repeats and a Wilson 95% interval.**
 6. **Models are pinned.** Every gate's model id lives in `configs/gates.yaml`
-   (`typesafe/jev-1.14`, never a floating alias); the judge's served model,
+   (`typesafe/jev-1.14-20261014`, the dated 1.14 snapshot; never a floating alias); the judge's served model,
    revision and dtype are recorded; the judge prompt is frozen once R4 merges.
 7. **The response cache is the source of truth and the replay mode.** Every
    gate response is stored content-addressed; the key includes the repeat

@@ -20,7 +20,7 @@ These rules keep the demo's claims reviewable on a five-day clock
 - **Noise floor first.** Measure each gate's test–retest floor from identical
   repeats (3; 5 if the floor exceeds 10%); report flips above it, with Wilson
   95% intervals and n on every number.
-- **Provenance on everything:** pinned model ids (`typesafe/jev-1.14`), git
+- **Provenance on everything:** pinned model ids (`typesafe/jev-1.14-20261014`), git
   hash + config hash + gate + model + repeat index on every row; the
   content-addressed cache (repeat index in the key) is the source of truth and
   the replay mode.

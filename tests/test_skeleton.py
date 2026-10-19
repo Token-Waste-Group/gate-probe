@@ -70,7 +70,7 @@ def test_fake_gate_overrides_and_threshold():
 def test_committed_configs_load_and_pin_every_model():
     gates = config.load_gates()
     run = config.load_run(gates=gates)
-    assert gates["jev"].model == "typesafe/jev-1.14"  # human decision 2026-10-19
+    assert gates["jev"].model == "typesafe/jev-1.14-20261014"  # human: 1.14; R1: dated snapshot
     assert gates["judge-claude"].model == "claude-opus-5-5"
     assert {g.adapter for g in gates.values()} <= config.ADAPTERS
     assert all(config.is_pinned(g.model) for g in gates.values())
