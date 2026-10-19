@@ -256,7 +256,7 @@ first takes the skeleton and the decision packets):
 - done-when: written after reading the claude-api skill (Python README and batches guide) — never from memory; the R4 judge adapter gains an `anthropic` backend on the official `anthropic` SDK (an optional `[claude]` extra, imported lazily, so the gate never needs it) using the frozen R4 judge prompt unchanged; model `claude-opus-5-5` and its `effort` level pinned in `configs/gates.yaml` (no temperature or thinking settings — this model rejects sampling parameters and keeps thinking on); verdict and a stated p_block come back through structured output, recorded as a stated probability, not a logprob; `gateprobe run` can submit a run as Message Batches, poll them, write every result into the R2 cache under the same key scheme (repeat index included) and resume a half-collected batch; `stop_reason: refusal` is stored as a refusal outcome and never re-run on another model (that would swap the gate under test); spend from each result's usage at the batch price is appended to `results/spend.csv`; tests use recorded batch fixtures with no network.
 
 ### I1 — HTML report v0
-- status: in_review (#17)
+- status: done
 - owner: jrzkaminski@Jerzy-Pro.local
 - claimed_at: 2026-10-19T18:09:05Z
 - deps: R6
