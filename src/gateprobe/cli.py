@@ -97,6 +97,7 @@ def build_parser() -> argparse.ArgumentParser:
         p.add_argument("--repeats", type=int, help="override configs/run.yaml repeats")
         p.add_argument("--run-id", help="default: <gate>-<UTC timestamp>")
         p.add_argument("--limit", type=int, help="only the first N variants (smoke runs)")
+        p.add_argument("--workers", type=int, default=1, help="parallel calls (the cap is checked per chunk)")
         p.add_argument("--gates-config", type=Path, default=ROOT / "configs" / "gates.yaml")
         p.add_argument("--run-config", type=Path, default=ROOT / "configs" / "run.yaml")
     return parser
@@ -140,6 +141,7 @@ def cmd_run(args: argparse.Namespace, replay: bool) -> int:
                 replay=replay,
                 retry=run_cfg.retry,
                 spend_csv=ROOT / run_cfg.spend_csv,
+                workers=args.workers,
             )
             if batched:
                 from gateprobe.runner.batch import run_batched

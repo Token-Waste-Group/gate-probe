@@ -251,3 +251,44 @@ def real_spend_log_untouched():
     before = real.read_bytes() if real.exists() else None
     yield
     assert (real.read_bytes() if real.exists() else None) == before
+
+
+def test_parallel_workers_match_a_sequential_run(tmp_path):
+    seq = _run(CountingGate(), tmp_path / "a")
+    par_gate = CountingGate()
+    par = _run(par_gate, tmp_path / "b", workers=4)
+    strip = ("timestamp", "cached")
+    assert [{k: v for k, v in r.items() if k not in strip} for r in par] == [
+        {k: v for k, v in r.items() if k not in strip} for r in seq
+    ]
+    assert par_gate.calls == 6
+
+
+def test_parallel_cap_is_checked_per_chunk(tmp_path):
+    gate = CountingGate(cost=0.3)
+    with pytest.raises(CapReached):
+        _run(gate, tmp_path, cap_usd=1.0, workers=2)
+    assert gate.calls == 2  # after 0.6 spent, the next chunk of 2 projects 1.2 > 1.0
+
+
+def test_concurrent_identical_requests_keep_the_first_answer(tmp_path):
+    import threading
+
+    c = Cache(tmp_path)
+    errors: list[Exception] = []
+
+    def put(i):
+        try:
+            c.put("same", {"i": i})
+        except FileExistsError:
+            pass
+        except Exception as e:  # anything else would be a real race
+            errors.append(e)
+
+    threads = [threading.Thread(target=put, args=(i,)) for i in range(16)]
+    for t in threads:
+        t.start()
+    for t in threads:
+        t.join()
+    assert not errors and set(c.get("same")) == {"i"}
+    assert [p.name for p in tmp_path.iterdir()] == ["same.json"]  # no stray temp files

@@ -12,6 +12,7 @@ from __future__ import annotations
 import hashlib
 import json
 import os
+import uuid
 from pathlib import Path
 from typing import Any
 
@@ -40,6 +41,13 @@ class Cache:
         if p.exists():
             raise FileExistsError(f"cache entry {key} already exists; entries are never rewritten")
         self.root.mkdir(parents=True, exist_ok=True)
-        tmp = p.with_suffix(".tmp")
+        tmp = p.with_name(
+            f".{key}.{uuid.uuid4().hex}.tmp"
+        )  # unique per writer: concurrent puts can't collide
         tmp.write_text(json.dumps(entry, sort_keys=True, ensure_ascii=False) + "\n", encoding="utf-8")
-        os.replace(tmp, p)  # atomic: a crash never leaves a half-written entry
+        try:
+            os.link(tmp, p)  # atomic and exclusive: never a half-written entry, never a rewrite
+        except FileExistsError as e:
+            raise FileExistsError(f"cache entry {key} already exists; entries are never rewritten") from e
+        finally:
+            tmp.unlink(missing_ok=True)

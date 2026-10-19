@@ -18,6 +18,7 @@ import os
 import subprocess
 import time
 from collections.abc import Callable, Iterator
+from concurrent.futures import ThreadPoolExecutor
 from dataclasses import asdict
 from pathlib import Path
 from typing import Any
@@ -87,6 +88,15 @@ def _usage_tokens(raw: dict[str, Any]) -> tuple[int, int]:
     return int(usage.get("input_tokens", 0) or 0), int(usage.get("output_tokens", 0) or 0)
 
 
+def _put(cache: Cache, key: str, entry: dict[str, Any]) -> dict[str, Any]:
+    """Store an answer; if an identical request already stored one (a concurrent duplicate), keep that."""
+    try:
+        cache.put(key, entry)
+        return entry
+    except FileExistsError:
+        return cache.get(key) or entry
+
+
 def _call_with_retries(
     gate: GateAdapter, request: GateRequest, retry: dict[str, float], sleep: Callable[[float], None]
 ) -> GateDecision:
@@ -116,94 +126,112 @@ def run_gate(
     spend_csv: Path | None = None,
     policies_dir: Path = ROOT / "policies",
     sleep: Callable[[float], None] = time.sleep,
+    workers: int = 1,
 ) -> Iterator[dict[str, Any]]:
+    """Rows in variant x repeat order. With `workers` > 1, calls run in parallel chunks of that
+    size; the cap is checked before each chunk against the chunk's projected cost, and the rows
+    come out in the same order as a sequential run."""
     mode = getattr(gate, "mode", "")
     commit = git_hash()
     spent, fresh_calls, tokens_in, tokens_out = 0.0, 0, 0, 0
-    try:
-        for variant in variants:
-            request = gate_request(variant, policies_dir)
-            for k in range(1, repeats + 1):
-                row: dict[str, Any] = {
-                    "run_id": run_id,
-                    "variant_id": variant.id,
-                    "probe_id": variant.probe_id,
-                    "parent_id": variant.parent_id,
-                    "relation_class": variant.relation_class,
-                    "transform": variant.transform,
-                    "repeat": k,
-                    "gate_id": gate.gate_id,
-                    "model_id": gate.model_id,
-                    "mode": mode,
-                    "git_hash": commit,
-                    "config_hash": config_digest,
-                }
-                try:
-                    request_bytes = gate.request_bytes(request)
-                except Exception as e:  # e.g. NotApplicable: option names this mode can't express
-                    yield {**row, "status": "not_applicable", "error": str(e), "timestamp": now()}
-                    continue
-                key = cache_key(gate.gate_id, gate.model_id, mode, request_bytes, k)
-                row["cache_key"] = key
-                entry = cache.get(key)
-                cached = entry is not None
-                if not cached:
-                    if replay:
-                        raise ReplayMiss(f"no cached answer for {variant.id} repeat {k} on {gate.gate_id}")
-                    projected = spent / fresh_calls if fresh_calls else 0.0
-                    if spent + projected > cap_usd:
-                        raise CapReached(f"{gate.gate_id}: spent ${spent:.4f} of a ${cap_usd:.2f} cap")
-                    try:
-                        decision = _call_with_retries(gate, request, retry or {}, sleep)
-                    except GateRefusal as e:  # its own outcome: cached, reported, never re-asked elsewhere
-                        cache.put(
-                            key,
-                            {"refusal": e.details, "message": str(e), "created_at": now(), "run_id": run_id},
-                        )
-                        yield {
-                            **row,
-                            "status": "refusal",
-                            "cached": False,
-                            "error": str(e),
-                            "timestamp": now(),
-                        }
-                        continue
-                    except Exception as e:
-                        yield {
-                            **row,
-                            "status": "error",
-                            "error": f"{type(e).__name__}: {e}",
-                            "timestamp": now(),
-                        }
-                        continue
-                    entry = {"decision": asdict(decision), "created_at": now(), "run_id": run_id}
-                    cache.put(key, entry)
-                    spent += decision.cost_usd
-                    fresh_calls += 1
-                    t_in, t_out = _usage_tokens(decision.raw)
-                    tokens_in, tokens_out = tokens_in + t_in, tokens_out + t_out
-                if "refusal" in entry:
-                    yield {
-                        **row,
-                        "status": "refusal",
-                        "cached": cached,
-                        "error": entry.get("message", ""),
-                        "timestamp": now(),
-                    }
-                    continue
-                d = entry["decision"]
-                yield {
+    tasks: list[tuple[Variant, GateRequest, int]] = []
+    for variant in variants:
+        request = gate_request(variant, policies_dir)
+        tasks.extend((variant, request, k) for k in range(1, repeats + 1))
+
+    def one(task: tuple[Variant, GateRequest, int]) -> tuple[dict[str, Any], dict[str, Any] | None]:
+        """(row, the fresh decision if a call was made). Thread-safe: the cache is per-key and exclusive."""
+        variant, request, k = task
+        row: dict[str, Any] = {
+            "run_id": run_id,
+            "variant_id": variant.id,
+            "probe_id": variant.probe_id,
+            "parent_id": variant.parent_id,
+            "relation_class": variant.relation_class,
+            "transform": variant.transform,
+            "repeat": k,
+            "gate_id": gate.gate_id,
+            "model_id": gate.model_id,
+            "mode": mode,
+            "git_hash": commit,
+            "config_hash": config_digest,
+        }
+        try:
+            request_bytes = gate.request_bytes(request)
+        except Exception as e:  # e.g. NotApplicable: option names this mode can't express
+            return {**row, "status": "not_applicable", "error": str(e), "timestamp": now()}, None
+        key = cache_key(gate.gate_id, gate.model_id, mode, request_bytes, k)
+        row["cache_key"] = key
+        entry = cache.get(key)
+        cached, fresh = entry is not None, None
+        if not cached:
+            if replay:
+                raise ReplayMiss(f"no cached answer for {variant.id} repeat {k} on {gate.gate_id}")
+            try:
+                decision = _call_with_retries(gate, request, retry or {}, sleep)
+            except GateRefusal as e:  # its own outcome: cached, reported, never re-asked elsewhere
+                _put(
+                    cache,
+                    key,
+                    {"refusal": e.details, "message": str(e), "created_at": now(), "run_id": run_id},
+                )
+                return {
                     **row,
-                    "status": "ok",
-                    "cached": cached,
-                    "verdict": d["verdict"],
-                    "p_block": d["p_block"],
-                    "latency_ms": d["latency_ms"],
-                    "cost_usd": d["cost_usd"],
-                    "served_model": (d.get("raw") or {}).get("model"),
+                    "status": "refusal",
+                    "cached": False,
+                    "error": str(e),
                     "timestamp": now(),
-                }
+                }, None
+            except Exception as e:
+                return {
+                    **row,
+                    "status": "error",
+                    "error": f"{type(e).__name__}: {e}",
+                    "timestamp": now(),
+                }, None
+            fresh = {"decision": asdict(decision), "created_at": now(), "run_id": run_id}
+            entry = _put(cache, key, fresh)
+        if "refusal" in entry:
+            return {
+                **row,
+                "status": "refusal",
+                "cached": cached,
+                "error": entry.get("message", ""),
+                "timestamp": now(),
+            }, None
+        d = entry["decision"]
+        return {
+            **row,
+            "status": "ok",
+            "cached": cached,
+            "verdict": d["verdict"],
+            "p_block": d["p_block"],
+            "latency_ms": d["latency_ms"],
+            "cost_usd": d["cost_usd"],
+            "served_model": (d.get("raw") or {}).get("model"),
+            "timestamp": now(),
+        }, fresh
+
+    pool = ThreadPoolExecutor(max_workers=workers) if workers > 1 else None
+    try:
+        size = max(1, workers)
+        for i in range(0, len(tasks), size):
+            chunk = tasks[i : i + size]
+            projected = (spent / fresh_calls if fresh_calls else 0.0) * len(chunk)
+            if spent + projected > cap_usd:
+                raise CapReached(f"{gate.gate_id}: spent ${spent:.4f} of a ${cap_usd:.2f} cap")
+            results = pool.map(one, chunk) if pool else map(one, chunk)
+            for row, fresh in results:
+                if fresh is not None:
+                    d = fresh["decision"]
+                    spent += d["cost_usd"]
+                    fresh_calls += 1
+                    t_in, t_out = _usage_tokens(d["raw"])
+                    tokens_in, tokens_out = tokens_in + t_in, tokens_out + t_out
+                yield row
     finally:
+        if pool:
+            pool.shutdown(wait=True, cancel_futures=True)
         if spend_csv is not None and fresh_calls:
             spend_csv.parent.mkdir(parents=True, exist_ok=True)
             new = not spend_csv.exists()
