@@ -1,12 +1,24 @@
-% Usage and workflow. Budget: ~0.35 page. Owner: W3.
+% Usage and workflow. Budget: ~0.3 page. Owner: W3.
 % CFP must-have covered here: the methodology or workflow required of users.
 % Every command shown must match the real `gateprobe --help` (W3 done-when).
-% Cover: install (pip / Docker), run, report, CI mode with --max-flip, replay
-% without a key, and the Claude Code PreToolUse hook used in the video.
 
 \section{Usage and Workflow}\label{sec:workflow}
 
-\todo{A user's session end to end: pick a gate and a policy, run the suite,
-read the report, gate a CI pipeline on the flip rate, and watch the live
-Claude Code \texttt{PreToolUse} hook~\cite{anthropic2026hooks}. Show the three
-or four commands, copied from the real CLI.}
+A user picks a gate from the pinned configuration and runs the suite:
+\begin{verbatim}
+gateprobe expand
+gateprobe run --gate jev \
+  --variants variants/generated.jsonl
+gateprobe report --runs runs/<id>.jsonl
+gateprobe ci --runs runs/<id>.jsonl \
+  --max-flip 0.05
+\end{verbatim}
+\texttt{report} shows the flip table, the reliability diagram and the worst
+flips, each next to its parent. \texttt{ci} exits non-zero when a relation's
+flip rate above the floor is significantly positive and above the tolerated
+excess, so a gate upgrade can be held back in a pipeline. Reviewers run
+\texttt{gateprobe replay} from the published cache, inside the Docker image,
+with no key and no network. To watch a gate on a real agent,
+\texttt{gateprobe hook} plugs into Claude Code as a \texttt{PreToolUse} hook. It
+prints the gate's verdict for each call and warns when the call contains a
+transform the gate failed, never approving anything itself.

@@ -1,16 +1,46 @@
-% Tool design. Budget: ~0.6 page. Owner: W3.
+% Tool design. Budget: ~0.5 page. Owner: W3.
 % Source: gateprobe_plan.md, "Tool design" -- probe corpus, policies, relation
-% engine, gate adapters (decisions, judge, rules, http) behind one contract,
-% runner with repeats and a content-addressed cache (= replay mode), analysis
-% (floor, flip rates with Wilson intervals, ECE, threshold band), outputs.
+% engine, gate adapters behind one contract, runner with repeats and a
+% content-addressed cache (= replay mode), analysis, outputs.
 % No architecture figure: the 4 pages hold only the three figures the plan
 % budgets (flip table, reliability diagram, case-study box) -- describe in text.
 
 \section{GateProbe}\label{sec:design}
 
-\todo{One paragraph per component, in data-flow order: inputs (corpus,
-policies) $\rightarrow$ relation engine $\rightarrow$ runner $\rightarrow$ gate
-adapters $\rightarrow$ analysis $\rightarrow$ outputs. State the adapter
-contract (policy, call, context $\rightarrow$ verdict, $p_\mathrm{block}$) and
-why a new vendor is one file; the rule gate uses Claude Code-style permission
-patterns~\cite{anthropic2026permissions}.}
+\tool{} is a Python package and CLI. Data flows through five components.
+
+\paragraph{Corpus and policies} A \emph{probe} is one tool call (a shell
+command, a file read or write, a web fetch) under one authorization policy,
+tagged with a tool family and a risk tier (read, reversible write,
+irreversible, exfiltration). Each policy is written once as allow and deny
+rules over actions and scopes, then rendered four ways (YAML, JSON, prose,
+bullets), so that policy format becomes a relation to test rather than a
+fixture.
+
+\paragraph{Relation engine} Deterministic, seeded generators turn each probe's
+\emph{base item} into variants, applying exactly one transform per variant.
+Each variant records its parent, relation class, transform, expected outcome
+and seed (Section~\ref{sec:relations}).
+
+\paragraph{Gate adapters} Every gate implements one contract: a policy
+rendering, a tool call, context text and answer labels go in; a verdict
+(allow, ask, deny), a block probability $p_\mathrm{block}$, the raw response,
+the pinned model id, latency and cost come out. Adapters exist for the
+Decisions API (true/false and labeled questions), LLM judges on any
+OpenAI-compatible endpoint (where $p_\mathrm{block}$ comes from answer-token
+logprobs) or on the Anthropic Message Batches API (a stated probability), and
+Claude Code-style allow/deny patterns~\cite{anthropic2026permissions}. A new
+vendor is one file.
+
+\paragraph{Runner} Each item is sent $R=3$ times. Every response is stored
+under a hash of the gate, the pinned model, the exact request bytes and the
+repeat index, so repeats are real calls and a rerun or a reviewer's replay
+needs no API key. Retries back off exponentially, and a per-gate dollar cap is
+checked before every call.
+
+\paragraph{Analysis and outputs} Scoring follows rules fixed before any run
+(Section~\ref{sec:relations}). \texttt{gateprobe analyze} writes the tables as
+CSV, \texttt{report} renders a self-contained HTML page with flip examples
+before and after, \texttt{ci} fails a pipeline on a significant excess, and
+\texttt{hook} shows the gate's verdict on a live Claude Code
+call~\cite{anthropic2026hooks}.
