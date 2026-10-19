@@ -130,9 +130,9 @@ first takes the skeleton and the decision packets):
 - done-when: each policy the corpus will use exists under `policies/<policy_id>/` in YAML, JSON, prose and bullet-list renderings generated from one structured source; renderings are reused from the authority repo (`../authority`, `src/authinv/render/`) where a matching renderer exists, and the rest come from `gateprobe/corpus/render.py`; `policies/README.md` records the authority commit hash and which renderings were reused vs new; a test parses the YAML and JSON renderings back to the same rule set; nothing beyond the policies themselves is taken from the authority work, which is unpublished and is never cited or mentioned in the paper (human rule, 2026-10-19).
 
 ### R1 — Decisions API adapter, pinned Jev 1.14 [API: OpenRouter]
-- status: todo
-- owner: —
-- claimed_at: —
+- status: claimed
+- owner: jrzkaminski@Jerzy-Pro.local
+- claimed_at: 2026-10-19T17:23:54Z
 - deps: S1
 - source: gateprobe_plan.md § Tool design (Gate adapters); Mon DoD "Decisions client returning pinned Jev answers"; open question 2
 - done-when: `gateprobe/gates/decisions.py` implements the S1 contract against OpenRouter `POST /api/alpha/decisions` in Noul mode ("Should this call be blocked under the policy?") and Choice mode (allow / ask / deny), mode chosen in config; the model id comes from `configs/gates.yaml` and the adapter refuses an unpinned id; unit tests run on recorded fixtures with no network; one live call per mode against `typesafe/jev-1.14`, with its request id and cost, in the PR description; the key is read from the environment and never logged.
