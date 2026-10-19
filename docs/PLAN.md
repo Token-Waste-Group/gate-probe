@@ -162,7 +162,8 @@ first takes the skeleton and the decision packets):
 - done-when: `gateprobe/gates/judge.py` calls any OpenAI-compatible chat endpoint (base URL and model from config, key from the environment when one is needed) at temperature 0; the judge prompt is committed at `configs/judge_prompt.md` and is frozen once this step merges (changing it needs a human); p_block comes from the verdict-token logprobs where the endpoint returns them — if it can't, the fallback and the reason are recorded in config and the PR; tests run against a fake OpenAI-compatible endpoint.
 
 ### R5 — Serve the Gemma 4 31B-it judge with vLLM [GPU: H100]
-- status: claimed
+- status: blocked
+- note: H100 storage is 99% full (65 GB free; Gemma 4 31B-it bf16 ~62 GB; no cache exists). Options: (a) a human frees space under /data/storage/kaluzhnaya_jhub, (b) an FP8 checkpoint (~32 GB), (c) route judge-gemma via OpenRouter google/gemma-4-31b-it (logprobs supported; ~$3-6 for X2; pin the provider)
 - owner: jrzkaminski@Jerzy-Pro.local
 - claimed_at: 2026-10-19T17:42:25Z
 - deps: R4
