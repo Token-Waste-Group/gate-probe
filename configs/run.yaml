@@ -1,0 +1,21 @@
+# Run settings (R2 reads them). Every X step states its own config and $ cap in
+# its planned report; these are the defaults.
+
+seed: 13
+repeats: 3              # identical repeats per variant; 5 on a gate whose floor exceeds 10% (X4)
+
+retry:
+  max_attempts: 5
+  backoff_initial_s: 1.0
+  backoff_max_s: 60.0
+
+# Per-run $ cap per gate, checked before every call (CLAUDE.md invariant 9).
+# Budgets: OpenRouter < $20 in total; Claude about $200 in total.
+caps_usd:
+  jev: 5.0
+  judge-gemma: 0.0      # local vLLM, no API spend
+  judge-claude: 100.0   # X7 sets the real cap from its pilot, within the $200 budget
+  rules: 0.0
+
+cache_dir: cache        # content-addressed response cache = the replay bundle (git-ignored)
+runs_dir: runs          # run JSONL (git-ignored)

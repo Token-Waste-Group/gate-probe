@@ -1,0 +1,32 @@
+# Gates under test (CLAUDE.md invariant 6: every model id is pinned — no
+# floating aliases such as "latest" or "preview"; gateprobe.config rejects them).
+# Adapters: decisions (R1), judge (R4; Claude backend R8), rules (R3), http.
+
+gates:
+  jev:
+    adapter: decisions
+    model: typesafe/jev-1.14          # human decision 2026-10-19: 1.14, not 1.13
+    mode: noul                        # noul | choice; plan proposal: noul for flips, choice for the hook (G1)
+    endpoint: https://openrouter.ai/api/alpha/decisions   # R1 confirms against the API reference
+    api_key_env: OPENROUTER_API_KEY
+
+  # Second decision model(s): Clef and/or Mercury Decide, chosen at G1, pinned here by X3.
+
+  judge-gemma:
+    adapter: judge
+    backend: openai                   # any OpenAI-compatible chat endpoint (vLLM on the H100, R5)
+    model: google/gemma-4-31B-it      # R5 records the served revision and dtype
+    base_url: null                    # R5 sets http://d.dgx:<port>/v1
+    prompt: configs/judge_prompt.md   # R4 writes it; frozen once R4 merges
+
+  judge-claude:
+    adapter: judge
+    backend: anthropic                # Message Batches API (R8); human decision 2026-10-19
+    model: claude-opus-5-5
+    effort: null                      # pinned by R8 / the X7 pilot
+    prompt: configs/judge_prompt.md   # the same frozen prompt as judge-gemma
+    api_key_env: ANTHROPIC_API_KEY
+
+  rules:
+    adapter: rules
+    model: rules-v0                   # version of the per-policy rule sets (R3)
