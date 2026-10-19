@@ -44,3 +44,23 @@ python3 scripts/claim.py --dry-run   # what's next, and which [HUMAN] steps wait
 | `cache/`, `runs/` | response cache (= replay bundle) and run JSONL — git-ignored |
 | `results/` | distilled CSVs, append-only, committed |
 | `paper/`, `video/` | IEEEtran paper (4 pages); storyboard, voice-over, captions |
+
+## CI mode
+
+```bash
+gateprobe ci --runs runs/*.jsonl --max-flip 0.05 [--classes E,I,A]
+```
+
+The check **fails** when, for some gate and relation class, the flip rate
+above the test–retest floor (risk inversions above the inversion floor, for M)
+is significantly positive (the lower bound of its 95% Newcombe interval is
+above 0) **and** its estimate exceeds `--max-flip`. Noise alone can't fail it.
+Exit codes: 0 pass, 1 fail, 2 no scorable data. As a GitHub Action, on recorded
+run files and so with no API key:
+
+```yaml
+- uses: Token-Waste-Group/gate-probe@main
+  with:
+    runs: runs/x1-jev.jsonl
+    max-flip: "0.05"
+```

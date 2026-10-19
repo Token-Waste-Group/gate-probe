@@ -1,11 +1,11 @@
-"""The `gateprobe` command: expand, run, report, ci, replay.
+"""The `gateprobe` command: expand, run, replay, analyze, report, ci, hook.
 
-Scope of v0: `expand` (C4) writes base items and the deterministic variants;
-`run` and `replay` (R2) send a variants file through one gate and write the
-rows to runs/<run_id>.jsonl; `analyze` (R6) and `report` (I1) score and
-render them; the others have `--help` and exit with
-status 3, naming the plan step that builds them. Out of scope: the planned
-subcommands' behavior (see `PLANNED`).
+Scope of v0: `expand` (C4/C5) writes base items and the deterministic
+variants; `run` and `replay` (R2; Message Batches for the Claude judge, R8)
+send a variants file through one gate and write the rows to
+runs/<run_id>.jsonl; `analyze` (R6), `report` (I1) and `ci` (I3) score,
+render and check them; `hook` (I2) is the Claude Code PreToolUse hook.
+`PLANNED` lists any subcommand still to come (it exits 3, naming its step).
 """
 
 from __future__ import annotations
@@ -23,9 +23,7 @@ NOT_IMPLEMENTED = 3
 ROOT = Path(__file__).resolve().parents[2]
 
 # subcommand -> (help text, plan step that implements it)
-PLANNED: dict[str, tuple[str, str]] = {
-    "ci": ("fail when a relation's flip rate exceeds --max-flip", "I3"),
-}
+PLANNED: dict[str, tuple[str, str]] = {}
 RUNS = {
     "run": "send a variants file x repeats through one gate (cache first, then the gate, under the $ cap)",
     "replay": "re-run a variants file from the response cache only; needs no API key, fails on any miss",
@@ -37,7 +35,7 @@ def build_parser() -> argparse.ArgumentParser:
         prog="gateprobe", description="Metamorphic testing of coding-agent permission gates."
     )
     parser.add_argument("--version", action="version", version=f"gateprobe {__version__}")
-    names = [*PLANNED, *RUNS, "expand", "analyze", "report", "hook"]
+    names = [*PLANNED, *RUNS, "expand", "analyze", "report", "hook", "ci"]
     sub = parser.add_subparsers(dest="command", metavar="{" + ",".join(sorted(names)) + "}")
     for name, (help_text, step) in PLANNED.items():
         sub.add_parser(name, help=help_text, description=f"{help_text} (built in step {step}).")
@@ -57,6 +55,16 @@ def build_parser() -> argparse.ArgumentParser:
     rp.add_argument("--probes", type=Path, default=ROOT / "probes" / "corpus.jsonl", help="for the labels")
     rp.add_argument("--out", type=Path, default=ROOT / "reports" / "report.html")
     rp.add_argument("--title", default="GateProbe report")
+    from gateprobe.report.ci import RULE
+
+    ci = sub.add_parser(
+        "ci",
+        help="exit non-zero when a relation's flip rate above the floor exceeds --max-flip",
+        description=f"The check {RULE}. Exit codes: 0 pass, 1 fail, 2 no scorable data.",
+    )
+    ci.add_argument("--runs", nargs="+", required=True, type=Path, help="run JSONL files (any gates)")
+    ci.add_argument("--max-flip", type=float, default=0.05, help="largest tolerated excess (default 0.05)")
+    ci.add_argument("--classes", default="", help="comma-separated relation classes to check (default: all)")
     hk = sub.add_parser(
         "hook",
         help="Claude Code PreToolUse hook: read the call on stdin, print the gate's verdict as JSON",
@@ -219,6 +227,19 @@ def main(argv: list[str] | None = None) -> int:
         return cmd_analyze(args)
     if args.command == "report":
         return cmd_report(args)
+    if args.command == "ci":
+        from gateprobe.report.ci import check
+
+        rows = [
+            json.loads(line)
+            for path in args.runs
+            for line in path.read_text(encoding="utf-8").splitlines()
+            if line.strip()
+        ]
+        classes = {c.strip() for c in args.classes.split(",") if c.strip()} or None
+        code, lines = check(rows, args.max_flip, classes)
+        print("\n".join(lines))
+        return code
     if args.command == "hook":
         from gateprobe.hook.claude_code import main as hook_main
 

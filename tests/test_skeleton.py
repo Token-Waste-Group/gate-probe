@@ -99,13 +99,11 @@ def test_unknown_adapter_and_missing_cap_are_rejected(tmp_path):
         config.load_run(run, gates=gates)
 
 
-@pytest.mark.parametrize("name", list(cli.PLANNED))
-def test_every_subcommand_has_help_and_says_which_step_builds_it(name, capsys):
+@pytest.mark.parametrize("name", ["expand", "run", "replay", "analyze", "report", "hook", "ci"])
+def test_every_subcommand_has_help(name):
     with pytest.raises(SystemExit) as e:
         cli.main([name, "--help"])
     assert e.value.code == 0
-    assert cli.main([name]) == cli.NOT_IMPLEMENTED
-    assert f"step {cli.PLANNED[name][1]}" in capsys.readouterr().err
 
 
 def test_bare_command_prints_help_and_the_console_script_is_installed():
