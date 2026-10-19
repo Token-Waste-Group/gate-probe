@@ -174,7 +174,7 @@ def run_gate(
             spend_csv.parent.mkdir(parents=True, exist_ok=True)
             new = not spend_csv.exists()
             with spend_csv.open("a", newline="", encoding="utf-8") as f:
-                w = csv.DictWriter(f, fieldnames=SPEND_FIELDS)
+                w = csv.DictWriter(f, fieldnames=SPEND_FIELDS, lineterminator="\n")
                 if new:
                     w.writeheader()
                 w.writerow(
