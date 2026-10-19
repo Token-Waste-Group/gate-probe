@@ -217,7 +217,7 @@ first takes the skeleton and the decision packets):
 - done-when: ≥ 300 probes validate against the schema (the plan's fallback — ship ≥ 200 if fewer than 200 exist on Tuesday night — applies only once a human records it in STATUS.md); no two probes are the same call after normalization; tier × tool-family balance updated in `docs/CORPUS.md`; the corpus rebuilds deterministically from the committed script.
 
 ### C7 — Labeled subset: stratified sample and labeling sheet
-- status: in_review (#27)
+- status: done
 - owner: jrzkaminski@Jerzy-Pro.local
 - claimed_at: 2026-10-19T19:19:10Z
 - deps: C6
