@@ -324,9 +324,9 @@ first takes the skeleton and the decision packets):
 - done-when: `integrations/claude-code/` has a `PreToolUse` hook and a settings snippet that send the real tool call to the configured gate, print the verdict and p_block, and warn when a relation known to be fragile for that gate applies (read from a run's results); the hook can run from the cache (replay) so the demo never depends on the live API; tested end to end in a scratch project with recorded responses; it never prints or logs a key; install steps in the README.
 
 ### I3 — CI mode and GitHub Action
-- status: todo
-- owner: —
-- claimed_at: —
+- status: claimed
+- owner: jrzkaminski@Jerzy-Pro.local
+- claimed_at: 2026-10-19T18:16:21Z
 - deps: R6
 - source: gateprobe_plan.md § Tool design (Outputs)
 - done-when: `gateprobe ci --max-flip 0.05` exits non-zero when any relation's flip rate above the floor exceeds the threshold (the rule is spelled out in `--help` and the README); an `action.yml` composite action wraps it; tests cover the pass and fail exit codes on fixture runs.
