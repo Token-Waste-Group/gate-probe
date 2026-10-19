@@ -1,7 +1,7 @@
 """Build a gate adapter from its `configs/gates.yaml` entry.
 
 Scope of v0: the adapters built so far (`decisions`, `rules`, `judge` on an
-OpenAI-compatible endpoint); the others raise
+OpenAI-compatible endpoint or the Anthropic API); the others raise
 `NotImplementedError` naming the step that builds them. Out of scope: the
 adapters themselves.
 """
@@ -11,7 +11,7 @@ from __future__ import annotations
 from gateprobe.config import GateConfig
 from gateprobe.gates.base import GateAdapter
 
-PENDING = {"judge": "R8 (the anthropic backend)", "http": "a later step"}
+PENDING = {"http": "a later step"}
 
 
 def make_gate(cfg: GateConfig) -> GateAdapter:
@@ -23,6 +23,10 @@ def make_gate(cfg: GateConfig) -> GateAdapter:
         from gateprobe.gates.judge import JudgeGate
 
         return JudgeGate.from_config(cfg)
+    if cfg.adapter == "judge" and cfg.options.get("backend") == "anthropic":
+        from gateprobe.gates.claude import ClaudeJudgeGate
+
+        return ClaudeJudgeGate.from_config(cfg)
     if cfg.adapter == "rules":
         from gateprobe.gates.rules import RulesGate
 

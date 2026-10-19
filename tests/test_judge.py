@@ -128,8 +128,7 @@ def test_factory_and_config():
     judge = make_gate(gates["judge-gemma"])
     assert isinstance(judge, JudgeGate) and judge.model_id == MODEL and judge.p_block_source == "logprobs"
     assert judge.template == (ROOT / "configs" / "judge_prompt.md").read_text(encoding="utf-8")
-    with pytest.raises(NotImplementedError, match="R8"):
-        make_gate(gates["judge-claude"])
+    assert type(make_gate(gates["judge-claude"])).__name__ == "ClaudeJudgeGate"  # built in R8
 
 
 def test_cost_from_usage_and_request_bytes_are_stable():

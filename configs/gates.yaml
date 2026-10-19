@@ -31,9 +31,13 @@ gates:
     adapter: judge
     backend: anthropic                # Message Batches API (R8); human decision 2026-10-19
     model: claude-opus-5-5
-    effort: null                      # pinned by R8 / the X7 pilot
+    effort: low                       # Opus 5.5 keeps thinking on; effort, not temperature (X7 pilot confirms)
+    max_tokens: 4096                  # thinking counts toward it
     prompt: configs/judge_prompt.md   # the same frozen prompt as judge-gemma
     api_key_env: ANTHROPIC_API_KEY
+    price_usd_per_mtok: {input: 4.0, output: 20.0}   # standard; batch results are billed at half
+    batch: true                       # gateprobe run submits Message Batches
+    est_usd_per_call: null            # set from the X7 pilot; until then at most 50 requests go out
 
   rules:
     adapter: rules
