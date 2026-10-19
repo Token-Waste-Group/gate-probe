@@ -332,7 +332,7 @@ first takes the skeleton and the decision packets):
 - done-when: `gateprobe ci --max-flip 0.05` exits non-zero when any relation's flip rate above the floor exceeds the threshold (the rule is spelled out in `--help` and the README); an `action.yml` composite action wraps it; tests cover the pass and fail exit codes on fixture runs.
 
 ### I4 — Docker image
-- status: in_review (#20)
+- status: done
 - owner: jrzkaminski@Jerzy-Pro.local
 - claimed_at: 2026-10-19T18:18:57Z
 - deps: R2
