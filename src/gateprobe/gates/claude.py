@@ -14,7 +14,7 @@ another model.
 
 Scope of v0: request params (shared by the synchronous and the batch path),
 response parsing from SDK objects or dicts, cost from usage at the configured
-prices (half for batch results), and a synchronous `decide` for single calls.
+prices (half for batch results; a refusal carries its cost too), and a synchronous `decide` for single calls.
 The SDK is the optional `[claude]` extra, imported lazily. Out of scope:
 batch submission and polling (runner/batch.py).
 """
@@ -131,9 +131,16 @@ class ClaudeJudgeGate(GateAdapter):
     # -- response ---------------------------------------------------------
     def parse(self, message: Any, names: dict[str, str], latency_ms: float, batch: bool) -> GateDecision:
         msg = _as_dict(message)
-        if msg.get("stop_reason") == "refusal":
+        usage = msg.get("usage") or {}
+        if msg.get("stop_reason") == "refusal":  # still billed: usage and cost go with the refusal
             raise GateRefusal(
-                "the model declined", {"stop_details": msg.get("stop_details"), "id": msg.get("id")}
+                "the model declined",
+                {
+                    "stop_details": msg.get("stop_details"),
+                    "id": msg.get("id"),
+                    "usage": usage,
+                    "cost_usd": self.cost(usage, batch),
+                },
             )
         served = msg.get("model")
         if served and served != self.model_id:
@@ -152,14 +159,6 @@ class ClaudeJudgeGate(GateAdapter):
         if total <= 0:
             raise JudgeError("stated probabilities are all zero", status=200)
         p_block = probs.get(_norm(names["deny"]), 0.0) / total
-        usage = msg.get("usage") or {}
-        tokens_in, tokens_out = usage.get("input_tokens", 0), usage.get("output_tokens", 0)
-        factor = 0.5 if batch else 1.0  # the Batch API halves token prices
-        cost = (
-            factor
-            * (tokens_in * self.price.get("input", 0.0) + tokens_out * self.price.get("output", 0.0))
-            / 1e6
-        )
         return GateDecision(
             verdict=label_to_verdict[chosen],
             p_block=min(max(p_block, 0.0), 1.0),
@@ -167,7 +166,16 @@ class ClaudeJudgeGate(GateAdapter):
             gate_id=self.gate_id,
             model_id=self.model_id,
             latency_ms=latency_ms,
-            cost_usd=cost,
+            cost_usd=self.cost(usage, batch),
+        )
+
+    def cost(self, usage: dict[str, Any], batch: bool) -> float:
+        factor = 0.5 if batch else 1.0  # the Batch API halves token prices
+        tokens_in, tokens_out = usage.get("input_tokens", 0) or 0, usage.get("output_tokens", 0) or 0
+        return (
+            factor
+            * (tokens_in * self.price.get("input", 0.0) + tokens_out * self.price.get("output", 0.0))
+            / 1e6
         )
 
     # -- synchronous call -------------------------------------------------

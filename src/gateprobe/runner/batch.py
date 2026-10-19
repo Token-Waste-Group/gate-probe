@@ -13,7 +13,8 @@ The $ cap is checked before anything is submitted: with no per-call cost
 estimate (the X7 pilot sets `est_usd_per_call`), at most `pilot_limit`
 requests may go out; with one, the projected cost of the missing requests
 plus the run's recorded spend must fit under the cap. A refusal is cached as
-its own outcome. Spend (at batch prices) is appended to the spend log.
+its own outcome; it is billed, so its cost counts too. Spend (at batch prices) is
+appended to the spend log.
 
 Scope of v0: submit, poll, collect, resume, rows. Out of scope: cancelling batches.
 """
@@ -130,7 +131,12 @@ def run_batched(
                     continue
                 try:
                     d = gate.parse(r.message, names_for[key], latency_ms=0.0, batch=True)
-                except GateRefusal as e:
+                except GateRefusal as e:  # billed like an answer: its cost and tokens are logged
+                    batch_spent += float(e.details.get("cost_usd", 0.0) or 0.0)
+                    fresh_calls += 1
+                    usage = e.details.get("usage") or {}
+                    tokens_in += int(usage.get("input_tokens", 0) or 0)
+                    tokens_out += int(usage.get("output_tokens", 0) or 0)
                     cache.put(
                         key,
                         {

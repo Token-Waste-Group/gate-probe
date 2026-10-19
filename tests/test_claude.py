@@ -246,3 +246,43 @@ def test_sdk_is_optional_and_imported_lazily():
 
     assert "anthropic" not in mod.__dict__  # only imported inside client()
     assert Path(mod.__file__).read_text().count("import anthropic") == 1
+
+
+def test_refusals_are_billed_and_logged(tmp_path):
+    with pytest.raises(GateRefusal) as e:
+        gate().parse(message("yes", {"yes": 1.0}, stop="refusal"), REQ.option_names, 0.0, batch=True)
+    assert e.value.details["usage"] == {"input_tokens": 1000, "output_tokens": 100}
+    assert e.value.details["cost_usd"] == pytest.approx(0.5 * (1000 * 4.0 + 100 * 20.0) / 1e6)
+
+    client = fake_client(lambda r: ("succeeded", message("yes", {"yes": 1.0, "no": 0.0}, stop="refusal")))
+    spend = tmp_path / "spend.csv"
+    rows = batched(gate(client), tmp_path, spend_csv=spend)
+    assert {r["status"] for r in rows} == {"refusal"}
+    logged = list(csv.DictReader(spend.open()))
+    assert int(logged[0]["calls"]) == 4 and int(logged[0]["input_tokens"]) == 4000
+    assert float(logged[0]["usd"]) == pytest.approx(4 * 0.5 * (1000 * 4.0 + 100 * 20.0) / 1e6)
+
+
+def test_synchronous_refusal_cost_counts_toward_spend_and_cap(tmp_path):
+    class Refuser(ClaudeJudgeGate):
+        def decide(self, request):
+            raise GateRefusal(
+                "declined", {"usage": {"input_tokens": 10, "output_tokens": 1}, "cost_usd": 0.4}
+            )
+
+    spend = tmp_path / "spend.csv"
+    with pytest.raises(CapReached):
+        list(
+            run_gate(
+                variants(),
+                Refuser("judge-claude", MODEL),
+                repeats=2,
+                cache=Cache(tmp_path / "c"),
+                run_id="r",
+                cap_usd=1.0,
+                config_digest="c",
+                spend_csv=spend,
+            )
+        )
+    logged = list(csv.DictReader(spend.open()))
+    assert int(logged[0]["calls"]) == 2 and float(logged[0]["usd"]) == pytest.approx(0.8)
