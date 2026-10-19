@@ -86,3 +86,19 @@ Claude Code only in the video. Name the owners.
 
 **To close G1:** record the decision and the answers in `STATUS.md`, then run
 `python3 scripts/mark.py G1 done`.
+
+## 7. Decision (human, Mon 19 Oct 2026, evening)
+
+- **The spec is frozen as written**, with all eight choices in § 2 confirmed.
+- **Further decision models:** `openai/gpt-6-luna-decisions`,
+  `perplexity/pplx-decider-v1.2`, `nace-ai/drex-v1.5` (instead of Clef or
+  Mercury Decide). The loop then probed each once per mode: all three answer
+  Noul and Choice and serve dated snapshots, now pinned (`-20261006`,
+  `-20261016`, `-20261009`). Measured prices: about $0.00007, $0.000013 and
+  $0.000024 per call, so GPT-6 Luna Decisions passes its $20 cap with room.
+- **Proposed answers taken:** Noul for the flip analysis and Choice for the
+  hook; Claude Code only in the video. Workstream owners: not named.
+- **Related decisions the same evening:** the Claude judge goes first, and
+  the Gemma judge (R5, X2) follows when the H100 frees, so X4 no longer waits
+  on X2. The loop grows the corpus (C6). An HF Space replay demo joins the
+  plan (I8, published in H5).

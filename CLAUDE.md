@@ -35,9 +35,11 @@ These protect the validity of the demo's claims. A change that violates one is
 wrong even if it runs. If a task seems to require breaking one, **stop and
 raise it** instead of working around it.
 
-1. **Scope is frozen** (`gateprobe_plan.md`): five relation classes, four
-   gates plus the Claude Opus 5.5 judge the humans added on 2026-10-19 (steps
-   R8, X7; Batch API), RQ1–RQ4, three figures. **No new relation class after G1**
+1. **Scope is frozen** (`gateprobe_plan.md`, amended by the humans on
+   2026-10-19): five relation classes; the gates Jev 1.14, GPT-6 Luna
+   Decisions, pplx-decider v1.2, drex v1.5 (all pinned to dated snapshots),
+   the Claude Opus 5.5 judge (R8, X7; Batch API), the rule gate, and the
+   Gemma 4 judge once the H100 frees (X2); RQ1–RQ4; three figures. **No new relation class after G1**
    (Mon 19 18:00) — it goes to the paper's future work. Stretch items (P
    sandbox validation, OpenCode plugin, PolicyForge) only after G2 records full
    scope.

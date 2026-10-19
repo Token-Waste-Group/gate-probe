@@ -15,7 +15,31 @@ gates:
     threshold: 0.5                    # noul: deny when p_block >= threshold
     price_usd_per_mtok: {input: 0.042, output: 0.0}       # fallback when a response carries no usage.cost
 
-  # Second decision model(s): Clef and/or Mercury Decide, chosen at G1, pinned here by X3.
+  # Three further decision models, chosen at G1 (human, 2026-10-19), pinned to the dated
+  # snapshots the API serves. Prices measured with one call each at G1 (usage.cost).
+  gpt-6-luna-decisions:
+    adapter: decisions
+    model: openai/gpt-6-luna-decisions-20261006     # ~$0.00007 per call (~$0.10 per M input; output free)
+    mode: noul
+    endpoint: https://openrouter.ai/api/alpha/decisions
+    api_key_env: OPENROUTER_API_KEY
+    threshold: 0.5
+
+  pplx-decider:
+    adapter: decisions
+    model: perplexity/pplx-decider-v1.2-20261016    # ~$0.000013 per call
+    mode: noul
+    endpoint: https://openrouter.ai/api/alpha/decisions
+    api_key_env: OPENROUTER_API_KEY
+    threshold: 0.5
+
+  drex:
+    adapter: decisions
+    model: nace-ai/drex-v1.5-20261009               # ~$0.000024 per call (served by DeepInfra)
+    mode: noul
+    endpoint: https://openrouter.ai/api/alpha/decisions
+    api_key_env: OPENROUTER_API_KEY
+    threshold: 0.5
 
   judge-gemma:
     adapter: judge
