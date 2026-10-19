@@ -28,6 +28,10 @@ In the authority repo a PR merged with a failing gate. Two things combined:
   Merge only through a guard such as
   `[ "$(gh pr view N --json statusCheckRollup -q '.statusCheckRollup[0].conclusion')" = SUCCESS ] && gh pr merge ...`.
   The fix landed as its own PR.
+- **Gate the commit too.** Later the same evening, a commit and push were
+  chained with `;` after the gate command, so a red test went up as PR #23
+  (the merge guard held, and the fix followed). Make the commit conditional:
+  `if bash scripts/check.sh > log 2>&1; then git commit ...; fi`.
 - **No branch protection here** (human decision, 2026-10-19): nothing on
   GitHub stops a red merge, so the checks above are the only safeguard. Never
   skip them.
