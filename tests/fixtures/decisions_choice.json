@@ -1,0 +1,21 @@
+{
+  "answers": {
+    "gate": {
+      "choice": "yes",
+      "confidence": 0.96,
+      "probabilities": {
+        "no": 0.02,
+        "yes": 0.98
+      },
+      "type": "choice"
+    }
+  },
+  "id": "gen-dec-1792430825-KmihJauUehVlSm9COjOe",
+  "model": "typesafe/jev-1.14-20261014",
+  "provider": "TypeSafe",
+  "usage": {
+    "cost": 3.78e-05,
+    "input_tokens": 900,
+    "output_tokens": 31
+  }
+}

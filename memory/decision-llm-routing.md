@@ -9,7 +9,7 @@ implementing an adapter, a run, or the paraphrase generator.
 of what is being tested:**
 
 1. **Decision models → the OpenRouter Decisions API** (`decisions` adapter,
-   `OPENROUTER_API_KEY`): Jev 1.14 pinned as `typesafe/jev-1.14`, plus the
+   `OPENROUTER_API_KEY`): Jev 1.14 pinned as the dated snapshot `typesafe/jev-1.14-20261014`, plus the
    second model(s) chosen at G1 (Cloudflare Clef, Mercury Decide). Clef has open
    weights, but it is still tested through the Decisions API. GPT-6 Luna
    Decisions only after its pricing is checked and recorded, under a $20 cap.
