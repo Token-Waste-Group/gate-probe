@@ -11,11 +11,26 @@
 
 \section{Related Work}\label{sec:related}
 
-\todo{GateProbe tests gates; every existing artifact builds one or uses one:
-a typed mediation gate~\cite{zhou2026introducing}; gates and middleware built
-on Jev~\cite{openrouter2026autoapprove,lgy10272026jevshield,langchain2026typesafe};
-the one-off swap study~\cite{sun2026typesafe}; agent-risk and trajectory
-tools~\cite{jiang2026risklab,ou2025agentdiagnose,jyu2026graphectory}; MCP
-benchmarks~\cite{zong2026mcpsafetybench,zhang2026mcp,zheng2026gatewaybench};
-metamorphic testing~\cite{chen1998metamorphic,segura2016survey,chen2018metamorphic}
-of ML components~\cite{tian2018deeptest}.}
+\tool{} tests gates. The closest artifacts build or deploy one.
+\emph{Gate builders and users.} Zhou and Jia mediate agent tool calls through
+typed tools and evaluate their world effects~\cite{zhou2026introducing}. Jev
+gates coding-agent permissions in OpenRouter's
+recipes~\cite{openrouter2026autoapprove,openrouter2026gatetoolcalls} and in
+community middleware, some of it still
+proposed~\cite{lgy10272026jevshield,langchain2026typesafe}. These works build or
+deploy a gate; none tests one against rewrites of the same call.
+\emph{Decision-model fragility.} Sun et al.\ show that typed decision models
+follow option names over the definitions bound to them~\cite{sun2026typesafe}.
+That is one relation in one study; \tool{} turns it into two of 26 transforms
+in a reusable suite, run against any gate.
+\emph{Agent risk and diagnosis.} RiskLab probes emergent risks in multi-agent
+systems~\cite{jiang2026risklab}, AgentDiagnose and Graphectory Viewer analyze
+agent trajectories~\cite{ou2025agentdiagnose,jyu2026graphectory}, and
+MCP-SafetyBench, MCP Security Bench and GatewayBench benchmark MCP servers and
+gateways~\cite{zong2026mcpsafetybench,zhang2026mcp,zheng2026gatewaybench}. None
+of them targets the permission gate or uses metamorphic relations.
+\emph{Metamorphic testing of ML.} Metamorphic relations replace a missing
+oracle~\cite{chen1998metamorphic,segura2016survey,chen2018metamorphic}, and
+DeepTest brought them to deep-learning components~\cite{tian2018deeptest}.
+Gates add something these components lack, a risk order over inputs, which
+\tool{}'s monotonicity class exploits.
