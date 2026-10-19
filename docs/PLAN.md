@@ -200,7 +200,7 @@ first takes the skeleton and the decision packets):
 - done-when: `gateprobe/relations/equivalence.py` and `irrelevance.py` implement every E and I transform in `docs/RELATIONS.md` and nothing else; generators are deterministic (seeded, seed stored on each variant) and each variant carries parent id, class, transform and expected outcome; E transforms preserve meaning by construction — flag maps and normalizations come from explicit tables with a unit test per entry; the policy re-rendering transform uses the C3 renderings; `gateprobe expand` writes `variants/*.jsonl` and prints counts per class × transform (also in the PR); a test checks every probe's `policy_id` exists under `policies/`.
 
 ### C5 — Generators: Monotonicity (M) and Adversarial (A)
-- status: in_review (#12)
+- status: done
 - owner: jrzkaminski@Jerzy-Pro.local
 - claimed_at: 2026-10-19T17:49:48Z
 - deps: C2 C3
