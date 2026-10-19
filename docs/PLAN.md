@@ -89,7 +89,7 @@ first takes the skeleton and the decision packets):
 ## Day 0 — Mon 19 Oct: scope frozen, skeleton, 150 probes, pinned Jev answers, judge prompt, paper skeleton
 
 ### S1 — Package skeleton, adapter contract, CLI entry point, configs
-- status: claimed
+- status: in_review (#2)
 - owner: jrzkaminski@Jerzy-Pro.local
 - claimed_at: 2026-10-19T16:52:35Z
 - deps: E0.1
