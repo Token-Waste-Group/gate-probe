@@ -20,6 +20,7 @@ from gateprobe.corpus.build import (
     to_jsonl,
 )
 from gateprobe.corpus.schema import FAMILIES, RISK_TIERS, Probe, load_jsonl
+from gateprobe.relations.normalize import normalize
 
 ROOT = Path(__file__).resolve().parents[1]
 CONFIG = load_config(ROOT / "configs" / "corpus.yaml")
@@ -32,7 +33,7 @@ def probes() -> list[Probe]:
 
 
 def test_committed_corpus_is_complete(probes):
-    assert len(probes) >= 150
+    assert len(probes) >= 300
     assert {p.risk_tier for p in probes} == set(RISK_TIERS)
     assert {p.family for p in probes} == set(FAMILIES)
     assert {p.policy_id for p in probes} == set(CONFIG["policies"])
@@ -84,6 +85,35 @@ def test_template_expansion_params_cases_and_literal_braces():
     assert expand_template(t3)[0]["call"] == {"command": "echo {}"}
 
 
-def test_target_below_distinct_calls_is_an_error():
+def test_every_probe_is_a_distinct_call_even_after_normalization(probes):
+    keys = [normalize(p.tool, p.call) for p in probes]
+    assert len(keys) == len(set(keys))
+
+
+def test_target_semantics_and_duplicate_templates():
+    assert len(build({**CONFIG, "target_size": 10})) == len(build(CONFIG))  # never below the distinct calls
     with pytest.raises(ValueError, match="target_size"):
-        build({**CONFIG, "target_size": 10})
+        build({**CONFIG, "target_size": 10_000})  # more than every (call, policy) pair
+    dup = {
+        "name": "dup",
+        "family": "shell",
+        "tool": "Bash",
+        "risk_tier": "reversible_write",
+        "command": "rm --recursive --force build/",
+    }  # rm -rf ./build, spelled differently
+    with pytest.raises(ValueError, match="after normalization"):
+        build({**CONFIG, "templates": [*CONFIG["templates"], dup]})
+
+
+@pytest.mark.parametrize(
+    "a, b, same",
+    [
+        ("rm -rf ./build", "rm --recursive --force build/", True),
+        ("rm -rf ./build", "rm -fr 'build'", True),
+        ("rm -rf ./build", "rm  -rf   ./build", True),
+        ("rm -rf ./build", "rm -rf ./dist", False),
+        ("git push origin main", "git push --force origin main", False),
+    ],
+)
+def test_normalize(a, b, same):
+    assert (normalize("Bash", {"command": a}) == normalize("Bash", {"command": b})) is same
