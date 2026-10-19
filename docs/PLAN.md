@@ -240,7 +240,7 @@ first takes the skeleton and the decision packets):
 - done-when: `gateprobe/relations/paraphrase.py` rewrites commands (`rm -rf build` ↔ `find build -delete`) and policies with an open model whose id, revision, prompt and temperature are fixed in config; every output is class P and never mixed into E; the generated set is frozen in `variants/` with its sha256; a hand-checked sample of 20 pairs in the PR says which rewrites are not equivalent (P is the explicitly weaker class).
 
 ### R6 — Analysis: floor, flip rates, intervals, calibration, threshold band
-- status: in_review (#13)
+- status: done
 - owner: jrzkaminski@Jerzy-Pro.local
 - claimed_at: 2026-10-19T17:54:21Z
 - deps: R2 C1
