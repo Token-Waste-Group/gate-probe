@@ -164,7 +164,7 @@ first takes the skeleton and the decision packets):
 
 ### R5 — Serve the Gemma 4 31B-it judge with vLLM [GPU: H100]
 - status: blocked
-- note: H100 storage is 99% full (65 GB free; Gemma 4 31B-it bf16 ~62 GB; no cache exists). Options: (a) a human frees space under /data/storage/kaluzhnaya_jhub, (b) an FP8 checkpoint (~32 GB), (c) route judge-gemma via OpenRouter google/gemma-4-31b-it (logprobs supported; ~$3-6 for X2; pin the provider)
+- note: deferred by the human (2026-10-19): Claude judge first; Gemma when a colleague frees the H100 (storage is 99% full)
 - owner: jrzkaminski@Jerzy-Pro.local
 - claimed_at: 2026-10-19T17:42:25Z
 - deps: R4
