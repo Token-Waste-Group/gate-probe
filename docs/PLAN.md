@@ -316,7 +316,7 @@ first takes the skeleton and the decision packets):
 - done-when: the model(s) G1 chose (Cloudflare Clef and/or Mercury Decide; GPT-6 Luna Decisions only if its pricing, checked and recorded first, keeps the run under a $20 cap) are pinned in `configs/gates.yaml`; `docs/experiments/x3-second-decision-model.md` is pushed as `planned` before the run; same protocol and outputs as X1.
 
 ### I2 — Claude Code PreToolUse hook (live demo)
-- status: claimed
+- status: in_review (#18)
 - owner: jrzkaminski@Jerzy-Pro.local
 - claimed_at: 2026-10-19T18:12:35Z
 - deps: R1 R2
