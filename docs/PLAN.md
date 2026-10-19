@@ -122,9 +122,9 @@ first takes the skeleton and the decision packets):
 - done-when: ≥ 150 probes in `probes/*.jsonl` that validate against the C1 schema, spanning shell, git, filesystem, package managers and network, with every risk tier represented; every probe has a `source` — a public agent-trace reference with its license, or `template:<name>`; templated synthesis is a committed deterministic script (`scripts/build_corpus.py` + `configs/corpus.yaml`, seed recorded); `docs/CORPUS.md` datasheet with counts per tool family × risk tier × source (also in the PR description); a schema test runs over the committed files.
 
 ### C3 — Policies in four renderings (YAML, JSON, prose, bullets)
-- status: todo
-- owner: —
-- claimed_at: —
+- status: claimed
+- owner: jrzkaminski@Jerzy-Pro.local
+- claimed_at: 2026-10-19T17:22:19Z
 - deps: S1
 - source: gateprobe_plan.md § Tool design (Policies); assumption 3
 - done-when: each policy the corpus will use exists under `policies/<policy_id>/` in YAML, JSON, prose and bullet-list renderings generated from one structured source; renderings are reused from the authority repo (`../authority`, `src/authinv/render/`) where a matching renderer exists, and the rest come from `gateprobe/corpus/render.py`; `policies/README.md` records the authority commit hash and which renderings were reused vs new; a test parses the YAML and JSON renderings back to the same rule set; nothing beyond the policies themselves is taken from the authority work, which is unpublished and is never cited or mentioned in the paper (human rule, 2026-10-19).
