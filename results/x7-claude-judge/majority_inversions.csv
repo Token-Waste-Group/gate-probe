@@ -1,0 +1,2 @@
+gate_id,parent_id,variant_id,transform,parent_p_mean,variant_p_mean
+judge-claude,p0201/base,p0201/read_to_write/0,read_to_write,0.990000,0.300000

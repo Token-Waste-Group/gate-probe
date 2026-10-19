@@ -1,0 +1,5 @@
+gate_id,class,n_cross,excess_all_pairings,excess_lo,excess_hi
+judge-claude,E,4747,0.011652,0.005394,0.018859
+judge-claude,M,1269,-0.000161,-0.004192,0.005692
+judge-claude,I,4213,0.004689,-0.000686,0.013236
+judge-claude,A,5951,0.004338,-0.001030,0.012849
