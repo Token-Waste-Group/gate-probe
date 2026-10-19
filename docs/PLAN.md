@@ -416,7 +416,7 @@ first takes the skeleton and the decision packets):
 - done-when: the complete draft builds with `scripts/build_paper.sh` at ≤ 4 pages including references; the PR description ticks each submission-checklist item the PDF itself satisfies and lists the rest with their owner.
 
 ### W6 — Video storyboard, voice-over script, captions
-- status: claimed
+- status: in_review (#23)
 - owner: jrzkaminski@Jerzy-Pro.local
 - claimed_at: 2026-10-19T18:29:43Z
 - deps: W1
