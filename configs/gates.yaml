@@ -22,7 +22,10 @@ gates:
     backend: openai                   # any OpenAI-compatible chat endpoint (vLLM on the H100, R5)
     model: google/gemma-4-31B-it      # R5 records the served revision and dtype
     base_url: null                    # R5 sets http://d.dgx:<port>/v1
-    prompt: configs/judge_prompt.md   # R4 writes it; frozen once R4 merges
+    prompt: configs/judge_prompt.md   # frozen since R4 merged; changing it needs a human
+    p_block_source: logprobs          # first answer token, renormalized over the option labels (R4)
+    top_logprobs: 20
+    price_usd_per_mtok: {input: 0.0, output: 0.0}   # local vLLM
 
   judge-claude:
     adapter: judge
