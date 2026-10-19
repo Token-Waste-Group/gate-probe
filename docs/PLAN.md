@@ -130,7 +130,7 @@ first takes the skeleton and the decision packets):
 - done-when: each policy the corpus will use exists under `policies/<policy_id>/` in YAML, JSON, prose and bullet-list renderings generated from one structured source; renderings are reused from the authority repo (`../authority`, `src/authinv/render/`) where a matching renderer exists, and the rest come from `gateprobe/corpus/render.py`; `policies/README.md` records the authority commit hash and which renderings were reused vs new; a test parses the YAML and JSON renderings back to the same rule set; nothing beyond the policies themselves is taken from the authority work, which is unpublished and is never cited or mentioned in the paper (human rule, 2026-10-19).
 
 ### R1 — Decisions API adapter, pinned Jev 1.14 [API: OpenRouter]
-- status: in_review (#7)
+- status: done
 - owner: jrzkaminski@Jerzy-Pro.local
 - claimed_at: 2026-10-19T17:23:54Z
 - deps: S1
