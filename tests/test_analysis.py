@@ -25,6 +25,7 @@ def test_wilson_and_newcombe_match_published_values():
     p, lo, hi = wilson(5, 10)
     assert (p, round(lo, 4), round(hi, 4)) == (0.5, 0.2366, 0.7634)
     assert wilson(0, 10)[1] == 0.0 and round(wilson(0, 10)[2], 4) == 0.2775
+    assert wilson(10, 10)[2] == 1.0 and round(wilson(10, 10)[1], 4) == 0.7225
     d, lo, hi = newcombe(56, 70, 48, 80)  # Newcombe (1998), the worked example: 0.0524 to 0.3339
     assert (round(d, 4), round(lo, 4), round(hi, 4)) == (0.2, 0.0524, 0.3339)
     assert math.isnan(wilson(0, 0)[0])
