@@ -91,9 +91,10 @@ def cmd_run(args: argparse.Namespace, replay: bool) -> int:
     out.parent.mkdir(parents=True, exist_ok=True)
     counts: Counter[str] = Counter()
     code = 0
+    batched = cfg.options.get("backend") == "anthropic" and cfg.options.get("batch", True) and not replay
     with out.open("w", encoding="utf-8") as f:
         try:
-            for row in run_gate(
+            rows = run_gate(
                 variants,
                 gate,
                 repeats=args.repeats or run_cfg.repeats,
@@ -104,7 +105,24 @@ def cmd_run(args: argparse.Namespace, replay: bool) -> int:
                 replay=replay,
                 retry=run_cfg.retry,
                 spend_csv=ROOT / run_cfg.spend_csv,
-            ):
+            )
+            if batched:
+                from gateprobe.runner.batch import run_batched
+
+                print(f"{run_id}: submitting/collecting Message Batches (resume with --run-id {run_id})")
+                rows = run_batched(
+                    variants,
+                    gate,
+                    repeats=args.repeats or run_cfg.repeats,
+                    cache=Cache(ROOT / run_cfg.cache_dir),
+                    run_id=run_id,
+                    cap_usd=run_cfg.caps_usd[cfg.name],
+                    config_digest=config_hash(cfg, run_cfg),
+                    state_path=ROOT / run_cfg.runs_dir / f"{run_id}.batches.json",
+                    est_usd_per_call=cfg.options.get("est_usd_per_call"),
+                    spend_csv=ROOT / run_cfg.spend_csv,
+                )
+            for row in rows:
                 f.write(json.dumps(row, ensure_ascii=False) + "\n")
                 counts[row["status"] + ("/cached" if row.get("cached") else "")] += 1
         except (CapReached, ReplayMiss) as e:

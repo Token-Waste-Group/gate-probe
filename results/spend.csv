@@ -1,2 +1,3 @@
 run_id,gate_id,model_id,calls,input_tokens,output_tokens,usd,ended_at
 r2-smoke-live,jev,typesafe/jev-1.14-20261014,4,2550,80,0.000107,2026-10-19T17:33:08.825914Z
+r8-smoke-live,judge-claude,claude-opus-5-5,1,1282,31,0.005750,2026-10-19T18:05:36.373493Z

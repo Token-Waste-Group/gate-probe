@@ -23,7 +23,7 @@ from typing import Any
 
 from gateprobe.corpus.render import FILES
 from gateprobe.corpus.schema import Variant
-from gateprobe.gates.base import GateAdapter, GateDecision, GateRequest, ToolCall
+from gateprobe.gates.base import GateAdapter, GateDecision, GateRefusal, GateRequest, ToolCall
 from gateprobe.runner.cache import Cache, cache_key
 
 ROOT = Path(__file__).resolve().parents[3]
@@ -144,6 +144,19 @@ def run_gate(
                         raise CapReached(f"{gate.gate_id}: spent ${spent:.4f} of a ${cap_usd:.2f} cap")
                     try:
                         decision = _call_with_retries(gate, request, retry or {}, sleep)
+                    except GateRefusal as e:  # its own outcome: cached, reported, never re-asked elsewhere
+                        cache.put(
+                            key,
+                            {"refusal": e.details, "message": str(e), "created_at": now(), "run_id": run_id},
+                        )
+                        yield {
+                            **row,
+                            "status": "refusal",
+                            "cached": False,
+                            "error": str(e),
+                            "timestamp": now(),
+                        }
+                        continue
                     except Exception as e:
                         yield {
                             **row,
@@ -158,6 +171,15 @@ def run_gate(
                     fresh_calls += 1
                     t_in, t_out = _usage_tokens(decision.raw)
                     tokens_in, tokens_out = tokens_in + t_in, tokens_out + t_out
+                if "refusal" in entry:
+                    yield {
+                        **row,
+                        "status": "refusal",
+                        "cached": cached,
+                        "error": entry.get("message", ""),
+                        "timestamp": now(),
+                    }
+                    continue
                 d = entry["decision"]
                 yield {
                     **row,

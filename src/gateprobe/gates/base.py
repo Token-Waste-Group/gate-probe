@@ -68,6 +68,17 @@ class GateDecision:
             raise ValueError("gate_id and model_id must be set")
 
 
+class GateRefusal(Exception):
+    """The gate declined to answer (e.g. a model's safety refusal). A refusal is its own outcome:
+    the runner caches and reports it, and never re-asks another model (that would swap the gate)."""
+
+    retryable = False
+
+    def __init__(self, message: str, details: dict[str, Any] | None = None) -> None:
+        super().__init__(message)
+        self.details = details or {}
+
+
 class GateAdapter(ABC):
     """One gate under test. Subclasses set `gate_id` and a pinned `model_id`."""
 
