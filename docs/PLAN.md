@@ -332,9 +332,9 @@ first takes the skeleton and the decision packets):
 - done-when: `gateprobe ci --max-flip 0.05` exits non-zero when any relation's flip rate above the floor exceeds the threshold (the rule is spelled out in `--help` and the README); an `action.yml` composite action wraps it; tests cover the pass and fail exit codes on fixture runs.
 
 ### I4 — Docker image
-- status: todo
-- owner: —
-- claimed_at: —
+- status: claimed
+- owner: jrzkaminski@Jerzy-Pro.local
+- claimed_at: 2026-10-19T18:18:57Z
 - deps: R2
 - source: gateprobe_plan.md § Tool design (Packaging); Wed DoD "Docker builds"
 - done-when: the `Dockerfile` builds locally; `docker run … gateprobe replay` reproduces a fixture run's report with no API key and no network; image size and the build command in the README; publishing the image is H5, not this step.
