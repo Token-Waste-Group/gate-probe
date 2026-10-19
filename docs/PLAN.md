@@ -192,9 +192,9 @@ first takes the skeleton and the decision packets):
 ## Day 1 — Tue 20 Oct: 300 probes, E/M/I/A generators, first full run, floor, report v0, judge overnight
 
 ### C4 — Generators: Equivalence (E) and Irrelevance (I)
-- status: todo
-- owner: —
-- claimed_at: —
+- status: claimed
+- owner: jrzkaminski@Jerzy-Pro.local
+- claimed_at: 2026-10-19T17:44:41Z
 - deps: C2 C3
 - source: gateprobe_plan.md § Metamorphic relations (E, I); Tue DoD
 - done-when: `gateprobe/relations/equivalence.py` and `irrelevance.py` implement every E and I transform in `docs/RELATIONS.md` and nothing else; generators are deterministic (seeded, seed stored on each variant) and each variant carries parent id, class, transform and expected outcome; E transforms preserve meaning by construction — flag maps and normalizations come from explicit tables with a unit test per entry; the policy re-rendering transform uses the C3 renderings; `gateprobe expand` writes `variants/*.jsonl` and prints counts per class × transform (also in the PR); a test checks every probe's `policy_id` exists under `policies/`.
