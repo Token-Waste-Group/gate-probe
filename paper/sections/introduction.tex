@@ -19,24 +19,57 @@
 
 \section{Introduction}\label{sec:intro}
 
-\todo{The SE challenge: coding agents route every tool call through a permission
-gate~\cite{openrouter2026decisions,openrouter2026autoapprove,openrouter2026gatetoolcalls,lgy10272026jevshield};
-the newest gates are untested ML components in a security-critical position;
-known fragility (option-name and rubric swaps~\cite{sun2026typesafe}, injected
-pre-approval~\cite{columbus2026companies,typesafe2026jaggedness}, probability
-drift between identical calls).}
+A coding agent runs shell commands, edits files and calls the network on its
+user's behalf, so every tool call passes a \emph{permission gate} that allows
+it, denies it, or asks the user. Gates used to be allow and deny patterns
+written by hand~\cite{anthropic2026permissions}. Increasingly they are learned
+models. Since September 2026, OpenRouter's Decisions API has served typed
+decision models that answer typed questions (true/false, a choice among labels,
+a score) about a given state~\cite{openrouter2026decisions}. OpenRouter's own recipes use one of them,
+TypeSafe's Jev, to auto-approve coding-agent permission prompts and to gate
+agent tool calls~\cite{openrouter2026autoapprove,openrouter2026gatetoolcalls},
+and a community project wraps it as a security gate~\cite{lgy10272026jevshield}.
+
+A gate is a security component: its specification is the policy, and a wrong
+\emph{allow} runs a destructive or exfiltrating command. Yet the new gates are
+ML components, and known to be fragile. When the definitions bound to the
+answer names are swapped, typed decision models follow the names: flip rates
+are up to 70.4 points higher with yes/no names than with a 0/1 control, and mean
+AUC falls from 93.8\% to a below-chance 23.2\%~\cite{sun2026typesafe}. TypeSafe's documentation warns that injected
+instructions and misleading framing can move an answer~\cite{typesafe2026jaggedness},
+and in one reported integration test, a fake ``user pre-approved'' field cut
+Jev's block probability for \texttt{rm -rf \textasciitilde/.ssh} from 0.76 to
+0.48~\cite{columbus2026companies}.
+
+Testing a gate meets the classic oracle problem: for most calls nobody can say
+what the right verdict is. \emph{Metamorphic testing} sidesteps it by checking
+relations between outputs instead of the outputs
+themselves~\cite{chen1998metamorphic,segura2016survey,chen2018metamorphic}, as
+DeepTest did for driving models~\cite{tian2018deeptest}. Gates fit it unusually
+well, because their inputs carry a natural risk order. An equivalent rewrite
+of a call must not change the verdict, a strictly more dangerous rewrite must
+not lower the block probability, and irrelevant or injected text must not move
+it. One complication is that the same request can come back with different
+probabilities, so a test has to separate real flips from noise.
 
 \paragraph{Envisioned users}
-\todo{Platform and DevEx engineers configuring an auto-approver; authors of
-gates and middleware who need a regression suite; researchers comparing
-decision models, LLM judges and rule sets.}
+Platform and DevEx engineers who configure an agent's permissions and want
+evidence before trusting an auto-approver; authors of gates and gate middleware
+who need a regression suite; and researchers comparing decision models, LLM
+judges and rule sets on robustness and calibration.
 
 \paragraph{Contributions}
-\todo{The positioning sentence: the first reusable metamorphic test suite for
-coding-agent permission gates, vendor-neutral across the Decisions API, LLM
-judges and rule sets.}
+\tool{} is the first reusable metamorphic test suite for coding-agent
+permission gates, vendor-neutral across the Decisions API, LLM judges and rule
+sets:
 \begin{itemize}
-  \item \todo{Contribution 1: the tool (CLI, adapters, report, CI mode, hook).}
-  \item \todo{Contribution 2: five relation classes, oracle-free for E, M, I, A.}
-  \item \todo{Contribution 3: a validation on four gates with noise floors.}
+  \item a CLI and Docker image with adapters for any Decisions API model, LLM
+  judges (OpenAI-compatible endpoints and the Anthropic API), and Claude
+  Code-style rule sets, plus a content-addressed response cache that doubles as
+  a key-free replay mode, an HTML report, a CI check and a live Claude Code
+  hook~\cite{anthropic2026hooks};
+  \item 26 transforms in five relation classes, the first four deterministic and
+  label-free, scored by rules pre-registered before any run, with each gate's
+  test--retest floor subtracted;
+  \item a validation on five gates \todo{headline numbers from the G3 freeze}.
 \end{itemize}

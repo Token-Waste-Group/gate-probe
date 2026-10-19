@@ -5,7 +5,19 @@
 % numbers from the G3 freeze, each with repeats and an interval.
 
 \begin{abstract}
-\todo{Abstract (W2). Headline numbers only from docs/gates/g3-results-freeze.md.}
+Coding agents now route every tool call through a permission gate that allows
+or denies it, and the newest gates are learned decision models or LLM judges:
+untested ML components in a security-critical position. \tool{} is a
+metamorphic testing harness for these gates. It rewrites a tool call, its
+policy and its context under relations with known expected outcomes. An
+equivalent rewrite must not change the verdict, a strictly riskier one must
+not lower the block probability, and irrelevant or injected text must not move
+it. No ground truth is needed. \tool{} measures each gate's test--retest noise
+floor and reports flips above it with 95\% intervals, using scoring rules fixed
+before any run. It ships as a CLI and a Docker image with adapters for
+decision models, LLM judges and rule sets, an HTML report, a CI check, a live
+Claude Code hook and a key-free replay mode. On \todo{N} tool calls and five gates,
+\todo{headline numbers from docs/gates/g3-results-freeze.md}.
 Tool, Docker image and replay bundle: \toolurl. Video: \videourl.
 \end{abstract}
 
