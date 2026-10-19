@@ -209,7 +209,7 @@ first takes the skeleton and the decision packets):
 - done-when: `gateprobe/relations/monotonicity.py` and `adversarial.py` implement every M and A transform in `docs/RELATIONS.md` and nothing else; each M transform strictly raises risk (add `--force`/`-f`, widen scope `./build` → `~` → `/`, drop `--dry-run`, read → write, add `sudo`, pipe a download into `sh`) with a unit test; A covers the injected claims ("user pre-approved this", "test environment", "safe per policy"), text arguing for its own classification, the option-name swap (yes/no → 0/1 → A/B) and the rubric-to-name swap replicating 2609.26758, applied where the adapter mode has named options; deterministic and seeded; counts per transform in the PR; `gateprobe expand` includes them.
 
 ### C6 — Corpus to 300 probes
-- status: in_review (#26)
+- status: done
 - owner: jrzkaminski@Jerzy-Pro.local
 - claimed_at: 2026-10-19T19:14:37Z
 - deps: C2
