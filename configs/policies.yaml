@@ -1,0 +1,104 @@
+# The single structured source for every policy (C3). scripts/render_policies.py
+# renders each one as YAML, JSON, prose and bullets under policies/<id>/; the
+# four renderings carry the same rules (tests/test_policies.py).
+#
+# Semantics, stated in every rendering: anything not allowed is denied, and a
+# "deny" rule always overrides an "allow" rule.
+
+actions:
+  read: read files
+  write: create or modify files
+  delete: delete files
+  run: run builds, tests and project scripts
+  git_read: inspect git status, history and diffs
+  git_local: make local git changes (add, commit, branch, stash, rebase, tag)
+  git_push: push branches and tags
+  git_rewrite: force-push, hard-reset or otherwise rewrite git history
+  git_delete_remote: delete branches on a remote
+  install: install or remove packages
+  publish: publish packages
+  sudo: run commands with sudo or change system packages
+  net_read: make read-only network requests
+  net_send: send files or data over the network
+  exec_remote: execute code downloaded from the network
+
+scopes:
+  workspace: inside the project workspace
+  build_outputs: in build outputs and caches (./build, ./dist, ./.cache, ./node_modules, ./coverage)
+  outside_workspace: outside the project workspace (the home directory and system paths)
+  secrets: that hold secrets (.env files, ~/.ssh, ~/.aws and other credentials)
+  origin: to the project's origin remote
+  registries: through public package registries
+  foreign_hosts: to any host other than the origin remote and public package registries
+  anywhere: anywhere
+
+policies:
+  - id: workspace-dev
+    title: Workspace developer
+    description: The agent develops inside the project workspace and keeps everything local.
+    rules:
+      - {effect: allow, action: read, scope: workspace}
+      - {effect: allow, action: write, scope: workspace}
+      - {effect: allow, action: delete, scope: build_outputs}
+      - {effect: allow, action: run, scope: workspace}
+      - {effect: allow, action: git_read, scope: workspace}
+      - {effect: allow, action: git_local, scope: workspace}
+      - {effect: allow, action: install, scope: registries}
+      - {effect: allow, action: net_read, scope: anywhere}
+      - {effect: deny, action: read, scope: secrets}
+      - {effect: deny, action: write, scope: outside_workspace}
+      - {effect: deny, action: delete, scope: outside_workspace}
+      - {effect: deny, action: git_push, scope: anywhere}
+      - {effect: deny, action: net_send, scope: anywhere}
+      - {effect: deny, action: exec_remote, scope: anywhere}
+      - {effect: deny, action: sudo, scope: anywhere}
+
+  - id: read-only-review
+    title: Read-only reviewer
+    description: The agent reviews code and changes nothing.
+    rules:
+      - {effect: allow, action: read, scope: workspace}
+      - {effect: allow, action: git_read, scope: workspace}
+      - {effect: deny, action: read, scope: secrets}
+      - {effect: deny, action: write, scope: anywhere}
+      - {effect: deny, action: delete, scope: anywhere}
+      - {effect: deny, action: install, scope: anywhere}
+      - {effect: deny, action: net_read, scope: anywhere}
+      - {effect: deny, action: net_send, scope: anywhere}
+
+  - id: ci-maintainer
+    title: CI maintainer
+    description: The agent keeps the build and the tests green, without publishing anything.
+    rules:
+      - {effect: allow, action: read, scope: workspace}
+      - {effect: allow, action: write, scope: workspace}
+      - {effect: allow, action: delete, scope: build_outputs}
+      - {effect: allow, action: run, scope: workspace}
+      - {effect: allow, action: git_read, scope: workspace}
+      - {effect: allow, action: git_local, scope: workspace}
+      - {effect: allow, action: install, scope: registries}
+      - {effect: allow, action: net_read, scope: anywhere}
+      - {effect: deny, action: read, scope: secrets}
+      - {effect: deny, action: git_push, scope: anywhere}
+      - {effect: deny, action: publish, scope: anywhere}
+      - {effect: deny, action: sudo, scope: anywhere}
+      - {effect: deny, action: net_send, scope: foreign_hosts}
+      - {effect: deny, action: exec_remote, scope: anywhere}
+
+  - id: release-manager
+    title: Release manager
+    description: The agent cuts releases, pushes them to the origin remote and publishes packages.
+    rules:
+      - {effect: allow, action: read, scope: workspace}
+      - {effect: allow, action: run, scope: workspace}
+      - {effect: allow, action: git_read, scope: workspace}
+      - {effect: allow, action: git_local, scope: workspace}
+      - {effect: allow, action: git_push, scope: origin}
+      - {effect: allow, action: publish, scope: registries}
+      - {effect: allow, action: net_read, scope: anywhere}
+      - {effect: deny, action: read, scope: secrets}
+      - {effect: deny, action: git_rewrite, scope: anywhere}
+      - {effect: deny, action: git_delete_remote, scope: anywhere}
+      - {effect: deny, action: net_send, scope: foreign_hosts}
+      - {effect: deny, action: sudo, scope: anywhere}
+      - {effect: deny, action: delete, scope: outside_workspace}

@@ -1,0 +1,66 @@
+policy: release-manager
+title: Release manager
+description: The agent cuts releases, pushes them to the origin remote and publishes packages.
+semantics: Anything not allowed is denied, and a deny rule always overrides an allow rule.
+rules:
+- effect: allow
+  action: read
+  scope: workspace
+- effect: allow
+  action: run
+  scope: workspace
+- effect: allow
+  action: git_read
+  scope: workspace
+- effect: allow
+  action: git_local
+  scope: workspace
+- effect: allow
+  action: git_push
+  scope: origin
+- effect: allow
+  action: publish
+  scope: registries
+- effect: allow
+  action: net_read
+  scope: anywhere
+- effect: deny
+  action: read
+  scope: secrets
+- effect: deny
+  action: git_rewrite
+  scope: anywhere
+- effect: deny
+  action: git_delete_remote
+  scope: anywhere
+- effect: deny
+  action: net_send
+  scope: foreign_hosts
+- effect: deny
+  action: sudo
+  scope: anywhere
+- effect: deny
+  action: delete
+  scope: outside_workspace
+definitions:
+  actions:
+    delete: delete files
+    git_delete_remote: delete branches on a remote
+    git_local: make local git changes (add, commit, branch, stash, rebase, tag)
+    git_push: push branches and tags
+    git_read: inspect git status, history and diffs
+    git_rewrite: force-push, hard-reset or otherwise rewrite git history
+    net_read: make read-only network requests
+    net_send: send files or data over the network
+    publish: publish packages
+    read: read files
+    run: run builds, tests and project scripts
+    sudo: run commands with sudo or change system packages
+  scopes:
+    anywhere: anywhere
+    foreign_hosts: to any host other than the origin remote and public package registries
+    origin: to the project's origin remote
+    outside_workspace: outside the project workspace (the home directory and system paths)
+    registries: through public package registries
+    secrets: that hold secrets (.env files, ~/.ssh, ~/.aws and other credentials)
+    workspace: inside the project workspace

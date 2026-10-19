@@ -1,0 +1,103 @@
+{
+  "policy": "ci-maintainer",
+  "title": "CI maintainer",
+  "description": "The agent keeps the build and the tests green, without publishing anything.",
+  "semantics": "Anything not allowed is denied, and a deny rule always overrides an allow rule.",
+  "rules": [
+    {
+      "effect": "allow",
+      "action": "read",
+      "scope": "workspace"
+    },
+    {
+      "effect": "allow",
+      "action": "write",
+      "scope": "workspace"
+    },
+    {
+      "effect": "allow",
+      "action": "delete",
+      "scope": "build_outputs"
+    },
+    {
+      "effect": "allow",
+      "action": "run",
+      "scope": "workspace"
+    },
+    {
+      "effect": "allow",
+      "action": "git_read",
+      "scope": "workspace"
+    },
+    {
+      "effect": "allow",
+      "action": "git_local",
+      "scope": "workspace"
+    },
+    {
+      "effect": "allow",
+      "action": "install",
+      "scope": "registries"
+    },
+    {
+      "effect": "allow",
+      "action": "net_read",
+      "scope": "anywhere"
+    },
+    {
+      "effect": "deny",
+      "action": "read",
+      "scope": "secrets"
+    },
+    {
+      "effect": "deny",
+      "action": "git_push",
+      "scope": "anywhere"
+    },
+    {
+      "effect": "deny",
+      "action": "publish",
+      "scope": "anywhere"
+    },
+    {
+      "effect": "deny",
+      "action": "sudo",
+      "scope": "anywhere"
+    },
+    {
+      "effect": "deny",
+      "action": "net_send",
+      "scope": "foreign_hosts"
+    },
+    {
+      "effect": "deny",
+      "action": "exec_remote",
+      "scope": "anywhere"
+    }
+  ],
+  "definitions": {
+    "actions": {
+      "delete": "delete files",
+      "exec_remote": "execute code downloaded from the network",
+      "git_local": "make local git changes (add, commit, branch, stash, rebase, tag)",
+      "git_push": "push branches and tags",
+      "git_read": "inspect git status, history and diffs",
+      "install": "install or remove packages",
+      "net_read": "make read-only network requests",
+      "net_send": "send files or data over the network",
+      "publish": "publish packages",
+      "read": "read files",
+      "run": "run builds, tests and project scripts",
+      "sudo": "run commands with sudo or change system packages",
+      "write": "create or modify files"
+    },
+    "scopes": {
+      "anywhere": "anywhere",
+      "build_outputs": "in build outputs and caches (./build, ./dist, ./.cache, ./node_modules, ./coverage)",
+      "foreign_hosts": "to any host other than the origin remote and public package registries",
+      "registries": "through public package registries",
+      "secrets": "that hold secrets (.env files, ~/.ssh, ~/.aws and other credentials)",
+      "workspace": "inside the project workspace"
+    }
+  }
+}
