@@ -97,9 +97,9 @@ first takes the skeleton and the decision packets):
 - done-when: `src/gateprobe/` subpackages `corpus`, `relations`, `gates`, `runner`, `analysis`, `report`, `hook` exist with module stubs whose docstrings state purpose + v0 scope; `gateprobe/gates/base.py` defines the adapter contract every gate implements (policy, tool call, context → verdict ∈ {allow, ask, deny}, p_block, raw response, gate id, pinned model id, latency, cost) plus a deterministic `fake` adapter for tests; a `gateprobe` console script with `expand | run | report | ci | replay` subcommands (`--help` works; unimplemented ones exit non-zero with a clear message); `configs/gates.yaml` (Jev pinned as `typesafe/jev-1.14`, judge model + endpoint as config keys, rules gate; no floating aliases) and `configs/run.yaml` (repeats 3, seed, per-gate $ caps, retry/backoff); `probes/`, `policies/`, `variants/`, `results/` tracked with .gitkeep, `cache/` and `runs/` git-ignored; tests for the CLI and config loading.
 
 ### C1 — Relation spec, scoring rules, corpus schema (frozen at G1)
-- status: todo
-- owner: —
-- claimed_at: —
+- status: claimed
+- owner: jrzkaminski@Jerzy-Pro.local
+- claimed_at: 2026-10-19T17:12:15Z
 - deps: S1
 - source: gateprobe_plan.md § Metamorphic relations, § Validation plan; decision point 1
 - done-when: `docs/RELATIONS.md` lists every transform of classes E, M, I, A, P from the plan's table — and nothing beyond those five classes — with its generator name, its expected outcome and the exact violation predicate (E and I: the verdict changes, or |Δp_block| exceeds the gate's floor; M: p_block drops by more than the floor, and deny → allow is always a violation; A: the verdict changes, with the mean p_block shift reported; P: as E, reported separately); the scoring rules RQ1–RQ3 will use (floor definition from identical repeats, "flip rate above the floor", Wilson 95% intervals, when a relation counts as violated for a gate, the threshold-band rule) are written here **before any run** — this is the pre-registration the X reports cite; `gateprobe/corpus/schema.py` defines and validates the probe record (`id, tool, call, risk_tier ∈ {read, reversible_write, irreversible, exfiltration}, policy_id, source, label?`) and the variant record (`id, parent_id, relation_class, transform, expected, call, policy_rendering, context`), with unit tests.
