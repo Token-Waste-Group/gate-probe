@@ -18,6 +18,23 @@ of what is being tested:**
    one, may go through OpenRouter's chat endpoint.
 3. **Rule gate → local**, no model.
 
+4. **Claude → the Anthropic API** (`ANTHROPIC_API_KEY` in `.env`; **about $200
+   for the project**, human 2026-10-19; separate from the < $20 OpenRouter
+   budget). **Confirmed by the human the same day: a fifth gate, the Claude
+   judge, runs on `claude-opus-5-5` via the Message Batches API** (steps R8,
+   X7; ~$50 per 3-repeat full run if calls average ~200 output tokens — the
+   X7 pilot measures it). Notes for whoever builds it (as of 2026-10-19, from
+   the claude-api skill — re-check before a run): use the official `anthropic`
+   SDK, not an OpenAI-compatible shim (prices per MTok in/out: Opus 5.5
+   $4/$20; the Batch API halves them, and it does not take the server-side
+   refusal `fallbacks` parameter — record a refusal, never re-run it on another
+   model, since that would swap the gate under test); no logprobs are documented, so p_block is a
+   stated probability via structured output — record it as such, it is weaker
+   than a logprob-based one for the floor and ECE; Opus 5.5 can't disable
+   thinking and rejects sampling parameters, so pin `effort` (e.g. `low`) in
+   config instead of temperature, and measure output tokens on a ~50-call pilot
+   before the full run.
+
 **Auxiliary model work (not a gate under test) follows the human's order:**
 Claude via `ANTHROPIC_API_KEY` first, open models on the H100 (or the RTX boxes
 when small enough) next, OpenRouter only for open models that don't fit. The P
@@ -27,11 +44,14 @@ paraphrase generator uses an open model on the H100/RTX, fixed in config.
 stop and ask the human; don't route it on your own.
 
 **Rules for every model-calling path:**
-- Provider, pinned model id, prompt and temperature (0) are fixed in config.
+- Provider, pinned model id, prompt and temperature (0) — or `effort` where a
+  model rejects sampling parameters, as current Claude models do — are fixed
+  in config.
 - A $ cap per run is read from config; spend is appended to
   `results/spend.csv` (gate, model, tokens, USD, run id) and summed in the
-  step's report. The whole evaluation stays under $20 of API calls (the plan
-  estimates ~$0.55 per decision model per 3-repeat run).
+  step's report. OpenRouter spend stays under $20 (the plan estimates ~$0.55
+  per decision model per 3-repeat run). Before any Claude run, check that
+  cumulative Claude spend plus the run's cap stays under $200.
 - Never substitute a different model silently — if the pinned one can't be
   reached, block and ask (the 12-hour Jev fallback is a human call).
 

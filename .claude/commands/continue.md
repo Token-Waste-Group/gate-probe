@@ -42,7 +42,8 @@ run `gh auth login` (the loop needs it to open/merge PRs).
 First peek: `python3 scripts/claim.py --dry-run [--lane <lane>]`. It prints the
 step it would take plus any `[HUMAN]` steps waiting on a person — mention those
 in your report. If the step needs what this machine lacks (`[API: OpenRouter]`
-without `OPENROUTER_API_KEY`; `[GPU: H100]` without the VPN and the `d.dgx`
+without `OPENROUTER_API_KEY`; `[API: Anthropic]` without `ANTHROPIC_API_KEY`;
+`[GPU: H100]` without the VPN and the `d.dgx`
 ssh alias), re-peek with `--skip-tag API` / `--skip-tag GPU`; if nothing fits,
 report which step is next and where it should run, then stop. Otherwise claim
 with the same flags:

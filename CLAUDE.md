@@ -36,7 +36,8 @@ wrong even if it runs. If a task seems to require breaking one, **stop and
 raise it** instead of working around it.
 
 1. **Scope is frozen** (`gateprobe_plan.md`): five relation classes, four
-   gates, RQ1–RQ4, three figures. **No new relation class after G1**
+   gates plus the Claude Opus 5.5 judge the humans added on 2026-10-19 (steps
+   R8, X7; Batch API), RQ1–RQ4, three figures. **No new relation class after G1**
    (Mon 19 18:00) — it goes to the paper's future work. Stretch items (P
    sandbox validation, OpenCode plugin, PolicyForge) only after G2 records full
    scope.
@@ -68,8 +69,10 @@ raise it** instead of working around it.
    id, pinned model id, repeat index, timestamp. Every experiment = one CLI
    invocation + one config; no notebook-only results.
 9. **Budget.** Every API-calling path reads a $ cap from config and logs spend
-   to `results/spend.csv`. The whole evaluation stays under $20 of API calls;
+   to `results/spend.csv`. OpenRouter (Decisions API) spend stays under $20;
    check GPT-6 Luna Decisions pricing before any run and cap it at $20.
+   Claude via `ANTHROPIC_API_KEY` has a separate budget of about $200
+   (human, 2026-10-19) — see `memory/decision-llm-routing.md`.
 10. **Results freeze at G3** (Thu 22 12:00): afterwards `results/` gets no new
     rows, the paper and the video use only those numbers, and only W-lane steps
     and packaging fixes that change no number land.
@@ -78,11 +81,17 @@ raise it** instead of working around it.
     report, hook output, or the screen in the video. `cache/` and `runs/` are
     git-ignored; `results/` CSVs are append-only and committed.
 12. **Negative results are committed, never dropped.** See the Results rule.
-13. **Prior work and format.** The authority and supersession preprints are
-    cited neutrally; no tool details are lifted from them and their systematic
-    findings stay for the planned A\* paper. The paper is 4 pages including
+13. **Prior work and format.** The authority and supersession work is
+    unpublished: **never cite or mention it** in the paper, the video or the
+    public release (human rule, 2026-10-19, overriding the proposal); lift no
+    tool details from it, and its systematic findings stay for the planned A\*
+    paper. The paper is 4 pages including
     references, `\documentclass[10pt,conference]{IEEEtran}`, no compsoc,
-    margins and spacing untouched, single-anonymous (author names in).
+    margins and spacing untouched, single-anonymous (author names in) — the
+    CFP text is `docs/icse27-demo-cfp.md`. **One section per .tex file**
+    (human rule): `paper/main.tex` only `\input`s `paper/sections/*.tex`;
+    `scripts/check_paper.py` enforces this and the format rules in the gate,
+    and `bash scripts/build_paper.sh [--final]` adds the 4-page check.
 14. **The public artifact is a cleaned release** (step I6): no agent pipeline,
     `memory/`, `STATUS.md`, internal hostnames or storage paths. This dev repo
     stays private.
@@ -108,7 +117,8 @@ integrations/            # (I2) Claude Code PreToolUse hook
 deploy/vllm-judge/       # (R5) compose file for the judge on the H100
 cache/  runs/            # git-ignored: response cache (= replay bundle) and run JSONL
 results/                 # distilled CSVs, append-only, committed
-paper/  video/           # (W1, W6) IEEEtran LaTeX; storyboard, voice-over, captions
+paper/                   # IEEEtran (vendored), main.tex + sections/ (one section per file), references.bib
+video/                   # (W6) storyboard, voice-over, captions
 scripts/                 # loop mechanics + thin wrappers
 ```
 
@@ -180,8 +190,8 @@ Conventions that keep parallel agents safe:
 - One claimed step per agent; stay within its scope. **Plan changes (new /
   split / re-sequenced steps) need human confirmation** — propose, don't
   self-edit.
-- **Hardware-aware claiming:** don't claim `[GPU: …]` / `[API: OpenRouter]`
-  steps on a machine that can't run them (`claim.py --skip-tag GPU`); release
+- **Hardware-aware claiming:** don't claim `[GPU: …]` / `[API: OpenRouter]` /
+  `[API: Anthropic]` steps on a machine that can't run them (`claim.py --skip-tag GPU`); release
   a mis-claim with `mark.py <id> todo "<reason>"`. `[HUMAN]` steps are never
   claimed; `[GATE]` steps end `blocked` until a human decides.
 - **Cadence:** one step per `/continue`; announce before you start; then report

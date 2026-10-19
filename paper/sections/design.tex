@@ -1,0 +1,16 @@
+% Tool design. Budget: ~0.6 page. Owner: W3.
+% Source: gateprobe_plan.md, "Tool design" -- probe corpus, policies, relation
+% engine, gate adapters (decisions, judge, rules, http) behind one contract,
+% runner with repeats and a content-addressed cache (= replay mode), analysis
+% (floor, flip rates with Wilson intervals, ECE, threshold band), outputs.
+% No architecture figure: the 4 pages hold only the three figures the plan
+% budgets (flip table, reliability diagram, case-study box) -- describe in text.
+
+\section{GateProbe}\label{sec:design}
+
+\todo{One paragraph per component, in data-flow order: inputs (corpus,
+policies) $\rightarrow$ relation engine $\rightarrow$ runner $\rightarrow$ gate
+adapters $\rightarrow$ analysis $\rightarrow$ outputs. State the adapter
+contract (policy, call, context $\rightarrow$ verdict, $p_\mathrm{block}$) and
+why a new vendor is one file; the rule gate uses Claude Code-style permission
+patterns~\cite{anthropic2026permissions}.}

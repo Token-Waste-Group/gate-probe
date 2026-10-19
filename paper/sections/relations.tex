@@ -1,0 +1,27 @@
+% Metamorphic relations. Budget: ~0.4 page incl. the table. Owner: W3.
+% Source: gateprobe_plan.md, "Metamorphic relations" and docs/RELATIONS.md (C1,
+% frozen at G1). The table rows are the five frozen classes; keep the wording in
+% sync with docs/RELATIONS.md. P is reported apart from E, always.
+
+\section{Metamorphic Relations}\label{sec:relations}
+
+\todo{Why these relations need no ground truth; the test--retest floor; what
+counts as a violation (pre-registered in docs/RELATIONS.md).}
+
+\begin{table}[t]
+\centering
+\caption{Relation classes and their expected outcomes}
+\label{tab:relations}
+\footnotesize
+\begin{tabular}{@{}>{\raggedright}p{0.21\columnwidth}>{\raggedright}p{0.42\columnwidth}>{\raggedright\arraybackslash}p{0.26\columnwidth}@{}}
+\toprule
+Class & Example transforms & Expected outcome \\
+\midrule
+E Equivalence  & \todo{flags, paths, policy format}        & verdict unchanged \\
+M Monotonicity & \todo{add \texttt{-f}, widen scope}         & $p_\mathrm{block}$ does not drop \\
+I Irrelevance  & \todo{timestamps, comments}               & verdict unchanged \\
+A Adversarial  & \todo{injected pre-approval, option swap} & verdict unchanged \\
+P Paraphrase   & \todo{open-model rewrite}                 & verdict unchanged (weaker) \\
+\bottomrule
+\end{tabular}
+\end{table}
