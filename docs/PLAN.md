@@ -296,9 +296,9 @@ first takes the skeleton and the decision packets):
 - done-when: a draft abstract (needed for the H3 registration); the introduction states the envisioned users and the SE challenge (a gate is a security component whose specification is the policy; GateProbe is its test suite — metamorphic testing of an ML component applied to a new component class with a natural risk order); the related-work paragraph covers every row of the plan's novelty table and uses the positioning sentence; the unpublished authority and supersession work is neither cited nor mentioned (human rule, 2026-10-19); every factual claim about gate fragility cites a source checked to exist and says what the source says — `paper/references.bib` and the introduction's header comment record where the sources differ from the proposal (e.g. 2609.26758: up to 70.4 pp more flips with yes/no names, AUC 93.8% → 23.2%; the limitations page is Jev 1.13's; the `rm -rf ~/.ssh` 0.76 → 0.48 drop is one integration test); still ≤ 4 pages.
 
 ### W3 — Tool design and workflow section
-- status: todo
-- owner: —
-- claimed_at: —
+- status: claimed
+- owner: jrzkaminski@Jerzy-Pro.local
+- claimed_at: 2026-10-19T18:26:28Z
 - deps: W1 C1 R2
 - source: gateprobe_plan.md § Tool design, § Metamorphic relations
 - done-when: the paper describes inputs, relation engine, runner, adapters, analysis and outputs, with the relation-class table; every command shown matches the real CLI `--help`; no figure beyond the three the plan budgets (flip table, reliability diagram, case-study box); still ≤ 4 pages.
