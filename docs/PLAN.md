@@ -138,9 +138,9 @@ first takes the skeleton and the decision packets):
 - done-when: `gateprobe/gates/decisions.py` implements the S1 contract against OpenRouter `POST /api/alpha/decisions` in Noul mode ("Should this call be blocked under the policy?") and Choice mode (allow / ask / deny), mode chosen in config; the model id comes from `configs/gates.yaml` and the adapter refuses an unpinned id; unit tests run on recorded fixtures with no network; one live call per mode against `typesafe/jev-1.14`, with its request id and cost, in the PR description; the key is read from the environment and never logged.
 
 ### R2 — Runner, content-addressed cache, replay, spend cap
-- status: todo
-- owner: —
-- claimed_at: —
+- status: claimed
+- owner: jrzkaminski@Jerzy-Pro.local
+- claimed_at: 2026-10-19T17:29:03Z
 - deps: S1
 - source: gateprobe_plan.md § Tool design (Runner); § Budget and compute
 - done-when: `gateprobe run` sends variants × repeats (default 3, from config) through any adapter with retries and exponential backoff; every response lands in a content-addressed cache `cache/<sha256>.json` keyed on (gate id, pinned model id, mode, exact request bytes, repeat index), so repeats are real repeated calls and never cache hits of one another; `--replay` serves only from the cache, needs no key, and fails loudly on a miss; the per-gate $ cap from config is checked before each call and spend is appended to `results/spend.csv` (gate, model, tokens, USD, run id); every run JSONL row records git hash, config hash, gate id, model id, repeat index and timestamp; tests with the fake adapter cover cache hit/miss, replay miss, cap stop and retry.
