@@ -138,7 +138,7 @@ first takes the skeleton and the decision packets):
 - done-when: `gateprobe/gates/decisions.py` implements the S1 contract against OpenRouter `POST /api/alpha/decisions` in Noul mode ("Should this call be blocked under the policy?") and Choice mode (allow / ask / deny), mode chosen in config; the model id comes from `configs/gates.yaml` and the adapter refuses an unpinned id; unit tests run on recorded fixtures with no network; one live call per mode against `typesafe/jev-1.14`, with its request id and cost, in the PR description; the key is read from the environment and never logged.
 
 ### R2 — Runner, content-addressed cache, replay, spend cap
-- status: in_review (#8)
+- status: done
 - owner: jrzkaminski@Jerzy-Pro.local
 - claimed_at: 2026-10-19T17:29:03Z
 - deps: S1
