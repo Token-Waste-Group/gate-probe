@@ -240,9 +240,9 @@ first takes the skeleton and the decision packets):
 - done-when: `gateprobe/relations/paraphrase.py` rewrites commands (`rm -rf build` ↔ `find build -delete`) and policies with an open model whose id, revision, prompt and temperature are fixed in config; every output is class P and never mixed into E; the generated set is frozen in `variants/` with its sha256; a hand-checked sample of 20 pairs in the PR says which rewrites are not equivalent (P is the explicitly weaker class).
 
 ### R6 — Analysis: floor, flip rates, intervals, calibration, threshold band
-- status: todo
-- owner: —
-- claimed_at: —
+- status: claimed
+- owner: jrzkaminski@Jerzy-Pro.local
+- claimed_at: 2026-10-19T17:54:21Z
 - deps: R2 C1
 - source: gateprobe_plan.md § Tool design (Analysis); RQ1–RQ3
 - done-when: `gateprobe/analysis/` implements exactly the scoring rules pre-registered in `docs/RELATIONS.md`: per-gate test–retest floor from identical repeats; flip rate per relation above the floor with Wilson 95% intervals; mean absolute p_block shift; M risk-inversion share by transform; ECE and reliability bins on the labeled subset; the threshold-band recommendation (the widest band of thresholds no E or I variant crosses); P reported apart from E; each function unit-tested on synthetic runs with hand-computed answers; outputs are distilled CSVs under `results/`.
