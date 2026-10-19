@@ -192,7 +192,7 @@ first takes the skeleton and the decision packets):
 ## Day 1 — Tue 20 Oct: 300 probes, E/M/I/A generators, first full run, floor, report v0, judge overnight
 
 ### C4 — Generators: Equivalence (E) and Irrelevance (I)
-- status: in_review (#11)
+- status: done
 - owner: jrzkaminski@Jerzy-Pro.local
 - claimed_at: 2026-10-19T17:44:41Z
 - deps: C2 C3
