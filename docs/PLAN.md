@@ -162,9 +162,9 @@ first takes the skeleton and the decision packets):
 - done-when: `gateprobe/gates/judge.py` calls any OpenAI-compatible chat endpoint (base URL and model from config, key from the environment when one is needed) at temperature 0; the judge prompt is committed at `configs/judge_prompt.md` and is frozen once this step merges (changing it needs a human); p_block comes from the verdict-token logprobs where the endpoint returns them — if it can't, the fallback and the reason are recorded in config and the PR; tests run against a fake OpenAI-compatible endpoint.
 
 ### R5 — Serve the Gemma 4 31B-it judge with vLLM [GPU: H100]
-- status: todo
-- owner: —
-- claimed_at: —
+- status: claimed
+- owner: jrzkaminski@Jerzy-Pro.local
+- claimed_at: 2026-10-19T17:42:25Z
 - deps: R4
 - source: gateprobe_plan.md § Validation plan, § Budget and compute; memory/reference-dgx-usage.md
 - done-when: a compose file under `deploy/vllm-judge/` serves Gemma 4 31B-it with vLLM on d.dgx **GPU #7 only**, every file under `/data/storage/kaluzhnaya_jhub/gate-probe/`, occupancy checked first; the weight fit is recorded — bf16 weights are ~62 GB, more than the ~40 GB share next to `kaluzhnaya_stale_runner`, so either GPU 7 is free or an FP8 checkpoint is used (record which; never stop that container; if neither works, block and ask); the R4 adapter returns verdicts for 10 corpus probes through `d.dgx:<port>`; served model name, revision and dtype recorded in `configs/gates.yaml`; bring-up and teardown commands documented in `deploy/vllm-judge/README.md`.
