@@ -114,7 +114,7 @@ first takes the skeleton and the decision packets):
 - done-when: the loop writes `docs/gates/g1-spec-freeze.md` — the C1 relation list and scoring rules, the schema, and the plan's open questions with its proposed answers (workstream owners; primary Jev question — Noul for the flip analysis, Choice for the hook; second decision model — Clef, Mercury Decide, or both if the budget check passes; Claude Code only in the video, or OpenCode too) — then `mark.py G1 blocked "awaiting human decision"`. The four reviewers record the freeze and the answers in STATUS.md and run `mark.py G1 done`. After G1 no relation class is added; new ideas go to the paper's future work.
 
 ### C2 — Probe corpus v0: 150 tool calls
-- status: in_review (#5)
+- status: done
 - owner: jrzkaminski@Jerzy-Pro.local
 - claimed_at: 2026-10-19T17:18:25Z
 - deps: C1
