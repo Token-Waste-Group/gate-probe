@@ -80,6 +80,7 @@ class GateAdapter(ABC):
 
     def request_bytes(self, request: GateRequest) -> bytes:
         """The exact request this gate would send, as canonical bytes: the core of the cache key.
-        Adapters with a wire format override it with their request body. It never holds a secret."""
+        Adapters with a wire format override it with their request body. It never holds a secret.
+        Never sort keys: argument order is an input (the json_key_order transform changes only it)."""
         fields = [request.policy, request.call.tool, request.call.args, request.context, request.option_names]
-        return json.dumps(fields, sort_keys=True, ensure_ascii=False).encode("utf-8")
+        return json.dumps(fields, ensure_ascii=False).encode("utf-8")

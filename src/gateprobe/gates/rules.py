@@ -220,7 +220,7 @@ class RulesGate(GateAdapter):
         # is in the key, so editing a rule set can't serve stale answers from the cache.
         _, digest = self.rules_for(request.policy_id)
         fields = [request.policy_id, digest, request.call.tool, request.call.args]
-        return json.dumps(fields, sort_keys=True).encode("utf-8")
+        return json.dumps(fields).encode("utf-8")
 
     def decide(self, request: GateRequest) -> GateDecision:
         rules, digest = self.rules_for(request.policy_id)

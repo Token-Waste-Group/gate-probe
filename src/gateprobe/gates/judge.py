@@ -102,8 +102,8 @@ class JudgeGate(GateAdapter):
         fill = {
             "policy": request.policy.strip(),
             "tool": request.call.tool,
-            "tool_input": json.dumps(request.call.args, ensure_ascii=False, sort_keys=True),
-            "context": request.context.strip() or "(none)",
+            "tool_input": json.dumps(request.call.args, ensure_ascii=False),
+            "context": request.context or "(none)",
             "options": options,
             "labels": labels,
         }
@@ -124,7 +124,7 @@ class JudgeGate(GateAdapter):
         return body
 
     def request_bytes(self, request: GateRequest) -> bytes:
-        return json.dumps(self.build_body(request), sort_keys=True, ensure_ascii=False).encode("utf-8")
+        return json.dumps(self.build_body(request), ensure_ascii=False).encode("utf-8")
 
     # -- response ---------------------------------------------------------
     def parse(self, body: dict[str, Any], names: dict[str, str], latency_ms: float) -> GateDecision:
