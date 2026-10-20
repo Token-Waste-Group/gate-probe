@@ -43,3 +43,9 @@ internal hosts and storage paths).
   "wrongly approved" needs the policy to deny the call.
 - `lesson-read-top-transforms.md` — read `top_transforms.csv` after every
   analysis; it is how generator bugs surface.
+- `lesson-colima-shares-home-only.md` — colima mounts only `~`; a mount from
+  elsewhere arrives empty and every replay misses.
+- `lesson-strace-breaks-sudo.md` — setuid is ignored under ptrace; report
+  "both failed, nothing changed" pairs apart.
+- `lesson-subset-scores-reuse-the-frozen-floor.md` — re-score subsets with the
+  full run's floor, and check the "all" subset reproduces the frozen row.
