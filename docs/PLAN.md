@@ -455,7 +455,7 @@ first takes the skeleton and the decision packets):
 - done-when: a Space app under `integrations/hf-space/` (small, self-contained, no API key) loads the frozen replay bundle and lets a visitor pick a gate, a relation class and a transform, browse the flip table with intervals, and open any flip with its parent and variant side by side; it runs locally with one command and in a fresh container, has tests for its data loading, and never calls a live gate; publishing the Space is part of H5 (human), never this step.
 
 ### I6 — Public release branch (reproduction-only, identity-clean)
-- status: claimed
+- status: in_review (#46)
 - owner: jrzkaminski@Jerzy-Pro.local
 - claimed_at: 2026-10-20T09:21:17Z
 - deps: I5
