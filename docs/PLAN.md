@@ -165,7 +165,7 @@ first takes the skeleton and the decision packets):
 - done-when: `gateprobe/gates/judge.py` calls any OpenAI-compatible chat endpoint (base URL and model from config, key from the environment when one is needed) at temperature 0; the judge prompt is committed at `configs/judge_prompt.md` and is frozen once this step merges (changing it needs a human); p_block comes from the verdict-token logprobs where the endpoint returns them — if it can't, the fallback and the reason are recorded in config and the PR; tests run against a fake OpenAI-compatible endpoint.
 
 ### R5 — Serve the Gemma 4 31B-it judge with vLLM [GPU: H100]
-- status: claimed
+- status: in_review (#52)
 - note: unblocked (human, 2026-10-20: the H100 is free): GPU 7 at 4 MiB, 279 GB free on storage, so bf16 fits; no FP8 needed
 - owner: jrzkaminski@Jerzy-Pro.local
 - claimed_at: 2026-10-19T17:42:25Z
