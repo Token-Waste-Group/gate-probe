@@ -1,0 +1,2 @@
+bonferroni_tests,z_95,z_bonferroni,inputs
+30,1.959964,3.143980,runs/x1-jev.jsonl;runs/x4p-jev.jsonl;runs/x1-rules.jsonl;runs/x4p-rules.jsonl;runs/x7-claude.jsonl;runs/x4p-claude.jsonl;runs/x3-luna.jsonl;runs/x4p-luna.jsonl;runs/x3-pplx.jsonl;runs/x4p-pplx.jsonl;runs/x3-drex.jsonl;runs/x4p-drex.jsonl
