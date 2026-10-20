@@ -44,8 +44,11 @@ gates:
   judge-gemma:
     adapter: judge
     backend: openai                   # any OpenAI-compatible chat endpoint (vLLM on the H100, R5)
-    model: google/gemma-4-31B-it      # R5 records the served revision and dtype
-    base_url: null                    # R5 sets http://d.dgx:<port>/v1
+    model: google/gemma-4-31B-it      # the served name; the adapter rejects any other
+    revision: 842da3794eaa0b77d5f08bae87a17459d91ff475   # Hugging Face commit of 2026-07-20 (R5)
+    dtype: bfloat16                   # the checkpoint's own; no quantization (R5)
+    server: vllm/vllm-openai:v0.29.0  # --language-model-only --generation-config=vllm --max-logprobs=20
+    base_url: http://localhost:8017/v1   # a vLLM server on this port (here an ssh tunnel to the GPU node)
     prompt: configs/judge_prompt.md   # frozen since R4 merged; changing it needs a human
     p_block_source: logprobs          # first answer token, renormalized over the option labels (R4)
     top_logprobs: 20

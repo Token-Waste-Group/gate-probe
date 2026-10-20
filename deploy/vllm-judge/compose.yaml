@@ -1,0 +1,54 @@
+# R5: the Gemma 4 31B-it judge, served by vLLM on the H100 (GPU 7 only).
+# Bring-up, the ssh tunnel and teardown are in README.md; every file stays under STORE.
+# The weights are pinned by revision and read offline once staged, so the server can't drift.
+x-store: &store /data/storage/kaluzhnaya_jhub/gate-probe/vllm-judge
+
+services:
+  stage:  # downloads the pinned revision into the HF cache; run once, before `up`
+    image: vllm/vllm-openai:v0.29.0
+    profiles: ["stage"]
+    entrypoint: ["python3", "-c"]
+    command:
+      - |
+        from huggingface_hub import snapshot_download
+        p = snapshot_download("google/gemma-4-31B-it", revision="842da3794eaa0b77d5f08bae87a17459d91ff475",
+                              ignore_patterns=[".eval_results/*"])
+        print(p)
+    environment:
+      HF_HOME: /store/hf
+    volumes:
+      - type: bind
+        source: *store
+        target: /store
+
+  judge:
+    image: vllm/vllm-openai:v0.29.0
+    command:
+      - --model=google/gemma-4-31B-it
+      - --revision=842da3794eaa0b77d5f08bae87a17459d91ff475
+      - --served-model-name=google/gemma-4-31B-it   # the adapter rejects any other served name
+      - --dtype=bfloat16                            # the checkpoint's own dtype; no quantization
+      - --language-model-only                       # text prompts only: no vision or audio encoder
+      - --generation-config=vllm                    # no sampling defaults from generation_config.json
+      - --max-model-len=8192
+      - --max-logprobs=20                           # the adapter asks for top_logprobs 20
+      - --gpu-memory-utilization=0.95               # GPU 7 is ours alone; see README.md if it is shared
+      - --seed=0
+    environment:
+      HF_HOME: /store/hf
+      HF_HUB_OFFLINE: "1"
+    volumes:
+      - type: bind
+        source: *store
+        target: /store
+    ports:
+      - "127.0.0.1:8017:8000"  # localhost only: reached through an ssh tunnel, never the cluster network
+    shm_size: 8gb
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              device_ids: ["7"]
+              capabilities: [gpu]
+    restart: "no"
