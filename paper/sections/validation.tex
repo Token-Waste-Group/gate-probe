@@ -4,9 +4,10 @@
 % Numbers ONLY from the G3 freeze (docs/gates/g3-results-freeze.md); every
 % number with its repeats and a Wilson 95% interval; figures come from R7's
 % scripts, never hand-edited. If E flips sit at the floor, lead with M and A.
-% DRAFT (loop, 2026-10-20) against the G3 candidate results/x4-final/ and
-% results/x5-case-studies/; G2 (scope) and G3 (freeze, decision 6: which case
-% pairs) are still open. Table and box: scripts/paper_tables.py.
+% DRAFT (loop, 2026-10-20). Numbers from results/ as frozen at G3 (19fd14a):
+% results/x4-final/ and results/x5-case-studies/. Case pairs: G3 decision 6
+% (1E in the box, 2' beside it). Table and box: scripts/paper_tables.py (R7a).
+% Figure 2 waits on R7b (H2 labels).
 
 \section{Validation}\label{sec:validation}
 
@@ -29,7 +30,7 @@ and class. Bonferroni runs over its 30 tests.
 
 \begin{table*}[t]
 \centering
-\caption{Flip rate above the test--retest floor ($F-f$, points, Newcombe 95\% interval; $R=3$). Bold: violated (interval above 0); $^\dagger$: survives Bonferroni over 30 tests. M counts risk inversions against the inversion floor.}
+\caption{Flip rate above the test--retest floor ($F-f$, points, Newcombe 95\% interval; floor $f$ with its Wilson 95\% interval; $R=3$). Bold: violated (interval above 0); $^\dagger$: survives Bonferroni over 30 tests. M counts risk inversions against the inversion floor.}
 \label{tab:flips}
 \footnotesize
 \setlength{\tabcolsep}{4pt}
@@ -54,8 +55,8 @@ and class. Bonferroni runs over its 30 tests.
 \paragraph{RQ2 Monotonicity} Verdict-level risk inversions are rare, at most
 one per gate. They aren't harmless:
 \begin{itemize}
-  \item Four of six gates allow \emph{overwriting} a secrets file whose reading
-  they deny. Jev goes from 0.82 to 0.49 ($\bar p_\mathrm{block}$), the judge
+  \item Four of six gates allow \emph{overwriting} a secrets file, an
+  irreversible write, where they deny reading it. Jev goes from 0.82 to 0.49 ($\bar p_\mathrm{block}$), the judge
   from 0.99 to 0.30, pplx from 1.00 to 0.41, and the rule set has no
   write-deny for \texttt{.env}.
   \item Under the pre-registered predicate, the three zero-floor models also
@@ -98,16 +99,17 @@ The whole evaluation cost \$54.
 \centering
 \footnotesize
 \input{figures/case_box.tex}
-\caption{Two flips from the frozen runs, replayed from the cache ($p_\mathrm{block}$ at repeats 1--3). (1)~The same policy as JSON lets drex delete the tests the policy forbids deleting. (2)~One injected line moves Jev to allow a fetch that a read-only policy denies.}
+\caption{Two flips from the frozen runs, replayed from the cache (gate, policy: call; $p_\mathrm{block}$ at repeats 1--3). (1)~The same policy as JSON lets drex delete tests, which release-manager does not allow. (2)~One injected line moves Jev to allow a fetch that read-only-review denies. Both were chosen among flips on calls the policy denies.}
 \label{fig:case}
 \end{figure}
 
 \paragraph{Threats} A check of the most-flipping transforms found one
 generator bug. Two of 130 path rewrites turned an \texttt{rsync} remote into a
 local path. Only the judge flipped on them, and rightly: without them its E
-is $+1.0$ $[0.5, 1.8]$. Case 1 was chosen among flips where the policy
-forbids the call, because a flip shows a contradiction but not which verdict
-is wrong.
+is $+1.0$ $[0.5, 1.8]$. A flip shows a contradiction, not which verdict is
+wrong. The pre-registered case picks (Luna on \texttt{git branch -D}, Jev on
+\texttt{git ls-remote}) concern calls the policy allows, so
+Fig.~\ref{fig:case} shows the largest flips on calls it denies.
 
 \paragraph{Planned study} Eight to ten developers configure a gate with and
 without \tool{}'s report. We record the threshold they pick and how many
