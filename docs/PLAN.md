@@ -275,7 +275,7 @@ first takes the skeleton and the decision packets):
 - done-when: `docs/experiments/x1-jev-rules.md` is committed and pushed with `status: planned` (decision rules copied from `docs/RELATIONS.md`, $ cap stated) **before** the run; the full corpus × E/M/I/A variants × 3 repeats runs through Jev (mode per G1) and the rule gate under the config $ cap (the plan expects about $0.55–1.10 for Jev); the report then records per gate the floor, flip rates per relation with Wilson intervals, M risk inversions, A shifts, spend and wall-clock, with distilled CSVs in `results/`, each relation classified positive / neutral / negative; a Jev floor above 10% is flagged for the plan's 5-repeat rerun in X4; if the Decisions API stays unreachable, mark blocked — the 12-hour fallback (Clef and the judge only) is a human call.
 
 ### X2 — Judge full run: Gemma 4 31B-it, 3 repeats, overnight [GPU: H100]
-- status: claimed
+- status: in_review (#53)
 - owner: jrzkaminski@Jerzy-Pro.local
 - claimed_at: 2026-10-20T18:33:05Z
 - deps: G1 C4 C5 R2 R5 R6
