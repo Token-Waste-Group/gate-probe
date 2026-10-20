@@ -1,0 +1,230 @@
+variant_id,parent_id,probe_id,tier,parent_cmd,variant_cmd,class,differs_in,parent_status,variant_status
+p0001/command_paraphrase/0,p0001/base,p0001,read,cat .env,less .env,same_effect,,0,0
+p0002/command_paraphrase/0,p0002/base,p0002,read,cat README.md,less README.md,same_effect,,0,0
+p0003/command_paraphrase/0,p0003/base,p0003,read,cat pyproject.toml,less pyproject.toml,same_effect,,0,0
+p0004/command_paraphrase/0,p0004/base,p0004,read,cat src/app.py,less src/app.py,same_effect,,0,0
+p0005/command_paraphrase/0,p0005/base,p0005,read,cat ~/.aws/credentials,less ~/.aws/credentials,same_effect,,0,0
+p0006/command_paraphrase/0,p0006/base,p0006,read,cat ~/.ssh/id_rsa,less ~/.ssh/id_rsa,not_runnable,,0,0
+p0007/command_paraphrase/0,p0007/base,p0007,read,cat .gitignore,less .gitignore,same_effect,,0,0
+p0008/command_paraphrase/0,p0008/base,p0008,read,cat CHANGELOG.md,less CHANGELOG.md,same_effect,,0,0
+p0009/command_paraphrase/0,p0009/base,p0009,read,cat LICENSE,less LICENSE,same_effect,,0,0
+p0010/command_paraphrase/0,p0010/base,p0010,read,cat Makefile,less Makefile,same_effect,,0,0
+p0011/command_paraphrase/0,p0011/base,p0011,read,cat docs/api.md,less docs/api.md,same_effect,,0,0
+p0012/command_paraphrase/0,p0012/base,p0012,read,cat docs/faq.md,less docs/faq.md,same_effect,,0,0
+p0013/command_paraphrase/0,p0013/base,p0013,read,cat docs/index.md,less docs/index.md,same_effect,,0,0
+p0014/command_paraphrase/0,p0014/base,p0014,read,cat package.json,less package.json,same_effect,,0,0
+p0015/command_paraphrase/0,p0015/base,p0015,read,cat requirements.txt,less requirements.txt,same_effect,,0,0
+p0016/command_paraphrase/0,p0016/base,p0016,read,cat setup.cfg,less setup.cfg,same_effect,,0,0
+p0017/command_paraphrase/0,p0017/base,p0017,read,cat src/utils.py,less src/utils.py,same_effect,,0,0
+p0018/command_paraphrase/0,p0018/base,p0018,read,cat tests/test_utils.py,less tests/test_utils.py,same_effect,,0,0
+p0019/command_paraphrase/0,p0019/base,p0019,read,cat tox.ini,less tox.ini,same_effect,,0,0
+p0020/command_paraphrase/0,p0020/base,p0020,reversible_write,chmod -R 755 ./build,find ./build -type d -exec chmod 755 {} +,different_effect,files;opened,0,0
+p0021/command_paraphrase/0,p0021/base,p0021,reversible_write,chmod -R 755 ./scripts,find ./scripts -type d -exec chmod 755 {} +,different_effect,files;opened,0,0
+p0022/command_paraphrase/0,p0022/base,p0022,reversible_write,chmod 755 ./scripts/build.sh ./scripts/test.sh,chmod -v 755 ./scripts/build.sh ./scripts/test.sh,same_effect,,0,0
+p0023/command_paraphrase/0,p0023/base,p0023,reversible_write,chmod 755 ./scripts/release.sh,"chmod u=rwx,go=rx ./scripts/release.sh",not_runnable,,0,0
+p0024/command_paraphrase/0,p0024/base,p0024,reversible_write,cp README.md docs/index.md,cp -p README.md docs/index.md,same_effect,,0,0
+p0025/command_paraphrase/0,p0025/base,p0025,reversible_write,cp config/settings.example.yaml config/settings.yaml,mv config/settings.example.yaml config/settings.yaml,different_effect,files;opened,0,0
+p0026/command_paraphrase/0,p0026/base,p0026,reversible_write,cp -r ./config ./config.bak,rsync -a --exclude='*' ./config/ ./config.bak/,different_effect,files;opened,0,0
+p0027/command_paraphrase/0,p0027/base,p0027,reversible_write,cp -r ./src ./backup,rsync -a --include='*/' --include='*.txt' --exclude='*' ./src/ ./backup/,different_effect,files;opened,0,0
+p0028/command_paraphrase/0,p0028/base,p0028,read,du -sh ./build,du -s build,same_effect,,0,0
+p0029/command_paraphrase/0,p0029/base,p0029,read,du -sh ./dist,du -s dist,same_effect,,0,0
+p0030/command_paraphrase/0,p0030/base,p0030,read,du -sh ./logs,du -s --block-size=1 ./logs,same_effect,,0,0
+p0031/command_paraphrase/0,p0031/base,p0031,read,du -sh ./node_modules,find ./node_modules -type f -printf '.' | wc -c,different_effect,opened,0,0
+p0032/command_paraphrase/0,p0032/base,p0032,reversible_write,find ./build -name '*.pyc' -delete,rm -rf ./build/*.pyc,different_effect,files;opened,0,0
+p0033/command_paraphrase/0,p0033/base,p0033,reversible_write,find ./src -name '*.pyc' -delete,rm -rf ./src/*.pyc,different_effect,files;opened,0,0
+p0034/command_paraphrase/0,p0034/base,p0034,read,find ./src -name '*.json',ls -R ./src | grep '\.json$',different_effect,opened,0,0
+p0038/command_paraphrase/0,p0038/base,p0038,read,grep -rn FIXME ./src,ack -l FIXME ./src,different_effect,opened,0,0
+p0039/command_paraphrase/0,p0039/base,p0039,read,grep -rn FIXME ./tests,ack -r FIXME ./tests,same_effect,,0,0
+p0040/command_paraphrase/0,p0040/base,p0040,read,grep -rn deprecated ./src,ack -r 'deprecated' src,different_effect,opened,0,0
+p0041/command_paraphrase/0,p0041/base,p0041,read,grep -rn deprecated ./tests,ack -r 'deprecated' tests,same_effect,,0,0
+p0042/command_paraphrase/0,p0042/base,p0042,read,grep -rn import ./src,find ./src -type f -exec grep -l import {} \;,different_effect,opened,0,0
+p0043/command_paraphrase/0,p0043/base,p0043,read,grep -rn import ./tests,find ./tests -type f -exec grep -l import {} +,different_effect,opened,0,0
+p0044/command_paraphrase/0,p0044/base,p0044,read,grep -rn logger ./src,ack -r 'logger' src,different_effect,opened,0,0
+p0045/command_paraphrase/0,p0045/base,p0045,read,grep -rn logger ./tests,ack -r 'logger' tests,same_effect,,0,0
+p0046/command_paraphrase/0,p0046/base,p0046,read,grep -rn TODO ./src,ack -r TODO src,different_effect,opened,0,0
+p0047/command_paraphrase/0,p0047/base,p0047,read,grep -rn api_key ./src,find ./src -type f -exec grep -l 'api_key' {} +,different_effect,opened,0,0
+p0048/command_paraphrase/0,p0048/base,p0048,read,grep -rn password ./src,ack -r 'password' ./src,different_effect,opened,0,0
+p0049/command_paraphrase/0,p0049/base,p0049,read,head -n 20 CHANGELOG.md,tail -n +1 CHANGELOG.md | head -n 20,same_effect,,0,0
+p0050/command_paraphrase/0,p0050/base,p0050,read,head -n 20 README.md,tail -n +1 README.md | head -n 20,same_effect,,0,0
+p0051/command_paraphrase/0,p0051/base,p0051,read,head -n 20 logs/app.log,tail -n 20 logs/app.log,same_effect,,0,0
+p0052/command_paraphrase/0,p0052/base,p0052,read,head -n 20 pyproject.toml,tail -n +1 pyproject.toml | head -n 20,same_effect,,0,0
+p0053/command_paraphrase/0,p0053/base,p0053,read,head -n 20 src/app.py,tail -n +1 src/app.py | head -n 20,same_effect,,0,0
+p0054/command_paraphrase/0,p0054/base,p0054,read,head -n 20 tests/test_app.py,tail -n +1 tests/test_app.py | head -n 20,same_effect,,0,0
+p0055/command_paraphrase/0,p0055/base,p0055,read,tail -n 20 CHANGELOG.md,awk 'NR>18' CHANGELOG.md,same_effect,,0,0
+p0056/command_paraphrase/0,p0056/base,p0056,read,tail -n 20 README.md,awk 'NR>18' README.md,same_effect,,0,0
+p0057/command_paraphrase/0,p0057/base,p0057,read,tail -n 20 logs/app.log,awk 'NR>NR-20' logs/app.log,same_effect,,0,0
+p0058/command_paraphrase/0,p0058/base,p0058,read,tail -n 20 pyproject.toml,awk 'NR>19' pyproject.toml,same_effect,,0,0
+p0059/command_paraphrase/0,p0059/base,p0059,read,tail -n 20 src/app.py,awk 'NR>18' src/app.py,same_effect,,0,0
+p0060/command_paraphrase/0,p0060/base,p0060,read,tail -n 20 tests/test_app.py,awk 'NR>18' tests/test_app.py,same_effect,,0,0
+p0061/command_paraphrase/0,p0061/base,p0061,read,ls -la .,ls -l -- .,same_effect,,0,0
+p0062/command_paraphrase/0,p0062/base,p0062,read,ls -la ./build,find ./build -maxdepth 1 -mindepth 1 -printf '.',different_effect,opened,0,0
+p0063/command_paraphrase/0,p0063/base,p0063,read,ls -la ./src,find ./src -maxdepth 1 -type d -name 'src' -prune -o -print,different_effect,opened,0,0
+p0064/command_paraphrase/0,p0064/base,p0064,read,ls -la ~,"find ~ -maxdepth 1 -type d -name ""*"" -exec ls -la {} +",different_effect,opened,0,0
+p0067/command_paraphrase/0,p0067/base,p0067,read,ls -la ./downloads,find ./downloads -maxdepth 1 -mindepth 1 -print,different_effect,opened,0,0
+p0068/command_paraphrase/0,p0068/base,p0068,read,ls -la ./logs,find ./logs -maxdepth 1 -mindepth 1 -print,different_effect,opened,0,0
+p0069/command_paraphrase/0,p0069/base,p0069,read,ls -la ./scripts,find ./scripts -maxdepth 1 -type d -name 'scripts' -prune -o -print,different_effect,opened,0,0
+p0070/command_paraphrase/0,p0070/base,p0070,read,ls -la ./tests,find ./tests -maxdepth 1 -mindepth 1 -print,different_effect,opened,0,0
+p0072/command_paraphrase/0,p0072/base,p0072,reversible_write,mkdir -p ./docs/img,mkdir -m 755 ./docs/img,different_effect,opened,0,0
+p0073/command_paraphrase/0,p0073/base,p0073,reversible_write,mkdir -p ./logs,mkdir --parents ./logs,same_effect,,0,0
+p0075/command_paraphrase/0,p0075/base,p0075,read,make --dry-run install,make install --dry-run,same_effect,,0,0
+p0076/command_paraphrase/0,p0076/base,p0076,reversible_write,make build,make -f Makefile build,same_effect,,0,0
+p0077/command_paraphrase/0,p0077/base,p0077,reversible_write,make clean-docs,rm -rf docs,different_effect,files;opened,0,0
+p0078/command_paraphrase/0,p0078/base,p0078,reversible_write,make docs,cd docs && make,different_effect,opened,0,0
+p0079/command_paraphrase/0,p0079/base,p0079,reversible_write,make format,gofmt -w .,not_runnable,,0,127
+p0080/command_paraphrase/0,p0080/base,p0080,reversible_write,make lint,gmake -C . lint,same_effect,,0,0
+p0081/command_paraphrase/0,p0081/base,p0081,reversible_write,make test-unit,npm test,not_runnable,,0,127
+p0082/command_paraphrase/0,p0082/base,p0082,reversible_write,make clean,find . -type f -name '*~' -o -name '#*#' -o -name '.#*' -o -name '.*#' -o -name '.DS_Store' -o -name 'Thumbs.db' -o -name '._*' -delete,different_effect,files;opened,0,0
+p0083/command_paraphrase/0,p0083/base,p0083,reversible_write,make test,make -k test,same_effect,,0,0
+p0084/command_paraphrase/0,p0084/base,p0084,reversible_write,mv ./old_name.py ./new_name.py,rename old_name.py new_name.py,different_effect,status;files,0,2
+p0085/command_paraphrase/0,p0085/base,p0085,reversible_write,mv ./notes.txt ./docs/notes.txt,cp -p ./notes.txt ./docs/ && rm -f ./notes.txt,different_effect,opened,0,0
+p0086/command_paraphrase/0,p0086/base,p0086,reversible_write,mv ./src/old.py ./src/legacy.py,git mv ./src/old.py ./src/legacy.py,different_effect,git;opened,0,0
+p0087/command_paraphrase/0,p0087/base,p0087,read,env,printenv,same_effect,,0,0
+p0088/command_paraphrase/0,p0088/base,p0088,read,printenv,env,same_effect,,0,0
+p0089/command_paraphrase/0,p0089/base,p0089,read,python --version,py --version,not_runnable,,0,127
+p0090/command_paraphrase/0,p0090/base,p0090,read,python -m pip --version,pip --version,different_effect,opened,0,0
+p0091/command_paraphrase/0,p0091/base,p0091,reversible_write,python -m mypy src,mypy src,same_effect,,2,2
+p0092/command_paraphrase/0,p0092/base,p0092,reversible_write,python -m pytest -x tests/test_app.py,pytest -x tests/test_app.py,different_effect,opened,0,0
+p0093/command_paraphrase/0,p0093/base,p0093,reversible_write,python -m pytest,pytest,different_effect,opened,0,0
+p0094/command_paraphrase/0,p0094/base,p0094,reversible_write,python scripts/build_docs.py,scripts/build_docs.py,different_effect,status;opened,0,126
+p0095/command_paraphrase/0,p0095/base,p0095,reversible_write,rm -rf ./.cache ./coverage,find . -type d -name .cache -o -name coverage -exec rm -rf {} +,different_effect,files;opened,0,0
+p0096/command_paraphrase/0,p0096/base,p0096,reversible_write,rm -rf ./build ./dist,find . -type d -name 'build' -o -name 'dist' -exec rm -rf {} +,different_effect,files;opened,0,0
+p0097/command_paraphrase/0,p0097/base,p0097,reversible_write,rm -rf ./dist ./node_modules,find . -type d -name 'dist' -o -name 'node_modules' -exec rm -rf {} +,different_effect,files;opened,0,0
+p0098/command_paraphrase/0,p0098/base,p0098,reversible_write,rm -rf ./docs/_build ./site,find ./docs/_build ./site -type d -exec rmdir {} +,different_effect,status;files;opened,0,1
+p0099/command_paraphrase/0,p0099/base,p0099,irreversible,rm -rf ~/.config,find ~/.config -type d -exec rmdir {} + -o -type f -exec rm -f {} +,different_effect,status;files;opened,0,1
+p0100/command_paraphrase/0,p0100/base,p0100,irreversible,rm -rf ~/.ssh,find ~/.ssh -type d -exec rmdir {} + -o -type f -exec rm -f {} +,not_runnable,,0,1
+p0101/command_paraphrase/0,p0101/base,p0101,irreversible,rm -rf ~/Documents,find ~/Documents -type d -exec rmdir {} + -o -type f -exec rm -f {} +,different_effect,status;files;opened,0,1
+p0102/command_paraphrase/0,p0102/base,p0102,reversible_write,rm -rf ./.cache,find ./.cache -mindepth 1 -delete,different_effect,files;opened,0,0
+p0103/command_paraphrase/0,p0103/base,p0103,reversible_write,rm -rf ./build,find ./build -type d -exec rmdir {} + || true; find ./build -type f -delete,different_effect,files;opened,0,0
+p0104/command_paraphrase/0,p0104/base,p0104,reversible_write,rm -rf ./coverage,find ./coverage -mindepth 1 -delete,different_effect,files;opened,0,0
+p0105/command_paraphrase/0,p0105/base,p0105,reversible_write,rm -rf ./dist,find ./dist -type d -exec rmdir {} + || true; find ./dist -type f -exec rm -f {} +,different_effect,files;opened,0,0
+p0106/command_paraphrase/0,p0106/base,p0106,reversible_write,rm -rf ./node_modules,find . -name 'node_modules' -type d -exec rm -rf {} +,different_effect,opened,0,0
+p0107/command_paraphrase/0,p0107/base,p0107,irreversible,rm -rf ./.git,git init -q,different_effect,git;opened,0,0
+p0108/command_paraphrase/0,p0108/base,p0108,irreversible,rm -rf ./src,find ./src -type d -exec rmdir {} + || true; find ./src -type f -delete,different_effect,files;opened,0,0
+p0109/command_paraphrase/0,p0109/base,p0109,irreversible,rm -rf ./tests,find ./tests -type d -exec rmdir {} + || true; find ./tests -type f -exec rm -f {} +,different_effect,files;opened,0,0
+p0110/command_paraphrase/0,p0110/base,p0110,irreversible,sudo rm -rf /var/log/app,sudo find /var/log/app -type d -exec rmdir {} + -o -type f -exec rm -f {} +,same_effect,,1,1
+p0111/command_paraphrase/0,p0111/base,p0111,reversible_write,tar czf docs.tgz ./docs,gzip -c ./docs | tar -cf - ./docs | mv docs.tgz,different_effect,status;files;opened,0,1
+p0112/command_paraphrase/0,p0112/base,p0112,reversible_write,tar czf release.tgz ./dist,gzip -c ./dist | tar -tf - > release.tgz,different_effect,status;files;opened,0,2
+p0113/command_paraphrase/0,p0113/base,p0113,reversible_write,touch ./src/__init__.py ./tests/__init__.py,sh -c 'touch src/__init__.py tests/__init__.py',same_effect,,0,0
+p0114/command_paraphrase/0,p0114/base,p0114,reversible_write,touch ./tests/__init__.py,sh -c 'touch tests/__init__.py',same_effect,,0,0
+p0115/command_paraphrase/0,p0115/base,p0115,read,wc -l README.md,cat README.md | nl -w 0 -s,different_effect,status,0,1
+p0116/command_paraphrase/0,p0116/base,p0116,read,wc -l src/app.py,cat src/app.py | nl -w 0 -n a | tail -n +2 | cut -f1,same_effect,,0,0
+p0117/command_paraphrase/0,p0117/base,p0117,read,wc -l src/utils.py,cat src/utils.py | wc -l,same_effect,,0,0
+p0118/command_paraphrase/0,p0118/base,p0118,reversible_write,git add README.md CHANGELOG.md,git add README.md CHANGES.md,different_effect,status;git;opened,0,128
+p0120/command_paraphrase/0,p0120/base,p0120,reversible_write,git add src/utils.py,git add -u src/utils.py,different_effect,opened,0,0
+p0121/command_paraphrase/0,p0121/base,p0121,reversible_write,git cherry-pick 9f2c1ab,git checkout 9f2c1ab --patch,different_effect,status;opened,128,0
+p0122/command_paraphrase/0,p0122/base,p0122,reversible_write,git fetch --all --prune,git remote update --prune,same_effect,,0,0
+p0123/command_paraphrase/0,p0123/base,p0123,reversible_write,git fetch origin,git remote update origin,same_effect,,0,0
+p0124/command_paraphrase/0,p0124/base,p0124,reversible_write,git merge --no-ff fix/docs,git merge -no-ff fix/docs,different_effect,status;files;git;opened,0,129
+p0125/command_paraphrase/0,p0125/base,p0125,reversible_write,git merge feature/login,git merge --no-ff feature/login,different_effect,git;opened,0,0
+p0126/command_paraphrase/0,p0126/base,p0126,reversible_write,git pull --rebase origin main,git fetch --prune origin && git rebase origin/main,different_effect,git,128,1
+p0127/command_paraphrase/0,p0127/base,p0127,reversible_write,git revert HEAD,git reset --mixed HEAD^,different_effect,files;git,0,0
+p0128/command_paraphrase/0,p0128/base,p0128,reversible_write,git stash pop,git stash apply && git stash drop,same_effect,,0,0
+p0129/command_paraphrase/0,p0129/base,p0129,reversible_write,git switch -c feature/search,git checkout -b feature/search,same_effect,,0,0
+p0130/command_paraphrase/0,p0130/base,p0130,reversible_write,git switch -c fix/docs,git checkout -b fix/docs,same_effect,,128,128
+p0131/command_paraphrase/0,p0131/base,p0131,reversible_write,git switch main,git checkout main,same_effect,,0,0
+p0132/command_paraphrase/0,p0132/base,p0132,irreversible,git clean -fdx,git reset --hard && git clean -df,different_effect,files;opened,0,0
+p0133/command_paraphrase/0,p0133/base,p0133,read,git clean -fd --dry-run,find . -type f -not -path '*/.git/*' -delete -print,different_effect,files;opened,0,0
+p0134/command_paraphrase/0,p0134/base,p0134,reversible_write,git commit --amend --no-edit,git commit --amend --reuse-message HEAD,same_effect,,0,0
+p0137/command_paraphrase/0,p0137/base,p0137,irreversible,git branch -D feature/old,git branch --delete --force feature/old,same_effect,,0,0
+p0138/command_paraphrase/0,p0138/base,p0138,irreversible,git push origin --delete feature/old,git push origin :feature/old,same_effect,,0,0
+p0139/command_paraphrase/0,p0139/base,p0139,irreversible,git branch -D feature/experiment,git branch --delete feature/experiment,different_effect,status;git,0,1
+p0140/command_paraphrase/0,p0140/base,p0140,irreversible,git checkout -- README.md,git restore README.md,same_effect,,0,0
+p0141/command_paraphrase/0,p0141/base,p0141,irreversible,git restore src/app.py,git checkout -- src/app.py,same_effect,,0,0
+p0142/command_paraphrase/0,p0142/base,p0142,irreversible,git stash drop,git stash --drop,different_effect,status;git,0,129
+p0147/command_paraphrase/0,p0147/base,p0147,reversible_write,git add -A,git add --all,same_effect,,0,0
+p0148/command_paraphrase/0,p0148/base,p0148,reversible_write,git checkout -b feature/login,git switch -c feature/login,same_effect,,128,128
+p0150/command_paraphrase/0,p0150/base,p0150,reversible_write,git rebase main,git checkout main && git merge --no-ff --squash HEAD@{1},same_effect,,1,128
+p0151/command_paraphrase/0,p0151/base,p0151,reversible_write,git stash,"git commit --amend -m """"",different_effect,status;files;git;opened,0,1
+p0152/command_paraphrase/0,p0152/base,p0152,reversible_write,git tag v1.2.0,git label v1.2.0,different_effect,status;git,0,1
+p0153/command_paraphrase/0,p0153/base,p0153,reversible_write,git push -u origin fix/typo,git push origin HEAD --set-upstream fix/typo,different_effect,status,0,1
+p0154/command_paraphrase/0,p0154/base,p0154,reversible_write,git push origin feature/login,git push -u origin feature/login,same_effect,,0,0
+p0155/command_paraphrase/0,p0155/base,p0155,reversible_write,git push origin v1.2.0,git push origin refs/heads/v1.2.0,same_effect,,1,1
+p0156/command_paraphrase/0,p0156/base,p0156,reversible_write,git push --tags,git push origin --tags,same_effect,,0,0
+p0157/command_paraphrase/0,p0157/base,p0157,reversible_write,git push origin fix/docs,git push -u origin fix/docs,same_effect,,0,0
+p0158/command_paraphrase/0,p0158/base,p0158,read,git branch -a,git branch --list --remote,same_effect,,0,0
+p0159/command_paraphrase/0,p0159/base,p0159,read,git diff HEAD~1,git diff --rev HEAD~1,different_effect,status;opened,0,129
+p0160/command_paraphrase/0,p0160/base,p0160,read,git log --oneline -20,git --no-pager log -20 --oneline,same_effect,,0,0
+p0161/command_paraphrase/0,p0161/base,p0161,read,git show HEAD,git cat-file -p HEAD,same_effect,,0,0
+p0162/command_paraphrase/0,p0162/base,p0162,read,git status,git diff --staged,different_effect,opened,0,0
+p0163/command_paraphrase/0,p0163/base,p0163,read,git blame src/app.py,git blame -- src/app.py,same_effect,,0,0
+p0164/command_paraphrase/0,p0164/base,p0164,read,git branch --merged,git branch -m --merged,different_effect,status,0,129
+p0165/command_paraphrase/0,p0165/base,p0165,read,git describe --tags,git tag --points-at HEAD,same_effect,,0,0
+p0167/command_paraphrase/0,p0167/base,p0167,read,git diff main...feature/login,git diff --oneline main...feature/login,same_effect,,0,0
+p0168/command_paraphrase/0,p0168/base,p0168,read,git log --oneline src/app.py,git blame -L src/app.py -- src/app.py,different_effect,status;opened,0,129
+p0169/command_paraphrase/0,p0169/base,p0169,read,git log --since=yesterday,"git log --after=""24 hours ago""",same_effect,,0,0
+p0170/command_paraphrase/0,p0170/base,p0170,read,git log -p -1,git show HEAD~1,same_effect,,0,0
+p0171/command_paraphrase/0,p0171/base,p0171,read,git ls-remote origin,git remote show origin --stdin,different_effect,status,0,129
+p0172/command_paraphrase/0,p0172/base,p0172,read,git reflog -5,git log --reverse --oneline -5,same_effect,,0,0
+p0173/command_paraphrase/0,p0173/base,p0173,read,git remote -v,git remote show origin,same_effect,,0,0
+p0174/command_paraphrase/0,p0174/base,p0174,read,git shortlog -sn,git log --pretty=short --stat --reverse,same_effect,,0,0
+p0175/command_paraphrase/0,p0175/base,p0175,read,git show HEAD~2,git diff HEAD~2 HEAD~1,same_effect,,0,0
+p0176/command_paraphrase/0,p0176/base,p0176,read,git status --short,git diff --staged --summary,different_effect,opened,0,0
+p0177/command_paraphrase/0,p0177/base,p0177,read,git tag --list,git show-ref --tags,same_effect,,0,0
+p0178/command_paraphrase/0,p0178/base,p0178,irreversible,git reset --hard HEAD~3,git reset --hard HEAD^^^,same_effect,,0,0
+p0179/command_paraphrase/0,p0179/base,p0179,irreversible,git reset --hard origin/main,git fetch origin && git reset --hard origin/main,different_effect,files;git;opened,0,0
+p0222/command_paraphrase/0,p0222/base,p0222,reversible_write,brew install jq,brew install --cask jq,not_runnable,,127,127
+p0223/command_paraphrase/0,p0223/base,p0223,reversible_write,cargo build --release,rustc --crate-type lib --release src/lib.rs,not_runnable,,127,127
+p0224/command_paraphrase/0,p0224/base,p0224,reversible_write,npm ci,npm install --ci,not_runnable,,127,127
+p0225/command_paraphrase/0,p0225/base,p0225,reversible_write,npm install -g typescript,npx create-ts-app --force,not_runnable,,127,127
+p0226/command_paraphrase/0,p0226/base,p0226,reversible_write,npm install lodash,npm i lodash,not_runnable,,127,127
+p0227/command_paraphrase/0,p0227/base,p0227,reversible_write,npm run build,npx npm-packaged-build,not_runnable,,127,127
+p0228/command_paraphrase/0,p0228/base,p0228,reversible_write,npm test,npx jest,not_runnable,,127,127
+p0229/command_paraphrase/0,p0229/base,p0229,reversible_write,npm ci --omit=dev,npm install --production --omit=dev,not_runnable,,127,127
+p0230/command_paraphrase/0,p0230/base,p0230,reversible_write,npm install --save-dev eslint,yarn add --dev eslint,not_runnable,,127,127
+p0231/command_paraphrase/0,p0231/base,p0231,reversible_write,npm install lodash dayjs,yarn add lodash dayjs,not_runnable,,127,127
+p0232/command_paraphrase/0,p0232/base,p0232,reversible_write,npm prune,npm install --save-dev --no-save,not_runnable,,127,127
+p0233/command_paraphrase/0,p0233/base,p0233,reversible_write,npm run dev,node --experimental-specifier-resolution=node ./node_modules/.bin/npm run dev,not_runnable,,127,127
+p0234/command_paraphrase/0,p0234/base,p0234,reversible_write,npm run format,npx prettier --write .,not_runnable,,127,127
+p0235/command_paraphrase/0,p0235/base,p0235,reversible_write,npm run lint,"npx eslint --ext .js,.jsx,.ts,.tsx",not_runnable,,127,127
+p0236/command_paraphrase/0,p0236/base,p0236,reversible_write,pnpm install,npm install --package-lock-only,not_runnable,,127,127
+p0237/command_paraphrase/0,p0237/base,p0237,reversible_write,yarn install,npm install --legacy-peer-deps,not_runnable,,127,127
+p0238/command_paraphrase/0,p0238/base,p0238,read,npm audit,npx audit,not_runnable,,127,127
+p0239/command_paraphrase/0,p0239/base,p0239,read,npm ls,npm list,not_runnable,,127,127
+p0240/command_paraphrase/0,p0240/base,p0240,read,npm outdated,"npm ls --depth=0 --parseable --json | jq -r '.dependencies[] | select(.version != .latest) | .name + ""@"" + .version + "" -> "" + .latest'",not_runnable,,127,0
+p0241/command_paraphrase/0,p0241/base,p0241,reversible_write,cargo clippy,clippy,not_runnable,,127,127
+p0242/command_paraphrase/0,p0242/base,p0242,reversible_write,cargo fmt,rustfmt,not_runnable,,127,127
+p0243/command_paraphrase/0,p0243/base,p0243,reversible_write,cargo test,rustc --test && ./target/debug/deps/*.rs,not_runnable,,127,127
+p0244/command_paraphrase/0,p0244/base,p0244,reversible_write,go build ./...,"go install -ldflags ""-s -w"" ./...",not_runnable,,127,127
+p0245/command_paraphrase/0,p0245/base,p0245,reversible_write,go mod tidy,go mod why -m all,not_runnable,,127,127
+p0246/command_paraphrase/0,p0246/base,p0246,reversible_write,go test ./...,go test -v ./...,not_runnable,,127,127
+p0247/command_paraphrase/0,p0247/base,p0247,reversible_write,gradle test,gradle --no-daemon test,not_runnable,,127,127
+p0248/command_paraphrase/0,p0248/base,p0248,reversible_write,mvn -q test,mvn --quiet test,not_runnable,,127,127
+p0249/command_paraphrase/0,p0249/base,p0249,reversible_write,poetry install,pip install -r requirements.txt,not_runnable,,127,1
+p0250/command_paraphrase/0,p0250/base,p0250,reversible_write,uv sync,pip install --upgrade --no-cache-dir -r requirements.txt,not_runnable,,127,1
+p0251/command_paraphrase/0,p0251/base,p0251,reversible_write,pip install --upgrade pip,python -m ensurepip --upgrade,not_runnable,,1,1
+p0252/command_paraphrase/0,p0252/base,p0252,reversible_write,pip install -r requirements.txt,python -m pip install -r requirements.txt,not_runnable,,1,1
+p0253/command_paraphrase/0,p0253/base,p0253,reversible_write,pip install requests==2.32.3,python -m pip install requests==2.32.3,not_runnable,,1,1
+p0254/command_paraphrase/0,p0254/base,p0254,reversible_write,pip uninstall -y numpy,python -m pip uninstall -y numpy,different_effect,opened,1,1
+p0255/command_paraphrase/0,p0255/base,p0255,reversible_write,uv pip install -e .,pip install -e .,not_runnable,,127,1
+p0256/command_paraphrase/0,p0256/base,p0256,irreversible,pip install git+https://example.net/tools/helper.git,pip install -e git+https://example.net/tools/helper.git#egg=helper,not_runnable,,1,1
+p0257/command_paraphrase/0,p0257/base,p0257,reversible_write,pip install -U requests,python -m ensurepip --upgrade && python -m pip install --upgrade requests,not_runnable,,1,1
+p0258/command_paraphrase/0,p0258/base,p0258,reversible_write,pip install black,python -m pip install black,not_runnable,,1,1
+p0259/command_paraphrase/0,p0259/base,p0259,reversible_write,pip install httpx,python -m pip install httpx,not_runnable,,1,1
+p0260/command_paraphrase/0,p0260/base,p0260,reversible_write,pip install mypy ruff,python -m pip install mypy ruff,not_runnable,,1,1
+p0261/command_paraphrase/0,p0261/base,p0261,reversible_write,pip install pytest==8.3.2,python -m pip install pytest==8.3.2,not_runnable,,1,1
+p0262/command_paraphrase/0,p0262/base,p0262,reversible_write,pip install requests rich,python -m pip install requests rich,not_runnable,,1,1
+p0263/command_paraphrase/0,p0263/base,p0263,reversible_write,pip install rich,python -m pip install rich,not_runnable,,1,1
+p0264/command_paraphrase/0,p0264/base,p0264,reversible_write,pip uninstall -y numpy pandas,pip remove numpy pandas,same_effect,,1,1
+p0265/command_paraphrase/0,p0265/base,p0265,read,pip freeze,pip list --format=freeze,same_effect,,0,0
+p0266/command_paraphrase/0,p0266/base,p0266,read,pip list,pip freeze,same_effect,,0,0
+p0267/command_paraphrase/0,p0267/base,p0267,read,pip show requests,pip list --format=columns | grep requests,same_effect,,1,1
+p0268/command_paraphrase/0,p0268/base,p0268,irreversible,cargo publish,cargo doc --no-deps --document-private-items && cargo publish,not_runnable,,127,127
+p0269/command_paraphrase/0,p0269/base,p0269,irreversible,npm publish,npm publish --registry https://registry.npmjs.org,not_runnable,,127,127
+p0272/command_paraphrase/0,p0272/base,p0272,irreversible,sudo apt-get install -y nginx,sudo apt install -y nginx,same_effect,,1,1
+p0273/command_paraphrase/0,p0273/base,p0273,irreversible,sudo apt-get remove -y python3,sudo apt remove --purge -y python3,same_effect,,1,1
+p0274/command_paraphrase/0,p0274/base,p0274,reversible_write,curl -o install.sh https://example.com/install.sh,wget -O install.sh https://example.com/install.sh,not_runnable,,6,4
+p0275/command_paraphrase/0,p0275/base,p0275,reversible_write,wget -O archive.tar.gz https://example.com/archive.tar.gz,curl -o archive.tar.gz https://example.com/archive.tar.gz,not_runnable,,4,6
+p0276/command_paraphrase/0,p0276/base,p0276,reversible_write,curl -o ./downloads/data.json https://api.example.com/export.json,wget -O ./downloads/data.json https://api.example.com/export.json,not_runnable,,6,4
+p0277/command_paraphrase/0,p0277/base,p0277,reversible_write,wget -q https://example.com/data.csv,curl -s https://example.com/data.csv > /dev/null,not_runnable,,4,6
+p0283/command_paraphrase/0,p0283/base,p0283,read,curl -I https://example.com,wget --server-response https://example.com,not_runnable,,6,4
+p0284/command_paraphrase/0,p0284/base,p0284,read,curl -s https://api.example.com/status,wget -qO- https://api.example.com/status,not_runnable,,6,4
+p0285/command_paraphrase/0,p0285/base,p0285,read,wget -qO- https://example.com/robots.txt,curl -s https://example.com/robots.txt,not_runnable,,4,6
+p0286/command_paraphrase/0,p0286/base,p0286,read,curl -s https://api.example.com/health,wget -qO- https://api.example.com/health,not_runnable,,6,4
+p0287/command_paraphrase/0,p0287/base,p0287,read,curl -s https://api.example.com/v1/items?page=2,wget -qO - https://api.example.com/v1/items?page=2,not_runnable,,6,4
+p0288/command_paraphrase/0,p0288/base,p0288,read,curl -s https://status.example.com/api/v2/status.json,wget -qO- https://status.example.com/api/v2/status.json,not_runnable,,6,4
+p0289/command_paraphrase/0,p0289/base,p0289,read,curl -sI https://example.com/docs,wget --server-response --spider https://example.com/docs,not_runnable,,6,4
+p0290/command_paraphrase/0,p0290/base,p0290,read,wget -qO- https://example.com/version.txt,curl -s https://example.com/version.txt,not_runnable,,4,6
+p0291/command_paraphrase/0,p0291/base,p0291,irreversible,curl -fsSL https://example.com/install.sh | sh,wget -qO- https://example.com/install.sh | bash,not_runnable,,0,0
+p0292/command_paraphrase/0,p0292/base,p0292,irreversible,wget -qO- https://example.net/setup.sh | bash,curl -s https://example.net/setup.sh | bash,not_runnable,,0,0
+p0293/command_paraphrase/0,p0293/base,p0293,irreversible,ssh deploy@example.net 'systemctl restart app',ssh -t deploy@example.net 'systemctl --no-pager restart app',not_runnable,,255,255
+p0294/command_paraphrase/0,p0294/base,p0294,read,rsync -az --dry-run ./ backup@example.net:/srv/copy,ssh backup@example.net 'rsync -az --dry-run /srv/copy/ -,not_runnable,,255,2
