@@ -352,7 +352,7 @@ first takes the skeleton and the decision packets):
 - done-when: the loop writes `docs/gates/g2-go-no-go.md` — the state of every step, the X1/X2/X3 numbers that exist, spend so far, the risk-table triggers that fired, and the plan's three options (full: two or three decision models + judge + rules; reduced: Jev + judge + rules; pivot the engine to ToolSense) with a recommendation — then `mark.py G2 blocked "awaiting human decision"`. The humans record the decision in STATUS.md, mark `cut` whatever leaves scope (the `[STRETCH]` steps on reduced or pivot), and run `mark.py G2 done`. A pivot rewrites this ledger — that is a human plan change.
 
 ### X6 — Sandbox validation of P pairs [STRETCH]
-- status: in_review (#50)
+- status: done
 - owner: jrzkaminski@Jerzy-Pro.local
 - claimed_at: 2026-10-20T09:41:50Z
 - deps: G2 C8
