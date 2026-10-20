@@ -172,3 +172,26 @@ def test_case_box_errors(box_inputs):
         f.write("drex,a/base,a/policy_format/0,deny 0.9/deny 0.9/deny 0.9,allow 0.1/allow 0.1/allow 0.1\n")
     with pytest.raises(SystemExit, match="disagreeing"):
         pt.case_box(["drex:a/policy_format/0"], x5, variants)
+
+
+def test_reliability_figure(tmp_path):
+    pt = _mod()
+    _write(
+        tmp_path / "calibration.csv",
+        [
+            {"gate_id": "jev", "n_labeled": 60, "ece": 0.1234, "ece_lo": 0.081, "ece_hi": 0.2},
+            {"gate_id": "judge-claude", "n_labeled": 58, "ece": 0.05, "ece_lo": 0.02, "ece_hi": 0.11},
+            {"gate_id": "rules", "n_labeled": 60, "ece": 0.3, "ece_lo": 0.2, "ece_hi": 0.4},
+        ],
+    )
+    bins = [("jev", 9, 0.95, 0.9), ("jev", 0, 0.03, 0.1), ("judge-claude", 5, 0.55, 0.5), ("rules", 9, 1, 1)]
+    _write(
+        tmp_path / "reliability.csv",
+        [{"gate_id": g, "bin": b, "n": 3, "confidence": c, "accuracy": a} for g, b, c, a in bins],
+    )
+    text = pt.reliability_figure(tmp_path)
+    assert "\\addplot+[mark=*] coordinates {(0.0300,0.1000) (0.9500,0.9000)};" in text  # in bin order
+    assert "\\addlegendentry{Jev 1.14 ($n=60$): ECE 0.12 [0.08, 0.20]}" in text
+    assert "\\addlegendentry{Claude Opus 5.5 judge ($n=58$): ECE 0.05 [0.02, 0.11]}" in text
+    assert "Rule set" not in text  # the plan's figure: Jev against the judge
+    assert text.count("\\addplot") == 3  # the diagonal and two gates
