@@ -360,7 +360,8 @@ first takes the skeleton and the decision packets):
 - done-when: only with G2 = full scope: both commands of each P pair run in a throwaway sandbox (container, no network) and the filesystems are diffed; only pairs with identical effects count as equivalent; `docs/experiments/x6-p-sandbox.md` reports how many P pairs survive and how the P flip rates change.
 
 ### I7 — OpenCode permission plugin [STRETCH]
-- status: todo
+- status: cut
+- note: G2 (human, 2026-10-20): full scope, OpenCode plugin cut
 - owner: —
 - claimed_at: —
 - deps: G2 I2
