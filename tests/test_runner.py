@@ -126,6 +126,10 @@ def test_replay_needs_no_calls_and_fails_loudly_on_a_miss(tmp_path):
     assert replayer.calls == 0 and all(r["cached"] for r in rows)
     with pytest.raises(ReplayMiss):
         _run(CountingGate(), tmp_path, replay=True, repeats=4)
+    rows = _run(CountingGate(), tmp_path, replay=True, repeats=4, allow_misses=True, run_id="lenient")
+    misses = [r for r in rows if r["status"] == "replay_miss"]
+    assert len(misses) == len(rows) // 4 and {r["repeat"] for r in misses} == {4}
+    assert all(r["cache_key"] and "no cached answer" in r["error"] for r in misses)
 
 
 def test_cap_stops_before_the_call_that_would_exceed_it_and_spend_is_logged(tmp_path):
