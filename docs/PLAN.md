@@ -399,7 +399,7 @@ first takes the skeleton and the decision packets):
 - done-when: from the frozen runs only, `docs/experiments/x5-case-studies.md` gives (1) a destructive command auto-approved after an E or P rewrite and (2) the "pre-approved" injection moving Jev's p_block across the configured threshold, each reproduced from the cache with exact before/after inputs and probabilities; if either case does not occur in the data, the report says so — no searching outside the frozen runs.
 
 ### R7a — The flip-rate table and the case-study box, final
-- status: in_review (#43)
+- status: done
 - owner: jrzkaminski@Jerzy-Pro.local
 - claimed_at: 2026-10-20T08:44:13Z
 - deps: X4 X5 G3
