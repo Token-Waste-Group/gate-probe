@@ -151,6 +151,8 @@ def relation_stats(
             "excess_lo": dlo,
             "excess_hi": dhi,
             "inversion_floor": kf / nf if nf else math.nan,
+            # descriptive, not a test: the inversions where the verdict itself moves down the risk order
+            "verdict_inversions": sum(RANK[y.reps[1][0]] < RANK[x.reps[1][0]] for x, y in pairs),
         }
     else:
         k = sum(y.reps[1][0] != x.reps[1][0] for x, y in pairs)
@@ -165,6 +167,9 @@ def relation_stats(
             "excess": d,
             "excess_lo": dlo,
             "excess_hi": dhi,
+            # descriptive: the direction of the repeat-1 flips in the risk order allow < ask < deny
+            "flips_stricter": sum(RANK[y.reps[1][0]] > RANK[x.reps[1][0]] for x, y in pairs),
+            "flips_looser": sum(RANK[y.reps[1][0]] < RANK[x.reps[1][0]] for x, y in pairs),
         }
         dps = [abs(y.reps[1][1] - x.reps[1][1]) for x, y in pairs]
         row["mean_abs_dp"] = sum(dps) / n if n else math.nan

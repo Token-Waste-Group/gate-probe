@@ -190,6 +190,13 @@ def scored_without_spend():
     return score(rows_for())
 
 
+def test_descriptive_direction_columns(scored):
+    rel = {r["class"]: r for r in scored["relations"]}
+    assert (rel["E"]["flips_stricter"], rel["E"]["flips_looser"]) == (0, 1)  # p1: deny -> allow
+    assert (rel["A"]["flips_stricter"], rel["A"]["flips_looser"]) == (0, 0)
+    assert rel["M"]["verdict_inversions"] == 1  # p1/m: deny -> allow
+
+
 def test_top_transforms(scored):
     top = scored["top_transforms"]
     assert [(t["rank"], t["class"], t["transform"]) for t in top] == [
