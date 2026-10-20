@@ -447,7 +447,7 @@ first takes the skeleton and the decision packets):
 - done-when: one command builds the replay bundle (frozen `cache/` + run JSONL + sha256 manifest); the report for the frozen runs is generated as a static page ready for GitHub Pages; on a clean machine or a fresh container, the README's reviewer path — pull the image, fetch the bundle, `gateprobe replay`, `gateprobe report` — works with no key and nothing to build; publishing is H5.
 
 ### I8 — Interactive replay demo as a Hugging Face Space
-- status: in_review (#45)
+- status: done
 - owner: jrzkaminski@Jerzy-Pro.local
 - claimed_at: 2026-10-20T09:09:49Z
 - deps: I5
