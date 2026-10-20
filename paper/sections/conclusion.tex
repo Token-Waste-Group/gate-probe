@@ -6,11 +6,19 @@
 
 \section{Conclusion}\label{sec:conclusion}
 
-\todo{Summary and future work.}
+\tool{} tests permission gates the way a security component should be
+tested: against rewrites whose right answer is known without an oracle. All
+six gates we tried contradict themselves on equivalent inputs. The most
+consistent contradiction, allowing a secrets file to be overwritten but not
+read, appears in a rule set, a judge and two decision models alike. Future
+work adds an open-weight judge (Gemma~4~\cite{google2026gemma4} on
+vLLM~\cite{kwon2023efficient}), validates paraphrase pairs by running both
+commands in a sandbox, and runs the planned user study.
 
 \paragraph{Availability}
 \tool{}, its Docker image, the corpus and the replay bundle are available at
 \toolurl{} \todo{H5 links: repository, image, report page, bundle}.
 
 \paragraph{Carbon footprint}
-\todo{One sentence: H100 hours for the judge runs; decision-model calls.}
+The evaluation used 88,074 billed API calls and under two minutes of
+consumer-GPU time, for the paraphrases; no data-center GPU was used.

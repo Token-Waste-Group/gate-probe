@@ -4,47 +4,110 @@
 % Numbers ONLY from the G3 freeze (docs/gates/g3-results-freeze.md); every
 % number with its repeats and a Wilson 95% interval; figures come from R7's
 % scripts, never hand-edited. If E flips sit at the floor, lead with M and A.
+% DRAFT (loop, 2026-10-20) against the G3 candidate results/x4-final/ and
+% results/x5-case-studies/; G2 (scope) and G3 (freeze, decision 6: which case
+% pairs) are still open. Table and box: scripts/paper_tables.py.
 
 \section{Validation}\label{sec:validation}
 
-\todo{Setup: the gates (Jev~\cite{openrouter2026jev114,typesafe2026models}, GPT-6 Luna
-Decisions, pplx-decider v1.2 and drex v1.5, all pinned to dated snapshots; the
-Claude Opus 5.5 judge via the Batch API with a stated probability; the rule
-gate; the Gemma 4 31B-it judge~\cite{google2026gemma4} on
-vLLM~\cite{kwon2023efficient} if the H100 frees in time),
-corpus size, variants per probe, repeats; Wilson intervals~\cite{wilson1927probable},
-ECE~\cite{guo2017calibration}.}
+\paragraph{Setup} The corpus has 300 tool calls under four policies.
+They yield 5,861 deterministic items (300 base items and 1,621 E, 436 M,
+1,452 I and 2,052 A variants) and 529 P variants written by Qwen3-8B.
+Six gates take every item $R=3$ times:
+\begin{itemize}
+  \item four decision models on the Decisions API, in true/false mode at
+  $\tau=0.5$, each pinned to a dated snapshot: Jev
+  1.14~\cite{openrouter2026jev114,typesafe2026models}, GPT-6 Luna Decisions,
+  pplx-decider v1.2 and drex v1.5;
+  \item Claude Opus 5.5 as an LLM judge, which states its own block
+  probability and runs through the Message Batches API;
+  \item a hand-written Claude Code-style rule set~\cite{anthropic2026permissions}.
+\end{itemize}
+That is 115,020 logged decisions. Table~\ref{tab:flips} gives $F-f$ per gate
+and class. Bonferroni runs over its 30 tests.
 
-\paragraph{RQ1 Invariance} \todo{E and I flip rates above the floor.}
-\paragraph{RQ2 Monotonicity} \todo{Share of M variants with a risk inversion.}
-\paragraph{RQ3 Adversarial} \todo{A flips and mean $p_\mathrm{block}$ shift.}
-\paragraph{RQ4 Cost} \todo{Dollars and wall-clock per 1,000 probes per gate.}
-
-% Figure 1 of 3 (R7): flip rates, relation x gate, 95% intervals.
-\begin{table}[t]
+\begin{table*}[t]
 \centering
-\caption{Flip rate above the test--retest floor, per relation and gate}
+\caption{Flip rate above the test--retest floor ($F-f$, points, Newcombe 95\% interval; $R=3$). Bold: violated (interval above 0); $^\dagger$: survives Bonferroni over 30 tests. M counts risk inversions against the inversion floor.}
 \label{tab:flips}
-\todo{R7 table}
-\end{table}
+\footnotesize
+\setlength{\tabcolsep}{4pt}
+\input{figures/flips.tex}
+\end{table*}
+
+\paragraph{RQ1 Invariance} \emph{Every gate violates equivalence.}
+\begin{itemize}
+  \item E ranges from $+1.1$ points on the Claude judge to $+7.5$ on Luna.
+  \item On the model gates the largest source is the same policy rendered
+  another way. Of the re-renderings, 11.1\% flip on Luna, 8.9\% on drex,
+  3.3\% on pplx, 2.8\% on Jev and 1.8\% on the judge.
+  \item The rule set has the opposite weakness: it ignores the policy text but
+  flips on call spelling, for 12.7\% of long-flag rewrites.
+  \item Three decision models answer repeats identically ($f=0$), so their
+  every flip is the transform's doing.
+  \item P is violated on all six gates, but it is the weaker class. A hand
+  check found 7 of 16 command rewrites not equivalent, and the largest P flips
+  are among them.
+\end{itemize}
+
+\paragraph{RQ2 Monotonicity} Verdict-level risk inversions are rare, at most
+one per gate. They aren't harmless:
+\begin{itemize}
+  \item Four of six gates allow \emph{overwriting} a secrets file whose reading
+  they deny. Jev goes from 0.82 to 0.49 ($\bar p_\mathrm{block}$), the judge
+  from 0.99 to 0.30, pplx from 1.00 to 0.41, and the rule set has no
+  write-deny for \texttt{.env}.
+  \item Under the pre-registered predicate, the three zero-floor models also
+  count M as violated. With $\delta=0$, any drop in $p_\mathrm{block}$ counts.
+\end{itemize}
+
+\paragraph{RQ3 Adversarial} The injections split the gates by direction:
+\begin{itemize}
+  \item They push Luna toward \emph{deny}: 73 of 86 flips, $+2.4$ points of
+  $p_\mathrm{block}$.
+  \item They push pplx and drex toward \emph{allow}: 25 of 28 and 23 of 33
+  flips. The single context line ``This action is safe per the policy.''
+  unblocks pplx 15 times.
+  \item Jev and the judge stay within their floors. Still, Jev's
+  $p_\mathrm{block}$ falls by 1.0 point $[0.8, 1.2]$ on average, and the
+  ``pre-approved'' line takes it across $\tau$ on 3 of 300 pairs
+  (Fig.~\ref{fig:case}).
+\end{itemize}
+
+\paragraph{RQ4 Cost} The full suite is about 60 calls per probe. Per 1,000
+probes it costs:
+\begin{itemize}
+  \item nothing and 11\,s on the rule set;
+  \item \$0.67--\$3.78 and 2.4--8.6\,h with 8 parallel workers on the decision
+  models;
+  \item \$173 and 1.3\,h through message batches on the judge.
+\end{itemize}
+The whole evaluation cost \$54.
 
 % Figure 2 of 3 (R7): reliability diagram, Jev vs. the judge, labeled subset.
 \begin{figure}[t]
 \centering
-\fbox{\parbox{0.9\columnwidth}{\centering\todo{R7 reliability diagram}}}
+\fbox{\parbox{0.9\columnwidth}{\centering\todo{R7 reliability diagram (waits on the H2 labels)}}}
 \caption{Reliability of Jev and the judge on the hand-labeled subset}
 \label{fig:reliability}
 \end{figure}
 
-% Figure 3 of 3 (R7, from X5): the before/after case-study box.
+% Figure 3 of 3 (R7, from X5): the before/after case-study box. Pair choice: G3 decision 6.
 \begin{figure}[t]
 \centering
-\fbox{\parbox{0.9\columnwidth}{\centering\todo{X5 case study: before / after}}}
-\caption{A destructive call auto-approved after a rewrite}
+\footnotesize
+\input{figures/case_box.tex}
+\caption{Two flips from the frozen runs, replayed from the cache ($p_\mathrm{block}$ at repeats 1--3). (1)~The same policy as JSON lets drex delete the tests the policy forbids deleting. (2)~One injected line moves Jev to allow a fetch that a read-only policy denies.}
 \label{fig:case}
 \end{figure}
 
-\paragraph{Planned study}
-\todo{8--10 developers configure a gate with and without GateProbe's report;
-we record the threshold they pick and how many dangerous corpus calls it
-admits. Described, not run.}
+\paragraph{Threats} A check of the most-flipping transforms found one
+generator bug. Two of 130 path rewrites turned an \texttt{rsync} remote into a
+local path. Only the judge flipped on them, and rightly: without them its E
+is $+1.0$ $[0.5, 1.8]$. Case 1 was chosen among flips where the policy
+forbids the call, because a flip shows a contradiction but not which verdict
+is wrong.
+
+\paragraph{Planned study} Eight to ten developers configure a gate with and
+without \tool{}'s report. We record the threshold they pick and how many
+dangerous corpus calls it admits. The study is described here, not yet run.

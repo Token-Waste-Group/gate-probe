@@ -16,8 +16,11 @@ it. No ground truth is needed. \tool{} measures each gate's test--retest noise
 floor and reports flips above it with 95\% intervals, using scoring rules fixed
 before any run. It ships as a CLI and a Docker image with adapters for
 decision models, LLM judges and rule sets, an HTML report, a CI check, a live
-Claude Code hook and a key-free replay mode. On \todo{N} tool calls and \todo{N} gates,
-\todo{headline numbers from docs/gates/g3-results-freeze.md}.
+Claude Code hook and a key-free replay mode. On 300 tool calls and six gates
+(four decision models, an LLM judge and a rule set, three repeats each),
+every gate changes its verdict on equivalent rewrites above its noise floor,
+by 1.1 to 7.5 points. Four of the six allow overwriting a secrets file they
+forbid reading, and injected text pushes two decision models toward allow.
 Tool, Docker image and replay bundle: \toolurl. Video: \videourl.
 \end{abstract}
 
