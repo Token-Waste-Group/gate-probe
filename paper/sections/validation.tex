@@ -17,8 +17,9 @@ Six gates take every item $R=3$ times:
 \begin{itemize}
   \item four decision models on the Decisions API, in true/false mode at
   $\tau=0.5$, each pinned to a dated snapshot: Jev
-  1.14~\cite{openrouter2026jev114,typesafe2026models}, GPT-6 Luna Decisions,
-  pplx-decider v1.2 and drex v1.5;
+  1.14~\cite{openrouter2026jev114,typesafe2026models}, GPT-6 Luna
+  Decisions~\cite{openrouter2026luna}, pplx-decider
+  v1.2~\cite{openrouter2026pplxdecider} and drex v1.5~\cite{openrouter2026drex};
   \item Claude Opus 5.5 as an LLM judge, which states its own block
   probability and runs through the Message Batches API;
   \item a hand-written Claude Code-style rule set~\cite{anthropic2026permissions}.
