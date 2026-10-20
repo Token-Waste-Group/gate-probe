@@ -309,7 +309,7 @@ first takes the skeleton and the decision packets):
 ## Day 2 — Wed 21 Oct: second decision model, hook end to end, Docker builds, go/no-go at 18:00
 
 ### X3 — The three further decision models chosen at G1 [API: OpenRouter]
-- status: claimed
+- status: in_review (#34)
 - owner: jrzkaminski@Jerzy-Pro.local
 - claimed_at: 2026-10-19T21:31:43Z
 - deps: X1
