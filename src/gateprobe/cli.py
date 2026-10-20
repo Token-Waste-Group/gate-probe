@@ -103,6 +103,12 @@ def build_parser() -> argparse.ArgumentParser:
         p.add_argument("--run-id", help="default: <gate>-<UTC timestamp>")
         p.add_argument("--limit", type=int, help="only the first N variants (smoke runs)")
         p.add_argument("--workers", type=int, default=1, help="parallel calls (the cap is checked per chunk)")
+        if name == "replay":
+            p.add_argument(
+                "--allow-misses",
+                action="store_true",
+                help="record a call with no cached answer as replay_miss and go on (default: stop)",
+            )
         p.add_argument("--gates-config", type=Path, default=ROOT / "configs" / "gates.yaml")
         p.add_argument("--run-config", type=Path, default=ROOT / "configs" / "run.yaml")
     return parser
@@ -144,6 +150,7 @@ def cmd_run(args: argparse.Namespace, replay: bool) -> int:
                 cap_usd=run_cfg.caps_usd[cfg.name],
                 config_digest=config_hash(cfg, run_cfg),
                 replay=replay,
+                allow_misses=getattr(args, "allow_misses", False),
                 retry=run_cfg.retry,
                 spend_csv=ROOT / run_cfg.spend_csv,
                 workers=args.workers,

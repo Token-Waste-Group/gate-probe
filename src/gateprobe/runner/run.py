@@ -3,9 +3,12 @@
 Scope of v0: `run_gate` yields one row per (variant, repeat) with full
 provenance (git hash, config hash, gate, pinned model, repeat, timestamp);
 `replay=True` serves only from the cache and fails on a miss, so it needs no
-key; the per-gate $ cap is checked before every call; retryable errors back
-off exponentially; spend is appended to `spend_csv` (the CLI passes
-results/spend.csv) when the run ends, however it ends. Out of scope: analysis (R6) and Message Batches (R8).
+key (with `allow_misses`, a miss becomes a `replay_miss` row instead: a call
+the recorded run never got an answer for, such as an HTTP error); the
+per-gate $ cap is checked before every call; retryable errors back off
+exponentially; spend is appended to `spend_csv` (the CLI passes
+results/spend.csv) when the run ends, however it ends. Out of scope: analysis
+(R6) and Message Batches (R8).
 """
 
 from __future__ import annotations
@@ -122,6 +125,7 @@ def run_gate(
     cap_usd: float,
     config_digest: str,
     replay: bool = False,
+    allow_misses: bool = False,
     retry: dict[str, float] | None = None,
     spend_csv: Path | None = None,
     policies_dir: Path = ROOT / "policies",
@@ -167,7 +171,10 @@ def run_gate(
         cached, fresh = entry is not None, None
         if not cached:
             if replay:
-                raise ReplayMiss(f"no cached answer for {variant.id} repeat {k} on {gate.gate_id}")
+                miss = f"no cached answer for {variant.id} repeat {k} on {gate.gate_id}"
+                if not allow_misses:
+                    raise ReplayMiss(miss)
+                return {**row, "status": "replay_miss", "error": miss, "timestamp": now()}, None
             try:
                 decision = _call_with_retries(gate, request, retry or {}, sleep)
             except GateRefusal as e:  # its own outcome: cached, reported, never re-asked elsewhere

@@ -79,3 +79,38 @@ docker run --rm --network none -v "$PWD/runs:/gateprobe/runs:ro" -v "$PWD/report
 The image holds the CLI, configs, policies, probes and variants, and never
 `.env`, the cache or local state (`.dockerignore`). The replay bundle (I5)
 supplies `cache/`. Publishing the image is a human step (H5).
+
+## Reviewer path: replay the frozen results (no key, no network)
+
+The replay bundle holds the cache entries behind every number in the paper:
+94,589 entries for the 12 frozen runs, 115,020 rows over six gates. It also
+holds the run files and a sha256 manifest. Nothing needs building: pull the
+image and fetch the bundle. Publishing both is H5; until then, `docker build`
+the image as above.
+
+```bash
+IMAGE=gateprobe                                   # the published image once H5 is done
+tar xzf gateprobe-replay-19fd14a.tar.gz && cd gateprobe-replay-19fd14a
+shasum -a 256 -c MANIFEST.sha256 --quiet          # (sha256sum on Linux) every file intact
+# replay a gate from the cache: seconds; --allow-misses records the one call drex's frozen
+# run never got an answer for (an HTTP 520) as replay_miss instead of stopping
+docker run --rm --network none -v "$PWD/cache:/gateprobe/cache:ro" -v "$PWD/runs:/gateprobe/runs" \
+  $IMAGE replay --gate drex --variants variants/generated.jsonl --run-id replay-drex --allow-misses
+# the report over the frozen runs: the hosted page
+mkdir -p reports
+docker run --rm --network none -v "$PWD/runs:/gateprobe/runs:ro" -v "$PWD/reports:/gateprobe/reports" \
+  $IMAGE report --runs runs/x[0-9]*.jsonl --variants variants/generated.jsonl variants/paraphrase.jsonl \
+  --out reports/frozen.html
+```
+
+With colima on macOS, unpack the bundle under your home directory: colima
+shares only `~` with its VM, and a mount from elsewhere arrives empty, so every
+call would be a miss.
+
+The gates are `jev`, `rules`, `judge-claude`, `gpt-6-luna-decisions`,
+`pplx-decider` and `drex`. P variants replay the same way with
+`--variants variants/paraphrase.jsonl`.
+
+To build the bundle and the page (`dist/`) from a working copy with the
+cache, run `uv run python scripts/build_bundle.py`. To check a replay against
+the frozen rows, run `uv run python scripts/compare_runs.py --frozen … --replayed …`.
