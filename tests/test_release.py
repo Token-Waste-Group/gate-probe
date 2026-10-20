@@ -111,8 +111,12 @@ def test_the_real_tree_builds_and_scans_clean(tmp_path):
     assert mr.scan(tmp_path / "release") == []
 
 
-def test_orphan_commit_holds_exactly_the_built_files(tmp_path):
+def test_orphan_commit_holds_exactly_the_built_files(tmp_path, monkeypatch):
     mr = _mr()
+    for k in ("GIT_AUTHOR_NAME", "GIT_COMMITTER_NAME"):  # CI runners have no git identity
+        monkeypatch.setenv(k, "t")
+    for k in ("GIT_AUTHOR_EMAIL", "GIT_COMMITTER_EMAIL"):
+        monkeypatch.setenv(k, "t@example.org")
     repo = tmp_path / "repo"
     repo.mkdir()
 
