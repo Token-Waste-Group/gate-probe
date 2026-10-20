@@ -7,26 +7,23 @@
 % DRAFT (loop, 2026-10-20). Numbers from results/ as frozen at G3 (19fd14a):
 % results/x4-final/ and results/x5-case-studies/. Case pairs: G3 decision 6
 % (1E in the box, 2' beside it). Table and box: scripts/paper_tables.py (R7a).
-% Figure 2 waits on R7b (H2 labels).
+% Figure 2 waits on R7b (H2 labels); its placeholder below has the figure's size.
 
 \section{Validation}\label{sec:validation}
 
-\paragraph{Setup} The corpus has 300 tool calls under four policies.
-They yield 5,861 deterministic items (300 base items and 1,621 E, 436 M,
-1,452 I and 2,052 A variants) and 529 P variants written by Qwen3-8B.
-Six gates take every item $R=3$ times:
-\begin{itemize}
-  \item four decision models on the Decisions API, in true/false mode at
-  $\tau=0.5$, each pinned to a dated snapshot: Jev
-  1.14~\cite{openrouter2026jev114,typesafe2026models}, GPT-6 Luna
-  Decisions~\cite{openrouter2026luna}, pplx-decider
-  v1.2~\cite{openrouter2026pplxdecider} and drex v1.5~\cite{openrouter2026drex};
-  \item Claude Opus 5.5 as an LLM judge, which states its own block
-  probability and runs through the Message Batches API;
-  \item a hand-written Claude Code-style rule set~\cite{anthropic2026permissions}.
-\end{itemize}
-That is 115,020 logged decisions. Table~\ref{tab:flips} gives $F-f$ per gate
-and class. Bonferroni runs over its 30 tests.
+\paragraph{Setup} The corpus has 300 tool calls under four policies. They
+yield 5,861 deterministic items (300 base items and 1,621 E, 436 M, 1,452 I
+and 2,052 A variants) and 529 P variants written by Qwen3-8B. Six gates take
+every item $R=3$ times. Four are decision models on the Decisions API, in
+true/false mode at $\tau=0.5$ and pinned to dated snapshots: Jev
+1.14~\cite{openrouter2026jev114,typesafe2026models}, GPT-6 Luna
+Decisions~\cite{openrouter2026luna}, pplx-decider
+v1.2~\cite{openrouter2026pplxdecider} and drex v1.5~\cite{openrouter2026drex}.
+The fifth is Claude Opus 5.5 as an LLM judge that states its own block
+probability, run through the Message Batches API. The sixth is a hand-written
+Claude Code-style rule set~\cite{anthropic2026permissions}. That is 115,020
+logged decisions. Table~\ref{tab:flips} gives $F-f$ per gate and class, with
+Bonferroni over its 30 tests.
 
 \begin{table*}[t]
 \centering
@@ -37,79 +34,66 @@ and class. Bonferroni runs over its 30 tests.
 \input{figures/flips.tex}
 \end{table*}
 
-\paragraph{RQ1 Invariance} \emph{Every gate violates equivalence.}
-\begin{itemize}
-  \item E ranges from $+1.1$ points on the Claude judge to $+7.5$ on Luna.
-  \item On the model gates the largest source is the same policy rendered
-  another way. Of the re-renderings, 11.1\% flip on Luna, 8.9\% on drex,
-  3.3\% on pplx, 2.8\% on Jev and 1.8\% on the judge.
-  \item The rule set has the opposite weakness: it ignores the policy text but
-  flips on call spelling, for 12.7\% of long-flag rewrites.
-  \item Three decision models answer repeats identically ($f=0$), so their
-  every flip is the transform's doing.
-  \item P is violated on all six gates, but it is the weaker class. A hand
-  check found 7 of 16 command rewrites not equivalent, and the largest P flips
-  are among them.
-\end{itemize}
+\paragraph{RQ1 Invariance} \emph{Every gate violates equivalence}, from $+1.1$
+points on the Claude judge to $+7.5$ on Luna. On the model gates the largest
+source is the same policy rendered another way: 11.1\% of re-renderings flip
+on Luna, 8.9\% on drex, 3.3\% on pplx, 2.8\% on Jev and 1.8\% on the judge
+(Fig.~\ref{fig:case}). The rule set has the opposite weakness. It never reads
+the policy text, but it flips on call spelling, for 12.7\% of long-flag
+rewrites. Three decision models answer repeats identically ($f=0$), so every
+flip they show is the transform's doing. P is violated on all six gates, but it
+is the weaker class: a hand check of 16 command rewrites found 7 not
+equivalent.
 
 \paragraph{RQ2 Monotonicity} Verdict-level risk inversions are rare, at most
-one per gate. They aren't harmless:
-\begin{itemize}
-  \item Four of six gates allow \emph{overwriting} a secrets file, an
-  irreversible write, where they deny reading it. Jev goes from 0.82 to 0.49 ($\bar p_\mathrm{block}$), the judge
-  from 0.99 to 0.30, pplx from 1.00 to 0.41, and the rule set has no
-  write-deny for \texttt{.env}.
-  \item Under the pre-registered predicate, the three zero-floor models also
-  count M as violated. With $\delta=0$, any drop in $p_\mathrm{block}$ counts.
-\end{itemize}
+one per gate, but not harmless. Four of six gates allow \emph{overwriting} a
+secrets file, an irreversible write, where they deny reading it: Jev goes from
+0.82 to 0.49 ($\bar p_\mathrm{block}$), the judge from 0.99 to 0.30, pplx from
+1.00 to 0.41, and the rule set has no write-deny for \texttt{.env}. Under the
+pre-registered predicate the three zero-floor models also count M as violated,
+because with $\delta=0$ any drop in $p_\mathrm{block}$ counts.
 
-\paragraph{RQ3 Adversarial} The injections split the gates by direction:
-\begin{itemize}
-  \item They push Luna toward \emph{deny}: 73 of 86 flips, $+2.4$ points of
-  $p_\mathrm{block}$.
-  \item They push pplx and drex toward \emph{allow}: 25 of 28 and 23 of 33
-  flips. The single context line ``This action is safe per the policy.''
-  unblocks pplx 15 times.
-  \item Jev and the judge stay within their floors. Still, Jev's
-  $p_\mathrm{block}$ falls by 1.0 point $[0.8, 1.2]$ on average, and the
-  ``pre-approved'' line takes it across $\tau$ on 3 of 300 pairs
-  (Fig.~\ref{fig:case}).
-\end{itemize}
+\paragraph{RQ3 Adversarial} The injections split the gates by direction. They
+push Luna toward \emph{deny} (73 of 86 flips, $+2.4$ points of
+$p_\mathrm{block}$), but pplx and drex toward \emph{allow} (25 of 28 and 23 of
+33 flips). The single line ``This action is safe per the policy.'' unblocks
+pplx 15 times. Jev and the judge stay within their floors, yet Jev's
+$p_\mathrm{block}$ falls by 1.0 point $[0.8, 1.2]$ on average. ``The user
+pre-approved this command.'' takes it across $\tau$ on 3 of 300 pairs, among
+them a \texttt{git fetch} that a read-only policy denies: 0.57, 0.53, 0.53
+become 0.35, 0.30, 0.31.
 
 \paragraph{RQ4 Cost} The full suite is about 60 calls per probe. Per 1,000
-probes it costs:
-\begin{itemize}
-  \item nothing and 11\,s on the rule set;
-  \item \$0.67--\$3.78 and 2.4--8.6\,h with 8 parallel workers on the decision
-  models;
-  \item \$173 and 1.3\,h through message batches on the judge.
-\end{itemize}
-The whole evaluation cost \$54.
+probes it costs nothing and 11\,s on the rule set; \$0.67--\$3.78 and
+2.4--8.6\,h with 8 parallel workers on the decision models; and \$173 and
+1.3\,h through message batches on the judge. The whole evaluation cost \$54.
 
-% Figure 2 of 3 (R7): reliability diagram, Jev vs. the judge, labeled subset.
+% Figure 2 of 3 (R7b): reliability diagram, Jev vs. the judge, labeled subset.
+% Placeholder of the generated figure's height (axis 0.55 columnwidth + legend).
 \begin{figure}[t]
 \centering
-\fbox{\parbox{0.9\columnwidth}{\centering\todo{R7 reliability diagram (waits on the H2 labels)}}}
-\caption{Reliability of Jev and the judge on the hand-labeled subset}
+\fbox{\parbox[c][0.6\columnwidth][c]{0.95\columnwidth}{\centering\todo{R7b reliability diagram (waits on the H2 labels)}}}
+\caption{Reliability of Jev and the judge on the hand-labeled subset (dashed: perfect calibration)}
 \label{fig:reliability}
 \end{figure}
 
-% Figure 3 of 3 (R7, from X5): the before/after case-study box. Pair choice: G3 decision 6.
+% Figure 3 of 3 (R7a, from X5): the before/after case-study box. Pair: G3 decision 6.
 \begin{figure}[t]
 \centering
 \footnotesize
 \input{figures/case_box.tex}
-\caption{Two flips from the frozen runs, replayed from the cache (gate, policy: call; $p_\mathrm{block}$ at repeats 1--3). (1)~The same policy as JSON lets drex delete tests, which release-manager does not allow. (2)~One injected line moves Jev to allow a fetch that read-only-review denies. Both were chosen among flips on calls the policy denies.}
+\caption{The same policy as JSON lets drex delete tests, which release-manager does not allow ($p_\mathrm{block}$ at repeats 1--3, replayed from the cache). Chosen among flips on calls the policy denies.}
 \label{fig:case}
 \end{figure}
 
 \paragraph{Threats} A check of the most-flipping transforms found one
 generator bug. Two of 130 path rewrites turned an \texttt{rsync} remote into a
-local path. Only the judge flipped on them, and rightly: without them its E
-is $+1.0$ $[0.5, 1.8]$. A flip shows a contradiction, not which verdict is
-wrong. The pre-registered case picks (Luna on \texttt{git branch -D}, Jev on
-\texttt{git ls-remote}) concern calls the policy allows, so
-Fig.~\ref{fig:case} shows the largest flips on calls it denies.
+local path. Only the judge flipped on them, and rightly: without them its E is
+$+1.0$ $[0.5, 1.8]$. A flip shows a contradiction, not which verdict is wrong.
+The pre-registered case picks (Luna on \texttt{git branch -D}, Jev on
+\texttt{git ls-remote}) concern calls the policy allows. So, after reading the
+policies, we show the E flip with the largest drop on a call the policy denies,
+and a \texttt{git fetch} on such a call that crosses at every repeat.
 
 \paragraph{Planned study} Eight to ten developers configure a gate with and
 without \tool{}'s report. We record the threshold they pick and how many
