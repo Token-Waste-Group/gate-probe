@@ -24,6 +24,8 @@ nothing new after 12:00 CEST.
 gates: Jev 1.14, three further decision models (GPT-6 Luna Decisions, pplx-decider
 v1.2, drex v1.5; G1), the Claude Opus 5.5 judge (R8, X7), the rule gate, and the
 Gemma 4 judge once the H100 frees (X2); three figures. No new relation classes after G1.
+**G2 (human, 2026-10-20): full scope**, I7 cut. **G3 (human, 2026-10-20): `results/` frozen at
+`19fd14a`**; until Thu 22 12:00 only R7b's calibration, X2 and X6 may add rows, each in a new directory.
 **Decision points (human):** G1 Mon 19 18:00 spec freeze · G2 Wed 21 18:00
 go/no-go (full / reduced / pivot to ToolSense) · G3 Thu 22 12:00 results freeze.
 After G3 only the paper and the video move.
@@ -395,19 +397,27 @@ first takes the skeleton and the decision packets):
 - source: gateprobe_plan.md § Validation plan (case studies)
 - done-when: from the frozen runs only, `docs/experiments/x5-case-studies.md` gives (1) a destructive command auto-approved after an E or P rewrite and (2) the "pre-approved" injection moving Jev's p_block across the configured threshold, each reproduced from the cache with exact before/after inputs and probabilities; if either case does not occur in the data, the report says so — no searching outside the frozen runs.
 
-### R7 — The three figures, final
+### R7a — The flip-rate table and the case-study box, final
 - status: todo
 - owner: —
 - claimed_at: —
-- deps: X4 X5 H2
-- source: gateprobe_plan.md § Validation plan (three figures); Thu DoD
-- done-when: committed scripts regenerate, in one command and from `results/` only, (1) the flip-rate table relation × gate with 95% intervals, (2) the reliability diagram (Jev against the judge on the labeled subset) and (3) the before/after case-study box from X5; vector output sized for IEEEtran columns; no hand-edited numbers.
+- deps: X4 X5 G3
+- source: gateprobe_plan.md § Validation plan (three figures); Thu DoD; human decision 2026-10-20 (R7 split: the table and the box don't wait on H2)
+- done-when: one committed command regenerates, from `results/` only (the inputs shown in the box come from the committed variant files), (1) the flip-rate table, relation × gate with 95% intervals, and (3) the before/after case-study box with the pair G3 chose (1E: drex, `rm -rf ./tests`, YAML → JSON; captioned as chosen among the policy-denied events); output sized for IEEEtran columns; no hand-edited numbers; tests cover the generation.
+
+### R7b — The reliability diagram, final
+- status: todo
+- owner: —
+- claimed_at: —
+- deps: H2 R7a
+- source: gateprobe_plan.md § Validation plan (three figures); docs/RELATIONS.md § 3.7; human decision 2026-10-20 (R7 split)
+- done-when: from `probes/labels.jsonl` (H2, majority over the labelers) and the frozen runs, `gateprobe analyze` writes the calibration tables (ECE with 10 equal-width bins and its 10,000-resample bootstrap interval, the reliability bins; § 3.7) to a new `results/` directory before `results/` closes on Thu 22 12:00; the same committed command as R7a then also regenerates (2) the reliability diagram, Jev against the judge on the labeled subset, as vector output sized for an IEEEtran column; no hand-edited numbers. If H2 isn't done by Thu 22 12:00, the humans choose per `docs/gates/g3-results-freeze.md` § 5, decision 3.
 
 ### W4 — Validation section and planned study
 - status: todo
 - owner: —
 - claimed_at: —
-- deps: G3 R7
+- deps: G3 R7a R7b
 - source: gateprobe_plan.md § Validation plan; § Submission checklist
 - done-when: RQ1–RQ4 reported from the frozen numbers only (each with repeats and interval, matching `docs/gates/g3-results-freeze.md`); the three figures; both case studies; the planned 8–10-developer study described, not run; the carbon-footprint sentence; negative results stated plainly (if E flips sit at the floor, the section leads with M and A, as the plan's risk table says); still ≤ 4 pages.
 
