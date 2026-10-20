@@ -388,7 +388,7 @@ first takes the skeleton and the decision packets):
 - done-when: the loop writes `docs/gates/g3-results-freeze.md` — every number the paper and the video will use, with the commit hash that freezes `results/` — then `mark.py G3 blocked "awaiting human decision"`. The humans confirm in STATUS.md and run `mark.py G3 done`. From then on `results/` gets no new rows and only W-lane steps (plus packaging fixes that change no number) land.
 
 ### X5 — Case studies (paper box and video)
-- status: claimed
+- status: in_review (#39)
 - owner: jrzkaminski@Jerzy-Pro.local
 - claimed_at: 2026-10-20T03:02:10Z
 - deps: X4
