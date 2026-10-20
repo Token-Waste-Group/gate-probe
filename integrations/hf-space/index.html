@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GateProbe replay demo</title>
+<meta name="description" content="Browse the metamorphic flips GateProbe found in six coding-agent permission gates, replayed from the frozen runs.">
+<style>
+:root {
+  --bg: #fafaf8; --panel: #ffffff; --ink: #1d1f24; --muted: #646872; --line: #e1e1dc;
+  --head: #f2f2ee; --pos: #fbe3e0; --pos-ink: #8a1f14; --neg: #e3f2e6; --neg-ink: #1d5b2b;
+  --deny: #b3261e; --allow: #1f6f3a; --accent: #2f5fb3; --mark: #fff3c4; --sel: #e8eefb;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #15171b; --panel: #1d2026; --ink: #e6e6e3; --muted: #9a9ea8; --line: #30343c;
+    --head: #252930; --pos: #4a2420; --pos-ink: #ffb4a8; --neg: #1f3a26; --neg-ink: #a6e3b4;
+    --deny: #ff8a80; --allow: #7fd69a; --accent: #8fb0ff; --mark: #4a4120; --sel: #26324a;
+  }
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 15px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif; }
+main { max-width: 1180px; margin: 0 auto; padding: 20px 16px 48px; }
+h1 { font-size: 24px; margin: 0 0 4px; }
+h2 { font-size: 17px; margin: 28px 0 8px; }
+p { margin: 6px 0; }
+.muted { color: var(--muted); }
+.small { font-size: 13px; }
+code, pre { font: 12.5px/1.45 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+pre { white-space: pre-wrap; word-break: break-word; margin: 4px 0 0; }
+.panel { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 12px; }
+.scroll { overflow-x: auto; }
+table { border-collapse: collapse; width: 100%; background: var(--panel); }
+th, td { border: 1px solid var(--line); padding: 6px 8px; text-align: left; vertical-align: top; }
+th { background: var(--head); font-weight: 600; font-size: 13px; }
+td.num { font-variant-numeric: tabular-nums; white-space: nowrap; }
+td.pick, tr.pick { cursor: pointer; }
+td.pick:hover, tr.pick:hover td { outline: 2px solid var(--accent); outline-offset: -2px; }
+.positive { background: var(--pos); color: var(--pos-ink); }
+.negative { background: var(--neg); color: var(--neg-ink); }
+.selected, tr.selected td { box-shadow: inset 0 0 0 2px var(--accent); }
+.controls { display: flex; flex-wrap: wrap; gap: 10px 16px; align-items: end; margin: 8px 0; }
+label { display: grid; gap: 2px; font-size: 13px; color: var(--muted); }
+select { font: inherit; padding: 4px 6px; border: 1px solid var(--line); border-radius: 6px; background: var(--panel); color: var(--ink); min-width: 160px; }
+.deny { color: var(--deny); font-weight: 600; }
+.allow { color: var(--allow); font-weight: 600; }
+.tag { display: inline-block; font-size: 12px; padding: 0 6px; border-radius: 10px; border: 1px solid var(--line); color: var(--muted); }
+.tag.looser { border-color: var(--deny); color: var(--deny); }
+.tag.stricter { border-color: var(--allow); color: var(--allow); }
+.pair { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+@media (max-width: 760px) { .pair { grid-template-columns: 1fr; } }
+.field { margin: 8px 0; }
+.field > b { font-size: 13px; }
+.changed { background: var(--mark); border-radius: 4px; padding: 0 4px; font-size: 12px; margin-left: 6px; }
+button { font: inherit; padding: 4px 10px; border: 1px solid var(--line); border-radius: 6px; background: var(--panel); color: var(--ink); cursor: pointer; }
+details summary { cursor: pointer; color: var(--accent); font-size: 13px; }
+#error { color: var(--deny); }
+</style>
+</head>
+<body>
+<main>
+  <h1>GateProbe replay demo</h1>
+  <p class="muted">
+    GateProbe rewrites the inputs of coding-agent permission gates under relations whose expected outcome is known.
+    It then counts the verdicts that move. Every answer on this page was recorded in the frozen runs and is replayed from them.
+    Nothing here calls a gate.
+  </p>
+  <p class="small muted" id="provenance">Loading the frozen data…</p>
+  <p id="error" hidden></p>
+
+  <h2>Flip rate above the noise floor, per gate and relation</h2>
+  <p class="small muted">
+    F − f in points: the rate at which a rewrite moves the verdict, minus the gate's own test–retest rate (floor f), with Newcombe 95% intervals.
+    For M, the rate counts risk inversions instead.
+    Red: violated (the interval is above 0). Green: invariant within 5 points. † survives Bonferroni over 30 tests. Click a cell to browse its flips.
+  </p>
+  <div class="scroll"><table id="overview"></table></div>
+
+  <h2>Transforms</h2>
+  <div class="controls">
+    <label>Gate <select id="gate"></select></label>
+    <label>Relation <select id="cls"></select></label>
+    <label>Transform <select id="transform"></select></label>
+    <label>Direction <select id="direction">
+      <option value="violations">violations only</option>
+      <option value="all">all flips</option>
+    </select></label>
+  </div>
+  <p class="small muted" id="cls-note"></p>
+  <div class="scroll"><table id="transforms"></table></div>
+
+  <h2 id="flips-title">Flips</h2>
+  <p class="small muted">
+    A flip: the parent and its rewrite get different verdicts at the same repeat. It shows the gate contradicting itself, not which verdict is wrong.
+    Click a flip to see both inputs side by side.
+  </p>
+  <div class="scroll"><table id="flips"></table></div>
+  <p><button id="more" hidden>Show more</button></p>
+
+  <h2>Side by side</h2>
+  <div id="detail" class="pair"><p class="muted">Pick a flip above.</p></div>
+</main>
+<script src="app.js"></script>
+</body>
+</html>
