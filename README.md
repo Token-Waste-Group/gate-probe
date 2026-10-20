@@ -114,3 +114,13 @@ The gates are `jev`, `rules`, `judge-claude`, `gpt-6-luna-decisions`,
 To build the bundle and the page (`dist/`) from a working copy with the
 cache, run `uv run python scripts/build_bundle.py`. To check a replay against
 the frozen rows, run `uv run python scripts/compare_runs.py --frozen … --replayed …`.
+
+## The public release tree
+
+`uv run python scripts/make_release.py [--branch release]` builds `dist/release/`:
+- the reproduction files only, with `release/README.md` as its README;
+- no agent pipeline and no planning records;
+- a scan for keys, internal hosts, storage paths, private IPs, local identities and the unpublished prior work;
+- with `--branch`, the tree committed as one orphan commit on a local branch.
+
+It never pushes. Publishing is H5.

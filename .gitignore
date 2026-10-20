@@ -219,7 +219,7 @@ __marimo__/
 # Streamlit
 .streamlit/secrets.toml
 
-# ---- GateProbe artifacts (raw / regenerable; see CLAUDE.md) ----
+# ---- GateProbe artifacts (raw / regenerable) ----
 # The response cache is the replay bundle: it ships as a release asset, not in
 # git. Run JSONL stays out too; distilled numbers in results/ ARE committed.
 cache/
