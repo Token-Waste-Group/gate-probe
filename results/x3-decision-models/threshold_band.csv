@@ -1,0 +1,4 @@
+gate_id,defined,band_lo,band_hi,band_width,safe_threshold_exists,n_pairs
+gpt-6-luna-decisions,True,0.000000,0.000000,0.000000,False,3073
+pplx-decider,True,0.000000,0.000583,0.000583,True,3073
+drex,True,0.999900,1.000000,0.000100,True,3073

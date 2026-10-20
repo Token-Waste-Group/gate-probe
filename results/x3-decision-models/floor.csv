@@ -1,0 +1,4 @@
+gate_id,n_items,flips,f,f_lo,f_hi,delta,mean_retest_abs_dp,excluded,rows,excluded_flag,excluded_not_applicable,excluded_error
+gpt-6-luna-decisions,5261,0,0.000000,0.000000,0.000730,0.000000,0.000000,1800,17583,True,1800,
+pplx-decider,5261,0,0.000000,0.000000,0.000730,0.000000,0.000000,1800,17583,True,1800,
+drex,5261,0,0.000000,0.000000,0.000730,0.000000,0.000009,1801,17583,True,1800,1

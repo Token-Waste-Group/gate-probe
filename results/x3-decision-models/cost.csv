@@ -1,0 +1,4 @@
+gate_id,fresh_calls,usd,usd_per_1000_calls,seconds_per_1000_calls
+gpt-6-luna-decisions,15690,1.049736,0.066905,538.154832
+pplx-decider,15690,0.186265,0.011872,776.973547
+drex,15689,0.326426,0.020806,1094.887373
