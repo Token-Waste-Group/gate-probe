@@ -2,7 +2,7 @@
 """Generate the paper's results table and case box from results/ only (R7a; no hand-typed numbers).
 
 Writes paper/figures/flips.tex (F - f per gate x class with Newcombe 95% intervals, the floor with
-its Wilson interval, labels and the Bonferroni mark) from results/x4-final/, and
+its Wilson interval, labels and the Bonferroni mark) from results/x2-seven-gates/, and
 paper/figures/case_box.tex (p_block per repeat, before / after) from results/x5-case-studies/. The
 inputs shown in the box (call, policy rendering, context) come from the committed variant files.
 
@@ -26,6 +26,7 @@ GATES = [
     ("pplx-decider", "pplx-decider v1.2"),
     ("drex", "drex v1.5"),
     ("judge-claude", "Claude Opus 5.5 judge"),
+    ("judge-gemma", "Gemma 4 31B judge"),
     ("rules", "Rule set"),
 ]
 CLASSES = "EMIAP"
@@ -161,7 +162,9 @@ def case_box(cases: list[str], x5: Path, variants: Path) -> str:
 
 def render(cases: list[str], root: Path = ROOT) -> dict[str, str]:
     return {
-        "flips.tex": flips_table(root / "results" / "x4-final"),
+        # G3 decision 4: X2 finished before the cut-off, so the table has seven gates (Bonferroni over 35).
+        # Its six frozen gates equal results/x4-final byte for byte (the X2 report's freeze check).
+        "flips.tex": flips_table(root / "results" / "x2-seven-gates"),
         "case_box.tex": case_box(cases, root / "results" / "x5-case-studies", root / "variants"),
     }
 
