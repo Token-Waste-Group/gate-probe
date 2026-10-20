@@ -381,7 +381,7 @@ first takes the skeleton and the decision packets):
 - done-when: `docs/experiments/x4-final-results.md` pushed as `planned` first; the P variants run on every in-scope gate; any gate whose floor exceeded 10% is rerun with 5 repeats; RQ4 gives dollars and wall-clock per 1,000 probes per gate from the logged spend and timings; consolidated CSVs in `results/` and the report give RQ1–RQ4 per gate with every number's repeat count and 95% interval; ready for the 12:00 freeze.
 
 ### G3 — Decision point 3: results frozen (Thu 22, 12:00) [GATE]
-- status: blocked
+- status: done
 - note: awaiting human decision — docs/gates/g3-results-freeze.md
 - owner: jrzkaminski@Jerzy-Pro.local
 - claimed_at: 2026-10-20T02:59:33Z
