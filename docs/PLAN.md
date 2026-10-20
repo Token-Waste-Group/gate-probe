@@ -370,7 +370,7 @@ first takes the skeleton and the decision packets):
 ## Day 3 — Thu 22 Oct: results frozen at 12:00, three figures, full draft, storyboard, Docker on a clean machine, hook segment
 
 ### X4 — Final runs: P class, 5-repeat reruns, RQ4 cost, consolidated results [API: OpenRouter] [API: Anthropic] [GPU: H100]
-- status: in_review (#37)
+- status: done
 - owner: jrzkaminski@Jerzy-Pro.local
 - claimed_at: 2026-10-20T01:05:31Z
 - deps: X1 X3 X7 C8
