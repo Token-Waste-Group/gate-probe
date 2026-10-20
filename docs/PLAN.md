@@ -447,9 +447,9 @@ first takes the skeleton and the decision packets):
 - done-when: one command builds the replay bundle (frozen `cache/` + run JSONL + sha256 manifest); the report for the frozen runs is generated as a static page ready for GitHub Pages; on a clean machine or a fresh container, the README's reviewer path — pull the image, fetch the bundle, `gateprobe replay`, `gateprobe report` — works with no key and nothing to build; publishing is H5.
 
 ### I8 — Interactive replay demo as a Hugging Face Space
-- status: todo
-- owner: —
-- claimed_at: —
+- status: claimed
+- owner: jrzkaminski@Jerzy-Pro.local
+- claimed_at: 2026-10-20T09:09:49Z
 - deps: I5
 - source: human decision 2026-10-19 (HF Space hosting an interactive replay demo; `HF_PERSONAL_TOKEN` in `.env`); CFP § Tool ("an active website")
 - done-when: a Space app under `integrations/hf-space/` (small, self-contained, no API key) loads the frozen replay bundle and lets a visitor pick a gate, a relation class and a transform, browse the flip table with intervals, and open any flip with its parent and variant side by side; it runs locally with one command and in a fresh container, has tests for its data loading, and never calls a live gate; publishing the Space is part of H5 (human), never this step.
