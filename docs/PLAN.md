@@ -399,9 +399,9 @@ first takes the skeleton and the decision packets):
 - done-when: from the frozen runs only, `docs/experiments/x5-case-studies.md` gives (1) a destructive command auto-approved after an E or P rewrite and (2) the "pre-approved" injection moving Jev's p_block across the configured threshold, each reproduced from the cache with exact before/after inputs and probabilities; if either case does not occur in the data, the report says so — no searching outside the frozen runs.
 
 ### R7a — The flip-rate table and the case-study box, final
-- status: todo
-- owner: —
-- claimed_at: —
+- status: claimed
+- owner: jrzkaminski@Jerzy-Pro.local
+- claimed_at: 2026-10-20T08:44:13Z
 - deps: X4 X5 G3
 - source: gateprobe_plan.md § Validation plan (three figures); Thu DoD; human decision 2026-10-20 (R7 split: the table and the box don't wait on H2)
 - done-when: one committed command regenerates, from `results/` only (the inputs shown in the box come from the committed variant files), (1) the flip-rate table, relation × gate with 95% intervals, and (3) the before/after case-study box with the pair G3 chose (1E: drex, `rm -rf ./tests`, YAML → JSON; captioned as chosen among the policy-denied events); output sized for IEEEtran columns; no hand-edited numbers; tests cover the generation.
