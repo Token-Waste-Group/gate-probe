@@ -31,14 +31,14 @@ itself.
 **5 · The report (1:45)**
 That self-disagreement is the noise floor. The report counts a relation as
 violated only when flips rise above that floor, beyond the interval. Red cells
-are violations. Here, [relation] flips [x] points more often than the gate
-disagrees with itself. Every cell shows its interval and the number of
+are violations. Here, on GPT-6 Luna Decisions, equivalent rewrites flip 7.5
+points more often than the gate disagrees with itself. Every cell shows its interval and the number of
 repeats. Opening one example puts the original call next to the rewrite.
 
 **6 · Case study (2:35)**
-This one is a destructive command. Written one way, the gate blocks it.
-Written an equivalent way, it lets it through: the block probability falls
-from [a] to [b].
+This one deletes the test suite, which the policy forbids. With the policy
+in YAML, the gate blocks it. With the same policy as JSON, it lets it
+through: the block probability falls from 0.83 to 0.30.
 
 **7 · CI mode (2:55)**
 A team that ships a gate can fail its build on this. The check fails only
