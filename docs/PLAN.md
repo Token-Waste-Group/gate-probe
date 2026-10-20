@@ -233,7 +233,7 @@ first takes the skeleton and the decision packets):
 - done-when: `probes/labels.jsonl` committed with 60 labels and labeler ids; recorded in STATUS.md.
 
 ### C8 — Paraphrase class (P): open-model rewrites, labeled as such [GPU: H100 or RTX]
-- status: claimed
+- status: done
 - owner: jrzkaminski@Jerzy-Pro.local
 - claimed_at: 2026-10-19T21:10:34Z
 - deps: C2 C3 G1
