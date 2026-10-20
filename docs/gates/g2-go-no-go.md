@@ -129,3 +129,14 @@ The humans:
 - write the outcome as a STATUS.md row;
 - mark `cut` whatever leaves scope (e.g. `python3 scripts/mark.py I7 cut "G2: …"`);
 - run `python3 scripts/mark.py G2 done`.
+
+## 9. Decision (human, Tue 20 Oct 2026)
+
+The humans took the loop's recommendation (§ 7), ahead of the Wed 21 18:00 due time.
+- **Full scope:** Jev 1.14, GPT-6 Luna Decisions, pplx-decider v1.2, drex v1.5, the Claude Opus 5.5 judge and the rule gate.
+- **The Gemma 4 judge (X2)** stays in scope only if the H100 frees early enough for X2 to finish before Thu 22 12:00. Otherwise it goes to the paper's future work, with its config and prompt shipped (G3, decision 4).
+- **Stretch steps:**
+  - I7 (OpenCode plugin) is cut.
+  - X6 (sandbox validation of the P pairs) stays at the lowest priority. It is out if it hasn't landed by Thu 22 12:00.
+  - PolicyForge stays out.
+- **No pivot.**
