@@ -439,7 +439,7 @@ first takes the skeleton and the decision packets):
 - done-when: `video/storyboard.md` plans 3–5 minutes that show the tool running (CLI run, report, CI mode, the live hook segment), not slides; `video/voiceover.md` and `video/captions.srt` timed to the script; a pre-recording checklist (no keys or `.env` on screen, clean terminal history, the hook against the cached gate); the case-study shots use X5 once it lands.
 
 ### I5 — Replay bundle, hosted report page, clean-machine check
-- status: claimed
+- status: in_review (#44)
 - owner: jrzkaminski@Jerzy-Pro.local
 - claimed_at: 2026-10-20T08:54:49Z
 - deps: I1 I4 G3
