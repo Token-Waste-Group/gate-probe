@@ -88,7 +88,7 @@ Keys are read from `.env`: `OPENROUTER_API_KEY` for the Decisions API gates and
 `ANTHROPIC_API_KEY` for the Claude judge. Every run has a dollar cap
 (`configs/run.yaml`) and logs its spend to `results/spend.csv`. A new gate is
 an entry in `configs/gates.yaml`. The adapters are `decisions`, `judge`
-(OpenAI-compatible or Anthropic), `rules` and `http`.
+(OpenAI-compatible or Anthropic) and `rules`.
 
 `gateprobe ci` fails when a relation's flip rate above the floor is
 significantly positive and exceeds `--max-flip`. `action.yml` wraps it as a
