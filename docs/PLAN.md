@@ -455,9 +455,9 @@ first takes the skeleton and the decision packets):
 - done-when: a Space app under `integrations/hf-space/` (small, self-contained, no API key) loads the frozen replay bundle and lets a visitor pick a gate, a relation class and a transform, browse the flip table with intervals, and open any flip with its parent and variant side by side; it runs locally with one command and in a fresh container, has tests for its data loading, and never calls a live gate; publishing the Space is part of H5 (human), never this step.
 
 ### I6 — Public release branch (reproduction-only, identity-clean)
-- status: todo
-- owner: —
-- claimed_at: —
+- status: claimed
+- owner: jrzkaminski@Jerzy-Pro.local
+- claimed_at: 2026-10-20T09:21:17Z
 - deps: I5
 - source: gateprobe_plan.md § Submission checklist (public repo); latent-underspecification-research A4.6 precedent
 - done-when: an orphan `release` branch (or an export for a separate public repo — the humans choose at H5) holds code, configs, probes, policies, variants, results, tests, the Dockerfile, the action and a reviewer README, without the agent pipeline (`.claude/`, `docs/PLAN.md`, `docs/AUTONOMY.md`, `memory/`, `STATUS.md`, `gateprobe_plan.md`); a scan finds no `.env`, keys, internal hostnames (d.dgx, a.dgx, b.dgx, gpubox, NSSLabPC), storage paths, private IPs, or mention of the unpublished authority or supersession work (the policy provenance note in `policies/README.md` included — the humans decide what it says publicly); nothing is pushed public by this step.
