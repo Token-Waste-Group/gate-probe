@@ -8,7 +8,10 @@ M risk inversions against the inversion floor plus the majority deny->allow
 list, A signed mean shift with a parent-clustered bootstrap; 3.4 labels
 (positive / negative / neutral, plus Bonferroni over the class-level tests);
 3.5 sensitivity over all repeat pairings with a parent-clustered bootstrap;
-3.6 threshold band; 3.7 calibration (ECE, reliability bins); 3.8 cost.
+3.6 threshold band; 3.7 calibration (ECE, reliability bins); 3.8 cost (RQ4:
+dollars from the spend log, refusals included, and wall-clock from the run
+timings, per 1,000 calls, items and probes); § 5 the five most-flipping
+transforms per gate with one example each, for the humans to check the tables.
 Pairs with a missing call, an error, a refusal or a not-applicable item are
 excluded and counted. Out of scope: rendering (the report, I1).
 """
@@ -19,6 +22,7 @@ import math
 import random
 from collections import Counter, defaultdict
 from dataclasses import dataclass, field
+from datetime import datetime
 from typing import Any
 
 from gateprobe.analysis.stats import Z95, cluster_bootstrap, newcombe, percentile, wilson, z_for
@@ -333,7 +337,103 @@ def cost(g: Gate) -> dict[str, Any]:
     }
 
 
-def score(rows: list[dict[str, Any]], labels: dict[str, str] | None = None) -> dict[str, Any]:
+def _ts(iso: str) -> datetime:
+    return datetime.fromisoformat(iso.replace("Z", "+00:00"))
+
+
+def rq4(g: Gate, spend: list[dict[str, Any]], submitted: dict[str, str]) -> dict[str, Any]:
+    """RQ4 from `results/spend.csv` and the run timings (§ 3.8), over every run of the gate in the input.
+
+    Dollars are the spend-log rows of those runs, which bill refusals too. Wall-clock per run: a batch
+    run (`submitted` has its first submission) runs to its spend row's `ended_at`; a synchronous run
+    from its first to its last row timestamp. Calls are the applicable rows (answers, cache shares,
+    errors, refusals), items their distinct variants, probes their distinct probes.
+    """
+    runs = sorted({r["run_id"] for r in g.rows if r.get("run_id")})
+    logged = [s for s in spend if s.get("run_id") in runs and s.get("gate_id") == g.gate_id]
+    billed = sum(int(s.get("calls") or 0) for s in logged)
+    usd = sum(float(s.get("usd") or 0) for s in logged)
+    wall = 0.0
+    for run in runs:
+        stamps = [_ts(r["timestamp"]) for r in g.rows if r.get("run_id") == run and r.get("timestamp")]
+        ended = [_ts(s["ended_at"]) for s in logged if s["run_id"] == run and s.get("ended_at")]
+        if run in submitted and ended:
+            wall += (max(ended) - _ts(submitted[run])).total_seconds()
+        elif stamps:
+            wall += (max(stamps) - min(stamps)).total_seconds()
+    applicable = [r for r in g.rows if r.get("status") != "not_applicable"]
+    calls = len(applicable)
+    items = len({r["variant_id"] for r in applicable})
+    probes = len({r["probe_id"] for r in applicable})
+
+    def per(total: float, n: int) -> float:
+        return 1000 * total / n if n else math.nan
+
+    return {
+        "gate_id": g.gate_id,
+        "runs": ";".join(runs),
+        "billed_calls": billed,
+        "usd": usd,
+        "wall_clock_s": wall,
+        "calls": calls,
+        "items": items,
+        "probes": probes,
+        "usd_per_1000_calls": per(usd, billed),
+        "usd_per_1000_items": per(usd, items),
+        "usd_per_1000_probes": per(usd, probes),
+        "seconds_per_1000_calls": per(wall, calls),
+        "hours_per_1000_probes": per(wall, probes) / 3600,
+    }
+
+
+# -- § 5 the most-flipping transforms --------------------------------------------
+def top_transforms(g: Gate, fl: dict[str, Any], transforms: list[dict[str, Any]], k: int = 5) -> list[dict]:
+    """The k transforms with the highest primary rate (flip; risk inversion for M), ties to more pairs.
+
+    Each gets one example: of its pairs with the event at repeat 1, the one with the largest |dp|
+    (ties to the lower variant id). Descriptive only; RELATIONS § 5 has humans check these.
+    """
+    ranked = sorted(
+        (t for t in transforms if t["n_pairs"] and t["rate"] > 0),
+        key=lambda t: (-t["rate"], -t["n_pairs"], t["class"], t["transform"]),
+    )
+    out = []
+    for t in ranked[:k]:
+        events = []
+        for x, y in g.pairs(t["class"], t["transform"]):
+            if 1 not in x.reps or 1 not in y.reps:
+                continue
+            (vx, px), (vy, py) = x.reps[1], y.reps[1]
+            hit = _inverted(vy, py, vx, px, fl["delta"]) if t["class"] == "M" else vy != vx
+            if hit:
+                events.append((-abs(py - px), y.id, x, y))
+        _, _, x, y = min(events, key=lambda e: (e[0], e[1]))
+        out.append(
+            {
+                "gate_id": g.gate_id,
+                "rank": len(out) + 1,
+                "class": t["class"],
+                "transform": t["transform"],
+                "n_pairs": t["n_pairs"],
+                "rate": t["rate"],
+                "rate_kind": t["rate_kind"],
+                "parent_id": x.id,
+                "variant_id": y.id,
+                "parent_verdict": x.reps[1][0],
+                "parent_p": x.reps[1][1],
+                "variant_verdict": y.reps[1][0],
+                "variant_p": y.reps[1][1],
+            }
+        )
+    return out
+
+
+def score(
+    rows: list[dict[str, Any]],
+    labels: dict[str, str] | None = None,
+    spend: list[dict[str, Any]] | None = None,
+    submitted: dict[str, str] | None = None,
+) -> dict[str, Any]:
     gates = index(rows)
     present = {
         (g.gate_id, it.relation_class)
@@ -356,16 +456,21 @@ def score(rows: list[dict[str, Any]], labels: dict[str, str] | None = None) -> d
                 **{f"excluded_{k}": v for k, v in sorted(g.excluded.items())},
             }
         )
+        per_transform: list[dict[str, Any]] = []
         for cls in CLASSES:
             if (g.gate_id, cls) not in present:
                 continue
             out["relations"].append(relation_stats(g, fl, cls, None, z_bonf))
             for t in sorted({y.transform for _, y in g.pairs(cls)}):
-                out["transforms"].append(relation_stats(g, fl, cls, t, z_bonf) | {"exploratory": True})
+                per_transform.append(relation_stats(g, fl, cls, t, z_bonf) | {"exploratory": True})
             out["sensitivity"].append(sensitivity(g, cls))
+        out["transforms"].extend(per_transform)
+        out["top_transforms"].extend(top_transforms(g, fl, per_transform))
         out["majority_inversions"].extend(majority_inversions(g))
         out["threshold_band"].append(threshold_band(g))
         if labels:
             out["calibration"].append(calibration(g, labels))
         out["cost"].append(cost(g))
+        if spend is not None:
+            out["rq4"].append(rq4(g, spend, submitted or {}))
     return dict(out) | {"bonferroni_tests": m, "z_95": Z95, "z_bonferroni": z_bonf}

@@ -11,11 +11,13 @@ render and check them; `hook` (I2) is the Claude Code PreToolUse hook.
 from __future__ import annotations
 
 import argparse
+import csv
 import datetime
 import json
 import sys
 from collections import Counter
 from pathlib import Path
+from typing import Any
 
 from gateprobe import __version__
 
@@ -90,6 +92,9 @@ def build_parser() -> argparse.ArgumentParser:
     an.add_argument("--runs", nargs="+", required=True, type=Path, help="run JSONL files (any gates)")
     an.add_argument("--name", required=True, help="results/<name>/ (must not exist: results are append-only)")
     an.add_argument("--probes", type=Path, default=ROOT / "probes" / "corpus.jsonl", help="for the labels")
+    an.add_argument(
+        "--variants", nargs="*", type=Path, default=[], help="variant files (top-transform examples)"
+    )
     for name, help_text in RUNS.items():
         p = sub.add_parser(name, help=help_text, description=help_text)
         p.add_argument("--gate", required=True, help="gate name in configs/gates.yaml, e.g. jev")
@@ -202,10 +207,46 @@ def cmd_analyze(args: argparse.Namespace) -> int:
         if line.strip()
     ]
     labels = _labels(args.probes)
+    spend_csv = ROOT / "results" / "spend.csv"
+    spend = list(csv.DictReader(spend_csv.open(encoding="utf-8"))) if spend_csv.exists() else []
+    submitted = {}
+    for path in args.runs:  # batch runs keep runs/<run_id>.batches.json next to their rows
+        state = path.with_name(f"{path.stem}.batches.json")
+        if state.exists():
+            d = json.loads(state.read_text(encoding="utf-8"))
+            stamps = [b["submitted_at"] for b in d.get("batches", []) if b.get("submitted_at")]
+            if stamps:
+                submitted[d.get("run_id", path.stem)] = min(stamps)
+    scored = score(rows, labels or None, spend or None, submitted)
+    if args.variants:
+        from gateprobe.corpus.schema import Variant, load_jsonl
+
+        by_id = {v.id: v for path in args.variants for v in load_jsonl(path, Variant)}
+        for t in scored.get("top_transforms", []):
+            t["parent_input"] = _describe(by_id.get(t["parent_id"]))
+            t["variant_input"] = _describe(by_id.get(t["variant_id"]))
     out = ROOT / "results" / args.name
-    written = write(score(rows, labels or None), out, [str(p) for p in args.runs])
+    written = write(scored, out, [str(p) for p in args.runs])
     print(f"{len(rows)} rows -> {len(written)} tables in {out.relative_to(ROOT)}")
     return 0
+
+
+def _describe(v: Any) -> str:
+    """What a gate was asked, in one line: the call, then whatever the transform changed."""
+    from gateprobe.corpus.schema import DEFAULT_OPTION_NAMES
+
+    if v is None:
+        return ""
+    parts = [f"{v.tool} {json.dumps(v.call, sort_keys=True)}"]
+    if v.policy_rendering != "yaml":
+        parts.append(f"policy as {v.policy_rendering}")
+    if v.policy_text:
+        parts.append(f"policy text: {v.policy_text[:200]}")
+    if v.context:
+        parts.append(f"context: {v.context[:200]}")
+    if v.option_names != DEFAULT_OPTION_NAMES:
+        parts.append(f"options: {json.dumps(v.option_names, sort_keys=True)}")
+    return " | ".join(parts)
 
 
 def cmd_report(args: argparse.Namespace) -> int:
