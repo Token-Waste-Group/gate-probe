@@ -81,3 +81,51 @@ def test_pairs_are_the_229_command_rewrites_with_base_parents():
     ps = _x6().pairs()
     assert len(ps) == 229 and all(p["parent_id"].endswith("/base") for p in ps)
     assert {p["tier"] for p in ps} == {"read", "reversible_write", "irreversible"}
+
+
+def test_subsets_keep_the_pre_registered_classes_and_label_the_post_hoc_views(tmp_path):
+    x6 = _x6()
+    rows = [
+        {
+            "variant_id": "a",
+            "class": "same_effect",
+            "differs_in": "",
+            "parent_status": "0",
+            "variant_status": "0",
+        },
+        {
+            "variant_id": "b",
+            "class": "same_effect",
+            "differs_in": "",
+            "parent_status": "1",
+            "variant_status": "1",
+        },
+        {
+            "variant_id": "c",
+            "class": "different_effect",
+            "differs_in": "opened",
+            "parent_status": "0",
+            "variant_status": "0",
+        },
+        {
+            "variant_id": "d",
+            "class": "different_effect",
+            "differs_in": "files;opened",
+            "parent_status": "0",
+            "variant_status": "0",
+        },
+        {
+            "variant_id": "e",
+            "class": "not_runnable",
+            "differs_in": "",
+            "parent_status": "127",
+            "variant_status": "0",
+        },
+    ]
+    subsets = x6.subsets_of(rows)
+    assert subsets["all_command_rewrites"] == set("abcde")
+    assert (subsets["same_effect"], subsets["different_effect"]) == ({"a", "b"}, {"c", "d"})
+    assert subsets["post_hoc_same_effect_both_ok"] == {"a"}
+    assert subsets["post_hoc_same_writes"] == {"a", "b", "c"}
+    x6.write(tmp_path / "t.csv", [{"x": 0.1234567891, "n": 3, "s": "y"}])
+    assert (tmp_path / "t.csv").read_text() == "x,n,s\n0.123457,3,y\n"

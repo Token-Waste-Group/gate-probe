@@ -126,9 +126,10 @@ def classify(pair: dict[str, str], a: dict[str, Any], b: dict[str, Any]) -> tupl
 
 
 def p_rates(subsets: dict[str, set[str]], root: Path = ROOT) -> list[dict[str, Any]]:
-    """Re-score the frozen runs with the pre-registered scorer on base rows plus one subset of P rows."""
+    """The pre-registered P statistics on each subset of command rewrites. Each gate's floor (f, delta)
+    comes from all its frozen rows, exactly as in results/x4-final; only the P pairs are restricted."""
     sys.path.insert(0, str(root / "src"))
-    from gateprobe.analysis.score import score
+    from gateprobe.analysis.score import floor, index, relation_stats
 
     rows = [
         json.loads(line)
@@ -136,24 +137,52 @@ def p_rates(subsets: dict[str, set[str]], root: Path = ROOT) -> list[dict[str, A
         for line in (root / "runs" / f"{run_id}.jsonl").read_text(encoding="utf-8").splitlines()
         if line.strip()
     ]
+    meta = next(csv.DictReader((root / "results" / "x4-final" / "meta.csv").open(encoding="utf-8")))
+    z_bonf = float(meta["z_bonferroni"])
+    floors = {gid: floor(g) for gid, g in index(rows).items()}
     base = [r for r in rows if r["relation_class"] == "base"]
     out = []
     for subset, ids in subsets.items():
-        scored = score(base + [r for r in rows if r["variant_id"] in ids])
-        for r in scored["relations"]:
-            if r["class"] == "P":
-                out.append({"subset": subset, **{k: r.get(k) for k in P_FIELDS}})
+        for gid, g in sorted(index(base + [r for r in rows if r["variant_id"] in ids]).items()):
+            r = relation_stats(g, floors[gid], "P", None, z_bonf)
+            out.append({"subset": subset, **{k: r.get(k) for k in P_FIELDS}})
     return out
 
 
-P_FIELDS = ("gate_id", "n_pairs", "rate", "rate_lo", "rate_hi", "excess", "excess_lo", "excess_hi", "label")
+P_FIELDS = ("gate_id", "n_pairs", "floor_f", "rate", "rate_lo", "rate_hi")
+P_FIELDS += ("excess", "excess_lo", "excess_hi", "label")
+
+
+def subsets_of(rows: list[dict[str, Any]]) -> dict[str, set[str]]:
+    """The pre-registered subsets, plus two post hoc views: the survivors where both commands
+    succeeded (no "both failed, nothing changed"), and the pairs that differ in nothing but the files
+    they opened (same writes, same state, same exit class)."""
+    return {
+        "all_command_rewrites": {r["variant_id"] for r in rows},
+        "same_effect": {r["variant_id"] for r in rows if r["class"] == "same_effect"},
+        "different_effect": {r["variant_id"] for r in rows if r["class"] == "different_effect"},
+        "post_hoc_same_effect_both_ok": {
+            r["variant_id"]
+            for r in rows
+            if r["class"] == "same_effect"
+            and str(r["parent_status"]) == "0"
+            and str(r["variant_status"]) == "0"
+        },
+        "post_hoc_same_writes": {
+            r["variant_id"]
+            for r in rows
+            if r["class"] == "same_effect"
+            or (r["class"] == "different_effect" and r["differs_in"] == "opened")
+        },
+    }
 
 
 def write(path: Path, rows: list[dict[str, Any]]) -> None:
+    """CSV with floats at 6 decimals, like every other table in results/."""
     with path.open("w", encoding="utf-8", newline="") as f:
         w = csv.DictWriter(f, fieldnames=list(rows[0]), lineterminator="\n")
         w.writeheader()
-        w.writerows(rows)
+        w.writerows({k: f"{v:.6f}" if isinstance(v, float) else v for k, v in r.items()} for r in rows)
 
 
 def main() -> int:
@@ -164,8 +193,15 @@ def main() -> int:
     parser.add_argument(
         "--docker", default="docker", help="the docker command, e.g. 'docker --context colima'"
     )
+    parser.add_argument("--rescore", action="store_true", help="only recompute p_rates.csv from pairs.csv")
     args = parser.parse_args()
     out = ROOT / "results" / args.name
+    if args.rescore:
+        with (out / "pairs.csv").open(encoding="utf-8") as f:
+            rows = list(csv.DictReader(f))
+        write(out / "p_rates.csv", p_rates(subsets_of(rows)))
+        print(f"-> {(out / 'p_rates.csv').relative_to(ROOT)}")
+        return 0
     if out.exists():
         raise SystemExit(f"{out} exists; results are append-only")
     docker = tuple(args.docker.split())
@@ -206,12 +242,7 @@ def main() -> int:
     out.mkdir(parents=True)
     write(out / "pairs.csv", rows)
     write(out / "self_check.csv", checks)
-    subsets = {
-        "all_command_rewrites": {r["variant_id"] for r in rows},
-        "same_effect": {r["variant_id"] for r in rows if r["class"] == "same_effect"},
-        "different_effect": {r["variant_id"] for r in rows if r["class"] == "different_effect"},
-    }
-    write(out / "p_rates.csv", p_rates(subsets))
+    write(out / "p_rates.csv", p_rates(subsets_of(rows)))
     write(
         out / "meta.csv",
         [{"image_id": image_id, "pairs": len(rows), "runs": len(jobs), "frozen_runs": ";".join(FROZEN)}],
