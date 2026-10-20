@@ -9,6 +9,8 @@ from __future__ import annotations
 import importlib.util
 from pathlib import Path
 
+import pytest
+
 ROOT = Path(__file__).resolve().parents[1]
 
 
@@ -129,3 +131,10 @@ def test_subsets_keep_the_pre_registered_classes_and_label_the_post_hoc_views(tm
     assert subsets["post_hoc_same_writes"] == {"a", "b", "c"}
     x6.write(tmp_path / "t.csv", [{"x": 0.1234567891, "n": 3, "s": "y"}])
     assert (tmp_path / "t.csv").read_text() == "x,n,s\n0.123457,3,y\n"
+
+
+def test_rescore_into_an_existing_directory_is_refused(monkeypatch):
+    x6 = _x6()
+    monkeypatch.setattr("sys.argv", ["x6", "--name", "x6-p-sandbox", "--rescore", "--out", "x6-p-sandbox"])
+    with pytest.raises(SystemExit, match="append-only"):
+        x6.main()
