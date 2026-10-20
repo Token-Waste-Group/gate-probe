@@ -44,11 +44,11 @@ Claude (Fig.~\ref{fig:case}). The rule set has the opposite weakness. It never r
 the policy text, but it flips on call spelling, for 12.7\% of long-flag
 rewrites. Four model gates never change a verdict between repeats ($f=0$), so
 every flip they show is the transform's doing. P is violated on all seven
-gates, but it is the weaker class. Run in a sandbox with no network, 90 of 229 command
-rewrites have the same effect as the original call, and 74 do not. On the 90,
-Luna, drex and the rule set still flip above their floors, while Jev, Claude
-and pplx do not. Drex, for one, denies \texttt{git push origin --delete
-feature/old} (0.99) but allows \texttt{git push origin :feature/old} (0.12), a
+gates, but it is the weaker class. Run in a sandbox with no network, 90 of 229
+command rewrites have the same effect as the original call, and 74 do not. On
+the 90, Luna, drex, the rule set and, on one pair, Gemma still flip above their
+floors, while Jev, Claude and pplx do not. Drex, for one, denies
+\texttt{git push origin --delete feature/old} (0.99) but allows \texttt{git push origin :feature/old} (0.12), a
 remote branch deletion that release-manager forbids.
 
 \paragraph{RQ2 Monotonicity} Verdict-level risk inversions are rare, at most
