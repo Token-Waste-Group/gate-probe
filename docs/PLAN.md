@@ -343,7 +343,7 @@ first takes the skeleton and the decision packets):
 - done-when: the `Dockerfile` builds locally; `docker run … gateprobe replay` reproduces a fixture run's report with no API key and no network; image size and the build command in the README; publishing the image is H5, not this step.
 
 ### G2 — Decision point 2: go/no-go on scope (Wed 21, 18:00) [GATE]
-- status: blocked
+- status: done
 - note: awaiting human decision — docs/gates/g2-go-no-go.md
 - owner: jrzkaminski@Jerzy-Pro.local
 - claimed_at: 2026-10-20T01:02:41Z
