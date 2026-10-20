@@ -158,6 +158,11 @@ def test_case_box_rows(box_inputs):
     assert "\n\\texttt{git push origin :old} & 0.12 ($\\times$3) & allow \\\\\n" in text
 
 
+def test_a_single_case_is_not_numbered(box_inputs):
+    text = _mod().case_box(["drex:a/policy_format/0"], *box_inputs)
+    assert "\\textit{drex v1.5, release-manager}" in text and "(1)" not in text
+
+
 def test_case_box_errors(box_inputs):
     pt = _mod()
     x5, variants = box_inputs
