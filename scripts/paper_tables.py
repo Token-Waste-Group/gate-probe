@@ -175,7 +175,8 @@ def reliability_figure(cal: Path, gates: tuple[str, ...] = RELIABILITY_GATES) ->
         "\\begin{tikzpicture}",
         "\\begin{axis}[width=\\columnwidth, height=0.55\\columnwidth, xmin=0, xmax=1, ymin=0, ymax=1,",
         "  xlabel={stated $p_\\mathrm{block}$, bin mean}, ylabel={share labeled deny},",
-        "  legend cell align=left, legend style={font=\\footnotesize, draw=none, at={(0.5,1.03)}, anchor=south},",
+        "  legend cell align=left,",
+        "  legend style={font=\\footnotesize, draw=none, at={(0.5,1.03)}, anchor=south},",
         "  tick label style={font=\\footnotesize}, label style={font=\\footnotesize}]",
         "\\addplot[gray, dashed, domain=0:1, forget plot] {x};",  # perfect calibration; the caption says so
     ]
