@@ -83,14 +83,14 @@ supplies `cache/`. Publishing the image is a human step (H5).
 ## Reviewer path: replay the frozen results (no key, no network)
 
 The replay bundle holds the cache entries behind every number in the paper:
-94,589 entries for the 12 frozen runs, 115,020 rows over six gates. It also
+113,654 entries for 14 runs, 134,190 rows over seven gates. It also
 holds the run files and a sha256 manifest. Nothing needs building: pull the
 image and fetch the bundle. Publishing both is H5; until then, `docker build`
 the image as above.
 
 ```bash
 IMAGE=gateprobe                                   # the published image once H5 is done
-tar xzf gateprobe-replay-19fd14a.tar.gz && cd gateprobe-replay-19fd14a
+tar xzf gateprobe-replay-ee08ca1.tar.gz && cd gateprobe-replay-ee08ca1
 shasum -a 256 -c MANIFEST.sha256 --quiet          # (sha256sum on Linux) every file intact
 # replay a gate from the cache: seconds; --allow-misses records the one call drex's frozen
 # run never got an answer for (an HTTP 520) as replay_miss instead of stopping

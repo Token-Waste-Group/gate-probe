@@ -2,7 +2,7 @@
 
 Scope of v0: build_data.py on a small bundle and repo (flips only where verdicts differ on
 answered repeats, their direction, the inputs the gate saw, the policy texts, the tables); the
-committed data.json agrees with the committed results/x4-final tables and covers every flip's
+committed data.json agrees with the committed results/x2-seven-gates tables and covers every flip's
 inputs; the page fetches nothing but data.json; the page's pure helpers, under node when it is
 installed.
 """
@@ -88,8 +88,8 @@ def repo(tmp_path):
     nums = {k: "0.01" for k in ("rate", "rate_lo", "rate_hi", "excess", "excess_lo", "excess_hi")}
     rel = {"gate_id": "jev", "class": "E", "transform": "*", "n_pairs": "1", **nums}
     rel |= {"label": "positive", "positive_bonferroni": "True", "rate_kind": "flip"}
-    _csv(tmp_path / "results" / "x4-final" / "relations.csv", [rel])
-    _csv(tmp_path / "results" / "x4-final" / "transforms.csv", [{**rel, "transform": "policy_format"}])
+    _csv(tmp_path / "results" / _bd().RESULTS / "relations.csv", [rel])
+    _csv(tmp_path / "results" / _bd().RESULTS / "transforms.csv", [{**rel, "transform": "policy_format"}])
     floor = {
         "gate_id": "jev",
         "n_items": "5",
@@ -98,7 +98,7 @@ def repo(tmp_path):
         "f_hi": "0.0057",
         "delta": "0.04",
     }
-    _csv(tmp_path / "results" / "x4-final" / "floor.csv", [floor])
+    _csv(tmp_path / "results" / _bd().RESULTS / "floor.csv", [floor])
     rows = [_row("a/base", "base", "identity", k, "deny") for k in (1, 2, 3)]
     rows += [
         _row("a/policy_format/0", "E", "policy_format", k, v)
@@ -168,10 +168,10 @@ def test_build_data_keeps_context_and_options_and_needs_every_input(repo):
 def test_committed_data_matches_the_frozen_tables():
     bd = _bd()
     data = json.loads((SPACE / "data.json").read_text(encoding="utf-8"))
-    assert data["meta"]["results_frozen_at"] == "19fd14a" and data["meta"]["rows"] == 115020
-    results = ROOT / "results" / "x4-final"
+    assert data["meta"]["results_frozen_at"] == "19fd14a" and data["meta"]["rows"] == 134190
+    results = ROOT / "results" / bd.RESULTS
     rel = {(r["gate_id"], r["class"]): r for r in csv.DictReader((results / "relations.csv").open())}
-    assert len(data["classes"]) == len(rel) == 30
+    assert len(data["classes"]) == len(rel) == 35
     for c in data["classes"]:
         r = rel[(c["gate_id"], c["class"])]
         assert (c["excess"], c["label"]) == (bd._num(r["excess"]), r["label"])

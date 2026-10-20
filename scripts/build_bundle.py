@@ -2,14 +2,15 @@
 """Build the replay bundle and the static report page for the frozen runs (I5).
 
 The bundle holds what a reviewer needs to replay every reported gate answer with no API key and
-no network: the cache entries behind the 12 frozen runs, the run JSONL (with the batch logs RQ4
-reads), BUNDLE.json (the frozen inputs' sha256), a README with the reviewer path, and
-MANIFEST.sha256 over every file. The archive is deterministic: the same inputs give the same
+no network: the cache entries behind the 14 runs of the seven-gate evaluation (the twelve frozen
+at G3 plus the Gemma judge's two, X2), the run JSONL (with the batch logs RQ4 reads),
+BUNDLE.json (the frozen inputs' sha256), a README with the reviewer path, and MANIFEST.sha256
+over every file. The archive is deterministic: the same inputs give the same
 bytes. The page is `gateprobe report` over the same runs, ready for GitHub Pages.
 
     uv run python scripts/build_bundle.py [--out dist]
 
-Writes dist/gateprobe-replay-<freeze>.tar.gz (+ .sha256) and dist/site/index.html (+ .nojekyll).
+Writes dist/gateprobe-replay-<results>.tar.gz (+ .sha256) and dist/site/index.html (+ .nojekyll).
 Publishing both is H5.
 """
 
@@ -26,7 +27,8 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 FREEZE = "19fd14a"  # G3 (human, 2026-10-20): results/ frozen at this commit
-FROZEN = (  # the runs behind results/x4-final/, in the order the analysis read them
+RESULTS = "ee08ca1"  # X2 merged; G3 decision 4 added its runs (results/x2-seven-gates/)
+FROZEN = (  # the runs behind results/x2-seven-gates/, in the order the analysis read them
     "x1-jev",
     "x4p-jev",
     "x1-rules",
@@ -39,6 +41,8 @@ FROZEN = (  # the runs behind results/x4-final/, in the order the analysis read 
     "x4p-pplx",
     "x3-drex",
     "x4p-drex",
+    "x2-gemma",
+    "x2p-gemma",
 )
 INPUTS = (
     "probes/corpus.jsonl",
@@ -50,7 +54,8 @@ INPUTS = (
 README = """# GateProbe replay bundle ({name})
 
 The cache entries and run files behind every number in the GateProbe paper
-(results frozen at commit {freeze}). Replay needs no API key and no network.
+(results frozen at commit {freeze}; the Gemma judge's runs added at {results},
+before the cut-off). Replay needs no API key and no network.
 
     shasum -a 256 -c MANIFEST.sha256          # every file intact
     IMAGE=gateprobe                           # or the published image (see the repository README)
@@ -64,7 +69,7 @@ The cache entries and run files behind every number in the GateProbe paper
       $IMAGE report --runs {run_args} \\
       --variants variants/generated.jsonl variants/paraphrase.jsonl --out reports/frozen.html
 
-Gates: jev, rules, judge-claude, gpt-6-luna-decisions, pplx-decider, drex. P variants
+Gates: jev, rules, judge-claude, gpt-6-luna-decisions, pplx-decider, drex, judge-gemma. P variants
 (--variants variants/paraphrase.jsonl) replay the same way. BUNDLE.json lists the
 frozen inputs' sha256; the image ships those inputs.
 """
@@ -103,7 +108,8 @@ def describe(files: dict[str, bytes], name: str, root: Path, runs: tuple[str, ..
         "bundle": name,
         "results_frozen_at": FREEZE,
         "built_from": commit,
-        "results": "results/x4-final",
+        "gemma_runs_added_at": RESULTS,
+        "results": "results/x2-seven-gates",
         "runs": list(runs),
         "rows": sum(files[f"runs/{r}.jsonl"].count(b"\n") for r in runs),
         "cache_entries": sum(1 for p in files if p.startswith("cache/")),
@@ -128,10 +134,11 @@ def archive(files: dict[str, bytes], name: str) -> bytes:
 
 
 def build(out: Path, root: Path = ROOT, runs: tuple[str, ...] = FROZEN, commit: str = "") -> Path:
-    name = f"gateprobe-replay-{FREEZE}"
+    name = f"gateprobe-replay-{RESULTS}"
     files = collect(root, runs)
     run_args = " ".join(f"runs/{r}.jsonl" for r in sorted(runs))  # the order the page uses
-    files["README.md"] = README.format(name=name, freeze=FREEZE, run_args=run_args).encode("utf-8")
+    readme = README.format(name=name, freeze=FREEZE, results=RESULTS, run_args=run_args)
+    files["README.md"] = readme.encode("utf-8")
     files["BUNDLE.json"] = (json.dumps(describe(files, name, root, runs, commit), indent=2) + "\n").encode()
     files["MANIFEST.sha256"] = "".join(f"{_sha256(files[p])}  {p}\n" for p in sorted(files)).encode()
     out.mkdir(parents=True, exist_ok=True)
