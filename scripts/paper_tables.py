@@ -29,8 +29,9 @@ GATES = [
     ("rules", "Rule set"),
 ]
 CLASSES = "EMIAP"
-# G3 decision 6 (human, 2026-10-20): 1E in the paper box; 2' (the video's pair) beside it.
-CASES = ["drex:p0109/policy_format/0", "jev:p0122/inject_preapproved/0"]
+# G3 decision 6 (human, 2026-10-20): 1E in the paper box; 2' (jev:p0122/inject_preapproved/0) is
+# the video's pair, and the text describes it.
+CASES = ["drex:p0109/policy_format/0"]
 RENDERINGS = {"yaml": "YAML", "json": "JSON", "prose": "prose", "bullets": "bullets"}
 
 
@@ -147,7 +148,7 @@ def case_box(cases: list[str], x5: Path, variants: Path) -> str:
         gate, vid = case.split(":", 1)
         e = _event(x5, gate, vid)
         x, y = by_id[e["parent_id"]], by_id[vid]
-        head = f"\\textit{{({n}) {dict(GATES)[gate]}, {x['policy_id']}}}"
+        head = f"\\textit{{{f'({n}) ' if len(cases) > 1 else ''}{dict(GATES)[gate]}, {x['policy_id']}}}"
         if x["call"] == y["call"]:
             head += f": {_call(x)}"
         lines += ["\\midrule", f"\\multicolumn{{3}}{{@{{}}l}}{{{head}}} \\\\"]
