@@ -18,6 +18,10 @@ the survivors, the different-effect pairs.
     uv run python scripts/x6_sandbox.py --image gateprobe-x6 --name x6-p-sandbox [--workers 2]
 
 Writes results/<name>/{pairs,self_check,p_rates,meta}.csv (append-only: the directory must not exist).
+`--rescore --runs <ids> --out <dir>` re-scores other runs on the same pairs into a new directory:
+
+    uv run python scripts/x6_sandbox.py --name x6-p-sandbox --rescore --runs x2-gemma x2p-gemma \
+        --out x6-p-sandbox-gemma
 """
 
 from __future__ import annotations
@@ -125,15 +129,17 @@ def classify(pair: dict[str, str], a: dict[str, Any], b: dict[str, Any]) -> tupl
     return ("different_effect" if diff else "same_effect"), diff
 
 
-def p_rates(subsets: dict[str, set[str]], root: Path = ROOT) -> list[dict[str, Any]]:
+def p_rates(
+    subsets: dict[str, set[str]], root: Path = ROOT, runs: tuple[str, ...] = FROZEN
+) -> list[dict[str, Any]]:
     """The pre-registered P statistics on each subset of command rewrites. Each gate's floor (f, delta)
-    comes from all its frozen rows, exactly as in results/x4-final; only the P pairs are restricted."""
+    comes from all its rows in `runs`, exactly as in results/x4-final; only the P pairs are restricted."""
     sys.path.insert(0, str(root / "src"))
     from gateprobe.analysis.score import floor, index, relation_stats
 
     rows = [
         json.loads(line)
-        for run_id in FROZEN
+        for run_id in runs
         for line in (root / "runs" / f"{run_id}.jsonl").read_text(encoding="utf-8").splitlines()
         if line.strip()
     ]
@@ -194,13 +200,20 @@ def main() -> int:
         "--docker", default="docker", help="the docker command, e.g. 'docker --context colima'"
     )
     parser.add_argument("--rescore", action="store_true", help="only recompute p_rates.csv from pairs.csv")
+    parser.add_argument("--runs", nargs="+", default=list(FROZEN), help="run ids under runs/ to re-score")
+    parser.add_argument("--out", help="with --rescore: write to results/<out>/ (must not exist)")
     args = parser.parse_args()
     out = ROOT / "results" / args.name
     if args.rescore:
         with (out / "pairs.csv").open(encoding="utf-8") as f:
             rows = list(csv.DictReader(f))
-        write(out / "p_rates.csv", p_rates(subsets_of(rows)))
-        print(f"-> {(out / 'p_rates.csv').relative_to(ROOT)}")
+        dest = ROOT / "results" / args.out if args.out else out
+        if args.out:
+            if dest.exists():
+                raise SystemExit(f"{dest} exists; results are append-only")
+            dest.mkdir(parents=True)
+        write(dest / "p_rates.csv", p_rates(subsets_of(rows), runs=tuple(args.runs)))
+        print(f"-> {(dest / 'p_rates.csv').relative_to(ROOT)}")
         return 0
     if out.exists():
         raise SystemExit(f"{out} exists; results are append-only")
