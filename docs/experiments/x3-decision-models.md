@@ -71,7 +71,7 @@ in this run (C8, X4).
   | drex | 15,689 | $0.33 | $0.38 | $0.021 |
 
   As on Jev, 93 rows per gate are in-run shares: 31 M variants × 3 repeats whose request is byte-identical to another item's. OpenRouter spend so far is $2.09 of the $20 budget.
-- **Floor:** zero on all three gates. Repeats are real, billed calls: 15,690 = 5,230 distinct requests × 3, because the cache key includes the repeat index. The APIs return the same verdict and, to the reported precision, the same p.
+- **Floor:** zero on all three gates. Repeats are real, billed calls: 15,690 = 5,230 distinct requests × 3, because the cache key includes the repeat index. The APIs return the same verdict and, to the reported precision, the same p. From outside we can't tell whether that is the model's determinism or provider-side caching of identical requests. Caching is the first known threat in `docs/RELATIONS.md` § 5, which says it lowers the floor and inflates Δ; so the raw flip rates F are shown next to F − f below. Here they are equal.
 
   | gate | items | f (repeat 1 vs 2) | δ | mean retest \|Δp\| | distinct p values |
   |---|---:|---|---:|---:|---:|
@@ -181,7 +181,7 @@ Per the pre-registered labels, **all 12 class tests are violations** and every o
   - On every model gate, the largest E transform is re-rendering the same policy.
 
   This is the RQ1 headline.
-- **The decision models are deterministic, and that sharpens the method.**
+- **The decision models answer repeats identically, and that sharpens the method.** Whether this is the model's determinism or provider-side caching (the § 5 threat) can't be told from outside. Either way, a rerun returns the same answer, which is what a user of the gate sees.
   - With a floor of exactly 0, F − f is the raw flip rate, with no noise to subtract.
   - The pre-registered δ-based secondaries (S, and the p-part of M) then count any movement in p.
   - The paper should report the M labels as registered, next to the verdict-level count (0 / 1 / 1) and say why the two differ. It must not re-label.
