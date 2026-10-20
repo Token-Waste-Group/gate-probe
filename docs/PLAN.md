@@ -379,9 +379,9 @@ first takes the skeleton and the decision packets):
 - done-when: `docs/experiments/x4-final-results.md` pushed as `planned` first; the P variants run on every in-scope gate; any gate whose floor exceeded 10% is rerun with 5 repeats; RQ4 gives dollars and wall-clock per 1,000 probes per gate from the logged spend and timings; consolidated CSVs in `results/` and the report give RQ1–RQ4 per gate with every number's repeat count and 95% interval; ready for the 12:00 freeze.
 
 ### G3 — Decision point 3: results frozen (Thu 22, 12:00) [GATE]
-- status: todo
-- owner: —
-- claimed_at: —
+- status: claimed
+- owner: jrzkaminski@Jerzy-Pro.local
+- claimed_at: 2026-10-20T02:59:33Z
 - deps: X4
 - source: gateprobe_plan.md § Risks and decision points (3)
 - done-when: the loop writes `docs/gates/g3-results-freeze.md` — every number the paper and the video will use, with the commit hash that freezes `results/` — then `mark.py G3 blocked "awaiting human decision"`. The humans confirm in STATUS.md and run `mark.py G3 done`. From then on `results/` gets no new rows and only W-lane steps (plus packaging fixes that change no number) land.
