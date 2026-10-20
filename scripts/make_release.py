@@ -76,7 +76,6 @@ EXCLUDE = (  # tests of what stays behind
 )
 REDACTIONS = {
     "configs/gates.yaml": [
-        ("# R5 sets http://d.dgx:<port>/v1", "# R5 sets the judge server's /v1 URL"),
         ("(CLAUDE.md invariant 6: every model id is pinned", "(every model id is pinned"),
     ],
     "policies/README.md": [
