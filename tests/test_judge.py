@@ -51,14 +51,14 @@ class Endpoint:
 
 
 def gate(endpoint, **kw) -> JudgeGate:
-    return JudgeGate("judge-gemma", MODEL, "http://d.dgx:8000/v1", transport=endpoint, **kw)
+    return JudgeGate("judge-gemma", MODEL, "http://judge-host:8000/v1", transport=endpoint, **kw)
 
 
 def test_request_body_and_the_frozen_prompt():
     ep = Endpoint(completion("yes", {"yes": 0.9, "no": 0.1}))
     gate(ep).decide(REQ)
     url, headers, body = ep.sent[0]
-    assert url == "http://d.dgx:8000/v1/chat/completions" and "Authorization" not in headers
+    assert url == "http://judge-host:8000/v1/chat/completions" and "Authorization" not in headers
     assert (body["temperature"], body["logprobs"], body["top_logprobs"]) == (0, True, 20)
     prompt = body["messages"][0]["content"]
     assert body["messages"][0]["role"] == "user" and len(body["messages"]) == 1

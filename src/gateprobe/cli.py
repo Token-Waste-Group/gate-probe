@@ -307,7 +307,7 @@ def main(argv: list[str] | None = None) -> int:
         return cmd_run(args, replay=args.command == "replay")
     step = PLANNED[args.command][1]
     print(
-        f"gateprobe {args.command}: not implemented yet — step {step} in docs/PLAN.md builds it",
+        f"gateprobe {args.command}: not implemented yet (step {step} builds it)",
         file=sys.stderr,
     )
     return NOT_IMPLEMENTED
