@@ -60,6 +60,11 @@ SCRIPTS = (  # the data and reproduction scripts; the loop, paper and bootstrap 
     "paraphrase.py",
     "render_policies.py",
     "sample_labels.py",
+    "x6_sandbox.py",
+    "x6/Dockerfile",
+    "x6/fixture.sh",
+    "x6/run.sh",
+    "x6/snapshot.py",
 )
 EXCLUDE = (  # tests of what stays behind
     "tests/test_claim.py",
