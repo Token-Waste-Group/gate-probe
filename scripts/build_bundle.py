@@ -130,7 +130,7 @@ def archive(files: dict[str, bytes], name: str) -> bytes:
 def build(out: Path, root: Path = ROOT, runs: tuple[str, ...] = FROZEN, commit: str = "") -> Path:
     name = f"gateprobe-replay-{FREEZE}"
     files = collect(root, runs)
-    run_args = " ".join(f"runs/{r}.jsonl" for r in runs)
+    run_args = " ".join(f"runs/{r}.jsonl" for r in sorted(runs))  # the order the page uses
     files["README.md"] = README.format(name=name, freeze=FREEZE, run_args=run_args).encode("utf-8")
     files["BUNDLE.json"] = (json.dumps(describe(files, name, root, runs, commit), indent=2) + "\n").encode()
     files["MANIFEST.sha256"] = "".join(f"{_sha256(files[p])}  {p}\n" for p in sorted(files)).encode()
@@ -147,7 +147,8 @@ def site(out: Path, root: Path = ROOT, runs: tuple[str, ...] = FROZEN) -> Path:
 
     page = out / "site" / "index.html"
     code = cli.main(
-        ["report", "--runs", *(str(root / "runs" / f"{r}.jsonl") for r in runs)]
+        # sorted, as a shell glob lists them, so the README's command reproduces this page byte for byte
+        ["report", "--runs", *(str(root / "runs" / f"{r}.jsonl") for r in sorted(runs))]
         + [
             "--variants",
             str(root / "variants" / "generated.jsonl"),

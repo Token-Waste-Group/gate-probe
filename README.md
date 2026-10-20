@@ -103,6 +103,10 @@ docker run --rm --network none -v "$PWD/runs:/gateprobe/runs:ro" -v "$PWD/report
   --out reports/frozen.html
 ```
 
+With colima on macOS, unpack the bundle under your home directory: colima
+shares only `~` with its VM, and a mount from elsewhere arrives empty, so every
+call would be a miss.
+
 The gates are `jev`, `rules`, `judge-claude`, `gpt-6-luna-decisions`,
 `pplx-decider` and `drex`. P variants replay the same way with
 `--variants variants/paraphrase.jsonl`.
