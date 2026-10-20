@@ -341,9 +341,9 @@ first takes the skeleton and the decision packets):
 - done-when: the `Dockerfile` builds locally; `docker run … gateprobe replay` reproduces a fixture run's report with no API key and no network; image size and the build command in the README; publishing the image is H5, not this step.
 
 ### G2 — Decision point 2: go/no-go on scope (Wed 21, 18:00) [GATE]
-- status: todo
-- owner: —
-- claimed_at: —
+- status: claimed
+- owner: jrzkaminski@Jerzy-Pro.local
+- claimed_at: 2026-10-20T01:02:41Z
 - deps: X1
 - source: gateprobe_plan.md § Risks and decision points (2)
 - done-when: the loop writes `docs/gates/g2-go-no-go.md` — the state of every step, the X1/X2/X3 numbers that exist, spend so far, the risk-table triggers that fired, and the plan's three options (full: two or three decision models + judge + rules; reduced: Jev + judge + rules; pivot the engine to ToolSense) with a recommendation — then `mark.py G2 blocked "awaiting human decision"`. The humans record the decision in STATUS.md, mark `cut` whatever leaves scope (the `[STRETCH]` steps on reduced or pivot), and run `mark.py G2 done`. A pivot rewrites this ledger — that is a human plan change.
