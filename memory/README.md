@@ -37,3 +37,9 @@ internal hosts and storage paths).
   merge only on CI `SUCCESS`; mark done only when `MERGED`.
 - `lesson-preregistration-git-trail.md` — planned report before the run;
   merge X-step PRs with `--merge`.
+- `lesson-zero-floor-gates.md` — with f = δ = 0 the S and M-p secondaries count
+  any movement; report verdict-level counts, never re-label.
+- `lesson-flip-does-not-say-which-verdict.md` — a flip proves a contradiction;
+  "wrongly approved" needs the policy to deny the call.
+- `lesson-read-top-transforms.md` — read `top_transforms.csv` after every
+  analysis; it is how generator bugs surface.
