@@ -78,6 +78,16 @@ REDACTIONS = {
     "configs/gates.yaml": [
         ("(CLAUDE.md invariant 6: every model id is pinned", "(every model id is pinned"),
     ],
+    "docs/experiments/x2-judge.md": [  # the pre-registered text keeps the host in the dev tree
+        (
+            "  - on d.dgx GPU 7 (H100 PCIe 80 GB) alone, reached through an ssh tunnel.\n",
+            "  - on one H100 PCIe 80 GB GPU alone, reached through an ssh tunnel.\n",
+        ),
+        (
+            "  ssh -N -L 8017:127.0.0.1:8017 d.dgx &          # the tunnel to the R5 server\n",
+            "  ssh -N -L 8017:127.0.0.1:8017 <gpu-host> &     # the tunnel to the R5 server\n",
+        ),
+    ],
     "policies/README.md": [
         (
             "**Provenance.** The plan assumed these renderings could be reused from an\n"
