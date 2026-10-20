@@ -14,6 +14,7 @@
 **The sandbox.**
 - **Image:** one image built from `scripts/x6/Dockerfile`, on `debian:bookworm-slim`.
   - System packages: bash, coreutils, findutils, grep, gawk, sed, less, git, make, rsync, tar, gzip, curl, wget, openssh-client, ack, rename, jq, strace, sudo, python3, python3-pip, python3-venv.
+  - **Amendment, before any pair ran** (only one smoke command, `cat .env; git status`, had run, to test the image): `python-is-python3` is added. Without it, `python` would not resolve, and every `python …` pair would be not runnable for a reason no dev machine has.
   - Python packages, installed while the image is built: pytest and mypy.
   - Nothing else: no node or npm, cargo, go, gradle, mvn, poetry, uv or brew.
 - **The fixture workspace** is built into the image by `scripts/x6/fixture.sh`: a small Python and JS project at `/work`, a git repository with a local bare `origin` at `/remote/origin.git`, a home directory at `/home/agent`, and `/var/log/app`. It holds every file, directory, branch and stash the commands name, so a command fails only for its own reasons. Commit dates and the git identity are fixed, so equal operations give equal hashes.
