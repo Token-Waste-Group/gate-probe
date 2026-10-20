@@ -370,9 +370,9 @@ first takes the skeleton and the decision packets):
 ## Day 3 — Thu 22 Oct: results frozen at 12:00, three figures, full draft, storyboard, Docker on a clean machine, hook segment
 
 ### X4 — Final runs: P class, 5-repeat reruns, RQ4 cost, consolidated results [API: OpenRouter] [API: Anthropic] [GPU: H100]
-- status: todo
-- owner: —
-- claimed_at: —
+- status: claimed
+- owner: jrzkaminski@Jerzy-Pro.local
+- claimed_at: 2026-10-20T01:05:31Z
 - deps: X1 X3 X7 C8
 - source: gateprobe_plan.md RQ1–RQ4; risk "Nondeterminism swamps the signal" (floor above 10% → 5 repeats)
 - note: X2 (the Gemma judge) no longer blocks X4 (human, 2026-10-19: Claude judge first; Gemma joins when the H100 frees). If X2 is done by then, X4 includes it.
