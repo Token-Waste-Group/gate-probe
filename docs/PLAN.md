@@ -439,9 +439,9 @@ first takes the skeleton and the decision packets):
 - done-when: `video/storyboard.md` plans 3–5 minutes that show the tool running (CLI run, report, CI mode, the live hook segment), not slides; `video/voiceover.md` and `video/captions.srt` timed to the script; a pre-recording checklist (no keys or `.env` on screen, clean terminal history, the hook against the cached gate); the case-study shots use X5 once it lands.
 
 ### I5 — Replay bundle, hosted report page, clean-machine check
-- status: todo
-- owner: —
-- claimed_at: —
+- status: claimed
+- owner: jrzkaminski@Jerzy-Pro.local
+- claimed_at: 2026-10-20T08:54:49Z
 - deps: I1 I4 G3
 - source: gateprobe_plan.md § Tool design (Packaging); Thu DoD "Docker verified on a clean machine"
 - done-when: one command builds the replay bundle (frozen `cache/` + run JSONL + sha256 manifest); the report for the frozen runs is generated as a static page ready for GitHub Pages; on a clean machine or a fresh container, the README's reviewer path — pull the image, fetch the bundle, `gateprobe replay`, `gateprobe report` — works with no key and nothing to build; publishing is H5.
