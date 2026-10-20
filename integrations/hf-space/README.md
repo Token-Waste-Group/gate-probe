@@ -34,13 +34,13 @@ docker run --rm -p 8000:8000 -v "$PWD/integrations/hf-space:/srv:ro" python:3.11
 ## Rebuild the data
 
 `data.json` is distilled from the replay bundle, so it is never edited by hand. It holds:
-- the frozen tables in `results/x4-final/`;
+- the seven-gate tables in `results/x2-seven-gates/`;
 - every flipped pair, with verdict and `p_block` per repeat;
 - the inputs the gate saw for both sides.
 
 ```bash
-uv run python scripts/build_bundle.py --no-site      # dist/gateprobe-replay-19fd14a.tar.gz
-uv run python integrations/hf-space/build_data.py --bundle dist/gateprobe-replay-19fd14a.tar.gz
+uv run python scripts/build_bundle.py --no-site      # dist/gateprobe-replay-ee08ca1.tar.gz
+uv run python integrations/hf-space/build_data.py --bundle dist/gateprobe-replay-ee08ca1.tar.gz
 ```
 
 Publishing the Space is a human step (H5). The Space repository takes four files from this directory: `README.md`, `index.html`, `app.js` and `data.json`.

@@ -66,7 +66,7 @@ def test_bundle_holds_the_answered_entries_and_a_manifest_that_verifies(root, tm
     bb = _load("build_bundle")
     path = bb.build(tmp_path / "out", root, runs=("a",), commit="abc")
     files = _members(path)
-    name = f"gateprobe-replay-{bb.FREEZE}"
+    name = f"gateprobe-replay-{bb.RESULTS}"
     assert sorted(files) == sorted(
         f"{name}/{p}"
         for p in (

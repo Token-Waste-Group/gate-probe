@@ -26,7 +26,7 @@ noise floor subtracted. No ground truth is needed.
 | `variants/` | the frozen variants: `generated.jsonl` (300 base items, 1,621 E, 436 M, 1,452 I, 2,052 A; seeded) and `paraphrase.jsonl` (529 P) |
 | `docs/RELATIONS.md` | the relation spec and the scoring rules, pre-registered before any run |
 | `docs/experiments/` | the run reports, as written during the study, including negative results |
-| `results/` | the distilled results; `results/x4-final/` holds every number in the paper |
+| `results/` | the distilled results; `results/x2-seven-gates/` holds the paper's tables |
 | `configs/` | the pinned gate models, run settings and the judge prompt |
 | `integrations/` | the Claude Code `PreToolUse` hook and the Hugging Face Space replay demo |
 | `tests/` | the test suite; it never touches the network |
@@ -46,12 +46,12 @@ docker build --build-arg GIT_HASH=<commit> -t gateprobe .
 
 ## Replay the frozen results (no key, no network)
 
-The replay bundle `gateprobe-replay-19fd14a.tar.gz` holds the 94,589 recorded
-gate answers behind every number in the paper: 12 runs, 115,020 rows over six
+The replay bundle `gateprobe-replay-ee08ca1.tar.gz` holds the 113,654 recorded
+gate answers behind every number in the paper: 14 runs, 134,190 rows over seven
 gates, R = 3 repeats. It also holds the run files and a sha256 manifest.
 
 ```bash
-tar xzf gateprobe-replay-19fd14a.tar.gz && cd gateprobe-replay-19fd14a
+tar xzf gateprobe-replay-ee08ca1.tar.gz && cd gateprobe-replay-ee08ca1
 shasum -a 256 -c MANIFEST.sha256 --quiet          # (sha256sum on Linux)
 # replay a gate from the cache; --allow-misses records the one call drex's frozen run never
 # got an answer for (an HTTP 520) as replay_miss instead of stopping
@@ -64,15 +64,15 @@ docker run --rm --network none -v "$PWD/runs:/gateprobe/runs:ro" -v "$PWD/report
   --out reports/frozen.html
 ```
 
-The gates are `jev`, `rules`, `judge-claude`, `gpt-6-luna-decisions`,
-`pplx-decider` and `drex`. With colima on macOS, unpack the bundle under your
+The gates are `jev`, `rules`, `judge-claude`, `judge-gemma`,
+`gpt-6-luna-decisions`, `pplx-decider` and `drex`. With colima on macOS, unpack the bundle under your
 home directory: colima shares only `~` with its VM.
 
 `python scripts/compare_runs.py --frozen runs/x3-drex.jsonl --replayed runs/replay-drex.jsonl`
 checks a replay against the frozen rows. To re-score the frozen runs, use
-`gateprobe analyze --runs <the 12 runs> --name check --variants variants/generated.jsonl variants/paraphrase.jsonl`.
+`gateprobe analyze --runs <the 14 runs> --name check --variants variants/generated.jsonl variants/paraphrase.jsonl`.
 Run it from this tree with the bundle's `runs/` copied in, so `results/spend.csv`
-is found. It writes `results/check/`, which matches `results/x4-final/`.
+is found. It writes `results/check/`, which matches `results/x2-seven-gates/`.
 
 ## Run your own gate
 
@@ -85,7 +85,9 @@ gateprobe ci --runs runs/<run-id>.jsonl --max-flip 0.05     # non-zero exit when
 ```
 
 Keys are read from `.env`: `OPENROUTER_API_KEY` for the Decisions API gates and
-`ANTHROPIC_API_KEY` for the Claude judge. Every run has a dollar cap
+`ANTHROPIC_API_KEY` for the Claude judge. The Gemma judge needs no key: it
+expects a vLLM server at `localhost:8017`, and `configs/gates.yaml` pins its
+model, revision, dtype, server image and flags. Every run has a dollar cap
 (`configs/run.yaml`) and logs its spend to `results/spend.csv`. A new gate is
 an entry in `configs/gates.yaml`. The adapters are `decisions`, `judge`
 (OpenAI-compatible or Anthropic) and `rules`.

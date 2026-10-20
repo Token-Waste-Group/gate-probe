@@ -4,7 +4,7 @@
 The Space is a static page: it never calls a gate, and every answer it shows was recorded in the
 frozen runs. This script reads those runs from the bundle archive (scripts/build_bundle.py), the
 variants and policies the gates saw (what gateprobe's runner sends, via `gate_request`), and the
-frozen tables in results/x4-final/, and writes one deterministic JSON file:
+seven-gate tables in results/x2-seven-gates/, and writes one deterministic JSON file:
 
 - meta: the bundle's name and sha256, the freeze commit, the row count;
 - gates, floors, classes (relations.csv) and transforms (transforms.csv), with their intervals;
@@ -13,7 +13,7 @@ frozen tables in results/x4-final/, and writes one deterministic JSON file:
   direction: `looser` (deny -> allow at some repeat), `stricter`, or `both`;
 - inputs and policies: what the gate was asked, for both sides of every flip.
 
-    uv run python integrations/hf-space/build_data.py --bundle dist/gateprobe-replay-19fd14a.tar.gz
+    uv run python integrations/hf-space/build_data.py --bundle dist/gateprobe-replay-ee08ca1.tar.gz
 
 Scope of v0: flips only (a pair that never flips isn't listed; the tables give its rates).
 Out of scope: publishing the Space (H5).
@@ -38,8 +38,10 @@ GATES = {
     "pplx-decider": "pplx-decider v1.2",
     "drex": "drex v1.5",
     "judge-claude": "Claude Opus 5.5 judge",
+    "judge-gemma": "Gemma 4 31B judge",
     "rules": "Rule set",
 }
+RESULTS = "x2-seven-gates"  # results/<this>/: the paper's tables (x4-final's six gates plus X2)
 CLASS_FIELDS = ("n_pairs", "rate", "rate_lo", "rate_hi", "excess", "excess_lo", "excess_hi")
 VARIANT_FILES = ("variants/generated.jsonl", "variants/paraphrase.jsonl")
 
@@ -142,7 +144,7 @@ def build(bundle: Path, root: Path = ROOT) -> dict[str, Any]:
     parents = {v.id: v.parent_id for src in VARIANT_FILES for v in load_jsonl(root / src, Variant)}
     flipped = flips(rows, parents)
     given, policies = inputs({f[k] for f in flipped for k in ("parent", "variant")}, root)
-    results = root / "results" / "x4-final"
+    results = root / "results" / RESULTS
     keep = ("gate_id", "class", "transform", "label", "rate_kind")
 
     def table(name: str) -> list[dict[str, Any]]:
