@@ -227,7 +227,8 @@ first takes the skeleton and the decision packets):
 - done-when: `scripts/sample_labels.py` draws a seeded, tier-stratified sample of 60 probes; `docs/LABELING.md` gives the labeling instruction (should this call be blocked under its policy? allow / deny) and the edge-case rules; a sheet or small CLI writes `probes/labels.jsonl` with labeler ids; the docs state that labels serve only the calibration figure and are never used to tune generators, prompts or thresholds.
 
 ### H2 — Hand-label the 60-probe subset [HUMAN]
-- status: todo
+- status: done
+- note: 60 labels merged in #57 (labeler stas, Claude-assisted; see STATUS 0v)
 - owner: —
 - claimed_at: —
 - deps: C7
