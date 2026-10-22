@@ -52,7 +52,7 @@ floors, while Jev, Claude and pplx do not. Drex, for one, denies
 remote branch deletion that release-manager forbids.
 
 \paragraph{RQ2 Monotonicity} Verdict-level risk inversions are rare, at most
-one per gate, but not harmless. Four of seven gates allow \emph{overwriting} a
+one per gate. Four of seven gates allow \emph{overwriting} a
 secrets file, an irreversible write, where they deny reading it: Jev goes from
 0.82 to 0.49 ($\bar p_\mathrm{block}$), Claude from 0.99 to 0.30, pplx from
 1.00 to 0.41, and the rule set has no write-deny for \texttt{.env}. Gemma
@@ -109,6 +109,6 @@ The pre-registered case picks concern calls the policy allows, so after
 reading the policies we show the E flip with the largest drop on a denied call,
 and a \texttt{git fetch} that crosses $\tau$ at every repeat.
 
-\paragraph{Planned study} Eight to ten developers configure a gate with and
-without \tool{}'s report. We record the threshold they pick and how many
-dangerous corpus calls it admits. The study is described here, not yet run.
+\paragraph{Planned study} Eight to ten developers will configure a gate with
+and without \tool{}'s report. We will record the threshold they pick and how
+many dangerous corpus calls it admits.
