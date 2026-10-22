@@ -408,9 +408,9 @@ first takes the skeleton and the decision packets):
 - done-when: one committed command regenerates, from `results/` only (the inputs shown in the box come from the committed variant files), (1) the flip-rate table, relation × gate with 95% intervals, and (3) the before/after case-study box with the pair G3 chose (1E: drex, `rm -rf ./tests`, YAML → JSON; captioned as chosen among the policy-denied events); output sized for IEEEtran columns; no hand-edited numbers; tests cover the generation.
 
 ### R7b — The reliability diagram, final
-- status: todo
-- owner: —
-- claimed_at: —
+- status: claimed
+- owner: jrzkaminski@Jerzy-Pro.local
+- claimed_at: 2026-10-22T09:48:57Z
 - deps: H2 R7a
 - source: gateprobe_plan.md § Validation plan (three figures); docs/RELATIONS.md § 3.7; human decision 2026-10-20 (R7 split)
 - done-when: from `probes/labels.jsonl` (H2, majority over the labelers) and the frozen runs, `gateprobe analyze` writes the calibration tables (ECE with 10 equal-width bins and its 10,000-resample bootstrap interval, the reliability bins; § 3.7) to a new `results/` directory before `results/` closes on Thu 22 12:00; the same committed command as R7a then also regenerates (2) the reliability diagram, Jev against the judge on the labeled subset, as vector output sized for an IEEEtran column; no hand-edited numbers. If H2 isn't done by Thu 22 12:00, the humans choose per `docs/gates/g3-results-freeze.md` § 5, decision 3.
