@@ -408,7 +408,8 @@ first takes the skeleton and the decision packets):
 - done-when: one committed command regenerates, from `results/` only (the inputs shown in the box come from the committed variant files), (1) the flip-rate table, relation × gate with 95% intervals, and (3) the before/after case-study box with the pair G3 chose (1E: drex, `rm -rf ./tests`, YAML → JSON; captioned as chosen among the policy-denied events); output sized for IEEEtran columns; no hand-edited numbers; tests cover the generation.
 
 ### R7b — The reliability diagram, final
-- status: claimed
+- status: done
+- note: tables #59 (11:51, before results close), figure #47
 - owner: jrzkaminski@Jerzy-Pro.local
 - claimed_at: 2026-10-22T09:48:57Z
 - deps: H2 R7a
