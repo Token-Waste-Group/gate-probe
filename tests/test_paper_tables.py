@@ -66,11 +66,13 @@ def test_flips_table_cells(tmp_path):
     text = pt.flips_table(tmp_path)
     jev = next(line for line in text.splitlines() if line.startswith("Jev 1.14"))
     cells = [c.strip() for c in jev.removesuffix("\\\\").split("&")]
-    assert cells[1] == "0.38\\,[0.25,\\,0.57]"
-    assert cells[2] == "\\textbf{+1.3\\,[+0.8,\\,+2.1]}$^\\dagger$"  # E: positive, Bonferroni
-    assert cells[3] == "--"  # M: no row
-    assert cells[4] == "\\textbf{+0.6\\,[+0.2,\\,+1.4]}"  # I: the class row, not the transform row
-    assert cells[5] == "+0.0\\,[$-$0.0,\\,+0.5]"  # A: negative, the sign survives rounding
+    ci = "{\\scriptsize\\color{black!55}[%s]}"
+    assert cells[1:3] == ["0.38", ci % "0.25, 0.57"]  # the floor, then its interval in its own column
+    assert cells[3:5] == ["\\textbf{+1.3}\\rlap{$^\\dagger$}", ci % "0.8, 2.1"]  # E: positive, Bonferroni
+    assert cells[5:7] == ["--", ""]  # M: no row
+    assert cells[7:9] == ["\\textbf{+0.6}", ci % "0.2, 1.4"]  # I: the class row, not the transform row
+    assert cells[9:11] == ["+0.0", ci % "$-$0.0, 0.5"]  # A: negative; the minus survives rounding
+    assert "\\cmidrule(l){4-13}" in text and text.count("\\addlinespace") == 2  # header span, three groups
     assert "% Bonferroni over 30 class tests (z = 3.14)." in text
 
 
@@ -197,10 +199,13 @@ def test_reliability_figure(tmp_path):
         [{"gate_id": g, "bin": b, "n": 3, "confidence": c, "accuracy": a} for g, b, c, a in bins],
     )
     text = pt.reliability_figure(tmp_path)
-    assert "\\addplot+[mark=*] coordinates {(0.0300,0.1000) (0.9500,0.9000)};" in text  # in bin order
-    assert "\\addlegendentry{Jev 0.12 [0.08, 0.20]}" in text  # ECE and its interval; n is in the caption
-    assert "\\addlegendentry{Claude 0.05 [0.02, 0.11]}" in text
-    assert "\\addplot+[mark=triangle*] coordinates {(0.0000,0.1200)};" in text
-    assert "\\addlegendentry{Gemma 0.07 [0.02, 0.14]}" in text
-    assert "Rule set" not in text  # Jev and the two judges only
-    assert text.count("\\addplot") == 4  # the diagonal and three gates
+    assert text.count("\\nextgroupplot") == 3  # one panel each for Jev and the two judges
+    assert "title={Jev ($n=60$)\\\\{\\scriptsize ECE 0.12 [0.08, 0.20]}}, ylabel=" in text  # n and ECE
+    assert "title={Claude ($n=58$)\\\\{\\scriptsize ECE 0.05 [0.02, 0.11]}}, xlabel=" in text
+    assert "title={Gemma ($n=60$)\\\\{\\scriptsize ECE 0.07 [0.02, 0.14]}}]" in text
+    jev = text[text.index("title={Jev") : text.index("title={Claude")]
+    assert jev.index("(0.0300,0.1000)") < jev.index("(0.9500,0.9000)")  # bins in order
+    assert "mark size=1.38pt, color=gp-jev" in jev  # radius 0.6 + 0.45 sqrt(n), n = 3
+    assert "\\definecolor{gp-judge-gemma}{HTML}{009E73}" in text
+    assert "Rule set" not in text and "gp-rules" not in text  # Jev and the two judges only
+    assert text.count("{x};") == 3  # the diagonal in every panel
