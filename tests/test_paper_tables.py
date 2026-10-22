@@ -66,13 +66,12 @@ def test_flips_table_cells(tmp_path):
     text = pt.flips_table(tmp_path)
     jev = next(line for line in text.splitlines() if line.startswith("Jev 1.14"))
     cells = [c.strip() for c in jev.removesuffix("\\\\").split("&")]
-    ci = "{\\scriptsize\\color{black!55}[%s]}"
-    assert cells[1:3] == ["0.38", ci % "0.25, 0.57"]  # the floor, then its interval in its own column
-    assert cells[3:5] == ["\\textbf{+1.3}\\rlap{$^\\dagger$}", ci % "0.8, 2.1"]  # E: positive, Bonferroni
-    assert cells[5:7] == ["--", ""]  # M: no row
-    assert cells[7:9] == ["\\textbf{+0.6}", ci % "0.2, 1.4"]  # I: the class row, not the transform row
-    assert cells[9:11] == ["+0.0", ci % "$-$0.0, 0.5"]  # A: negative; the minus survives rounding
-    assert "\\cmidrule(l){4-13}" in text and text.count("\\addlinespace") == 2  # header span, three groups
+    assert cells[1] == "0.38"  # the floor; intervals stay in the released CSVs (one number per cell)
+    assert cells[2] == "\\textbf{+1.3}\\rlap{$^\\dagger$}"  # E: positive, Bonferroni
+    assert cells[3] == "--"  # M: no row
+    assert cells[4] == "\\textbf{+0.6}"  # I: the class row, not the transform row
+    assert cells[5] == "0.0"  # A: negative, and a value that rounds to zero has no sign
+    assert "[" not in jev and "\\cmidrule(l){3-7}" in text and text.count("\\addlinespace") == 2
     assert "% Bonferroni over 30 class tests (z = 3.14)." in text
 
 
@@ -176,36 +175,45 @@ def test_case_box_errors(box_inputs):
         pt.case_box(["drex:a/policy_format/0"], x5, variants)
 
 
-def test_reliability_figure(tmp_path):
+def test_threshold_figure(tmp_path):
     pt = _mod()
     _write(
         tmp_path / "calibration.csv",
         [
-            {"gate_id": "jev", "n_labeled": 60, "ece": 0.1234, "ece_lo": 0.081, "ece_hi": 0.2},
-            {"gate_id": "judge-claude", "n_labeled": 58, "ece": 0.05, "ece_lo": 0.02, "ece_hi": 0.11},
-            {"gate_id": "judge-gemma", "n_labeled": 60, "ece": 0.07, "ece_lo": 0.017, "ece_hi": 0.14},
-            {"gate_id": "rules", "n_labeled": 60, "ece": 0.3, "ece_lo": 0.2, "ece_hi": 0.4},
+            {"gate_id": "jev", "n_labeled": 6, "ece": 0.1234, "ece_lo": 0.081, "ece_hi": 0.2},
+            {"gate_id": "rules", "n_labeled": 6, "ece": 0.3, "ece_lo": 0.2, "ece_hi": 0.4},
         ],
     )
-    bins = [
-        ("jev", 9, 0.95, 0.9),
-        ("jev", 0, 0.03, 0.1),
-        ("judge-claude", 5, 0.55, 0.5),
-        ("judge-gemma", 0, 0.0, 0.12),
-        ("rules", 9, 1, 1),
+    bins = [  # jev: 2 deny-labeled below 0.5 (bin 3), 1 of 3 allow-labeled at 0.5+ (bin 5); rules: none / 3
+        ("jev", 0, 1, 0.03, 0.0),
+        ("jev", 3, 2, 0.35, 1.0),
+        ("jev", 5, 3, 0.55, 2 / 3),
+        ("rules", 0, 3, 0.0, 0.0),
+        ("rules", 9, 3, 1.0, 0.0),
     ]
     _write(
         tmp_path / "reliability.csv",
-        [{"gate_id": g, "bin": b, "n": 3, "confidence": c, "accuracy": a} for g, b, c, a in bins],
+        [{"gate_id": g, "bin": b, "n": n, "confidence": c, "accuracy": a} for g, b, n, c, a in bins],
     )
-    text = pt.reliability_figure(tmp_path)
-    assert text.count("\\nextgroupplot") == 3  # one panel each for Jev and the two judges
-    assert "title={Jev ($n=60$)\\\\{\\scriptsize ECE 0.12 [0.08, 0.20]}}, ylabel=" in text  # n and ECE
-    assert "title={Claude ($n=58$)\\\\{\\scriptsize ECE 0.05 [0.02, 0.11]}}, xlabel=" in text
-    assert "title={Gemma ($n=60$)\\\\{\\scriptsize ECE 0.07 [0.02, 0.14]}}]" in text
-    jev = text[text.index("title={Jev") : text.index("title={Claude")]
-    assert jev.index("(0.0300,0.1000)") < jev.index("(0.9500,0.9000)")  # bins in order
-    assert "mark size=1.38pt, color=gp-jev" in jev  # radius 0.6 + 0.45 sqrt(n), n = 3
-    assert "\\definecolor{gp-judge-gemma}{HTML}{009E73}" in text
-    assert "Rule set" not in text and "gp-rules" not in text  # Jev and the two judges only
-    assert text.count("{x};") == 3  # the diagonal in every panel
+    assert pt._counts(
+        [
+            dict(zip(("gate_id", "bin", "n", "confidence", "accuracy"), map(str, b), strict=True))
+            for b in bins[:3]
+        ]
+    ) == (
+        4,
+        2,
+        2,
+        1,
+    )  # (deny-labeled, let through, allow-labeled, blocked)
+    text = pt.threshold_figure(tmp_path)
+    assert (
+        "yticklabels={Jev {\\scriptsize\\color{black!55}0.12}, Rule set {\\scriptsize\\color{black!55}0.30}}"
+        in text
+    )
+    assert "coordinates {(-2,1) (0,2)};" in text  # let through, rows in GATES order
+    assert "coordinates {(1,1) (3,2)};" in text  # blocked
+    assert "at (axis cs:-2,1) {2};" in text and "at (axis cs:3,2) {3};" in text  # counts at the bar ends
+    assert "[0.08" not in text  # the ECE interval stays in calibration.csv
+    with pytest.raises(SystemExit):
+        pt._counts([{"gate_id": "jev", "bin": "0", "n": "3", "confidence": "0.1", "accuracy": "0.5"}])

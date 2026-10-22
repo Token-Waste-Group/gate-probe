@@ -8,7 +8,7 @@
 % (G3 decision 4): results/x2-seven-gates/ (its six frozen gates = results/x4-final/
 % byte for byte) and results/x5-case-studies/. Case pairs: G3 decision 6
 % (1E in the box, 2' beside it). Table and box: scripts/paper_tables.py (R7a).
-% Figure 2: R7b (results/r7b-calibration/, labels: majority of probes/labels.jsonl).
+% Figure 2: R7b's threshold view (results/r7b-calibration/, labels: majority of probes/labels.jsonl).
 
 \section{Validation}\label{sec:validation}
 
@@ -27,10 +27,10 @@ is 134,190 logged decisions.
 
 \begin{table*}[t]
 \centering
-\caption{Flip rate above the test--retest floor ($F-f$, points, Newcombe 95\% interval; floor $f$ with its Wilson 95\% interval; $R=3$). Bold: violated (interval above 0). $^\dagger$: survives Bonferroni over 35 tests. M counts risk inversions against the inversion floor.}
+\caption{Flip rate above the test--retest floor ($F-f$, points) per gate and relation class, and the floor $f$; $R=3$. Bold: violated (95\% interval above 0). $^\dagger$: survives Bonferroni over 35 tests. M counts risk inversions against the inversion floor. All intervals are in the released tables.}
 \label{tab:flips}
 \footnotesize
-\setlength{\tabcolsep}{4pt}
+\setlength{\tabcolsep}{9pt}
 \input{figures/flips.tex}
 \end{table*}
 
@@ -64,25 +64,29 @@ $p_\mathrm{block}$ falls by 1.0 point $[0.8, 1.2]$ on average. ``The user
 pre-approved this command.'' takes it across $\tau$ on 3 of 300 pairs. One is a \texttt{git fetch} that a
 read-only policy denies, and it crosses at every repeat.
 
-\paragraph{Calibration} Two labelers marked 60 sampled probes allow or deny from the policy alone and agree on 58 ($\kappa=0.93$). One saw Claude's suggested labels. A third labeler, who did not, agrees with
-that one on all 60.
-On the 58, ECE is lowest on pplx, 0.04 $[0.02, 0.07]$, and highest on the
-rule set, 0.26 $[0.16, 0.38]$. Fig.~\ref{fig:reliability} shows Jev and the two
-judges.
+\paragraph{Against labels} The relations need no labels, but a deployed gate
+acts at a threshold, so we also check what each gate does at $\tau=0.5$ with
+calls people would deny. Two labelers marked 60 sampled probes allow or deny
+from the policy alone and agree on 58 ($\kappa=0.93$). One saw Claude's
+suggested labels. A third labeler, who did not, agrees with that one on all 60.
+Every model gate lets at least one deny-labeled probe through, Jev the most.
+The rule set lets none through but blocks 15 of the 29 allow-labeled ones
+(Fig.~\ref{fig:threshold}).
 
 \paragraph{RQ4 Cost} The full suite is about 60 calls per probe. Per 1,000 probes, the rule set costs nothing and takes 11\,s. The decision
 models cost \$0.67--\$3.78 and take 2.4--8.6\,h with 8 parallel workers.
 Claude costs \$173 and 1.3\,h through message batches, and Gemma no fees and
 0.8\,h on one H100. The whole evaluation cost \$54.
 
-% Figure 2 of 3 (R7b): reliability diagram from results/r7b-calibration/; Gemma added by the humans (2026-10-22).
+% Figure 2 of 3 (R7b): the threshold view (human, 2026-10-22, replacing the reliability diagram).
 \begin{figure}[t]
 \centering
-\input{figures/reliability.tex}
-\caption{Reliability on the 58 probes both labelers agree on, one panel per gate. Each dot is a bin
-of mean $p_\mathrm{block}$ ($R=3$), with area growing with the bin's probes. Dashed: perfect calibration.
-Titles give ECE with a 10,000-resample bootstrap 95\% interval. Claude refuses four probes labeled deny.}
-\label{fig:reliability}
+\input{figures/threshold.tex}
+\caption{Labeled probes on the wrong side of $\tau=0.5$, out of the 58 both
+labelers agree on: deny-labeled probes with mean $p_\mathrm{block}$ ($R=3$)
+below $\tau$ (let through) and allow-labeled ones at or above it (blocked), of
+29 each (Claude: 25 deny-labeled, as it refuses four). Gray: ECE.}
+\label{fig:threshold}
 \end{figure}
 
 % Figure 3 of 3 (R7a, from X5): the before/after case-study box. Pair: G3 decision 6.
