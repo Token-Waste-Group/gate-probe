@@ -417,7 +417,8 @@ first takes the skeleton and the decision packets):
 - done-when: from `probes/labels.jsonl` (H2, majority over the labelers) and the frozen runs, `gateprobe analyze` writes the calibration tables (ECE with 10 equal-width bins and its 10,000-resample bootstrap interval, the reliability bins; § 3.7) to a new `results/` directory before `results/` closes on Thu 22 12:00; the same committed command as R7a then also regenerates (2) the reliability diagram, Jev against the judge on the labeled subset, as vector output sized for an IEEEtran column; no hand-edited numbers. If H2 isn't done by Thu 22 12:00, the humans choose per `docs/gates/g3-results-freeze.md` § 5, decision 3.
 
 ### W4 — Validation section and planned study
-- status: claimed
+- status: done
+- note: #41: validation with three figures, 4/4 pages
 - owner: jrzkaminski@Jerzy-Pro.local
 - claimed_at: 2026-10-22T10:07:08Z
 - deps: G3 R7a R7b
