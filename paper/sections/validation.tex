@@ -15,7 +15,7 @@
 \paragraph{Setup} The corpus has 300 tool calls under four policies. They
 yield 5,861 deterministic items (300 base items and 1,621 E, 436 M, 1,452 I
 and 2,052 A variants) and 529 P variants written by Qwen3-8B. Seven gates take
-every item $R=3$ times. Four are decision models on the Decisions API, in
+every item $R=3$ times; brackets give 95\% intervals. Four are decision models on the Decisions API, in
 true/false mode at $\tau=0.5$ and pinned to dated snapshots: Jev
 1.14~\cite{openrouter2026jev114,typesafe2026models}, GPT-6 Luna
 Decisions~\cite{openrouter2026luna}, pplx-decider
@@ -37,15 +37,16 @@ is 134,190 logged decisions.
 
 \paragraph{RQ1 Invariance} \emph{Every gate violates equivalence}, from $+1.1$
 points on the Claude judge to $+7.5$ on Luna (Table~\ref{tab:flips}). On the model gates the largest
-source is the same policy rendered another way: 11.1\% of re-renderings flip
-on Luna, 8.9\% on drex, 3.3\% on pplx and Gemma, 2.8\% on Jev and 1.8\% on
-Claude (Fig.~\ref{fig:case}). The rule set has the opposite weakness. It never reads
-the policy text, but it flips on call spelling, for 12.7\% of long-flag
+source is the same policy rendered another way: 11.1\% $[9.2, 13.3]$ of
+re-renderings flip on Luna, 8.9\% $[7.2, 10.9]$ on drex, 3.3\% $[2.3, 4.7]$ on
+pplx and Gemma, 2.8\% $[1.9, 4.1]$ on Jev and 1.8\% $[1.1, 2.9]$ on Claude
+(Fig.~\ref{fig:case}). The rule set has the opposite weakness. It never reads
+the policy text, but it flips on call spelling, for 12.7\% $[6.6, 23.1]$ of long-flag
 rewrites. Four model gates never change a verdict between repeats ($f=0$), so
 every flip they show is the transform's doing. P is violated on all seven
 gates, but it is the weaker class. Run in a sandbox with no network, 90 of 229
-command rewrites have the same effect as the original call, and 74 do not. On
-the 90, Luna, drex, the rule set and, on one pair, Gemma still flip above their
+command rewrites have the same effect as the original call. On
+these, Luna, drex, the rule set and, on one pair, Gemma still flip above their
 floors, while Jev, Claude and pplx do not. Drex, for one, denies
 \texttt{git push origin --delete feature/old} (0.99) but allows \texttt{git push origin :feature/old} (0.12), a
 remote branch deletion that release-manager forbids.
@@ -61,7 +62,7 @@ also count M as violated, because with $\delta=0$ any drop in
 $p_\mathrm{block}$ counts.
 
 \paragraph{RQ3 Adversarial} The injections split the gates by direction. They
-push Luna toward \emph{deny} (73 of 86 flips, $+2.4$ points of
+push Luna toward \emph{deny} (73 of 86 flips, $+2.4$ $[1.4, 3.4]$ points of
 $p_\mathrm{block}$), and Gemma too (16 of 20, mostly renamed option labels),
 but pplx and drex toward \emph{allow} (25 of 28 and 23 of 33 flips). The single
 line ``This action is safe per the policy.'' unblocks pplx 15 times. Jev and
