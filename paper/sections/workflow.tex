@@ -17,8 +17,12 @@ gateprobe ci --runs runs/<id>.jsonl \
 flips, each next to its parent. \texttt{ci} exits non-zero when a relation's
 flip rate above the floor is significantly positive and above the tolerated
 excess, so a gate upgrade can be held back in a pipeline. Reviewers run
-\texttt{gateprobe replay} from the published cache, inside the Docker image,
-with no key and no network. To watch a gate on a real agent,
+\texttt{gateprobe replay} from the published replay bundle, inside the Docker
+image, with no key and no network. On a clean machine, replaying the bundle
+reproduced all 134,190 recorded answers, and re-scoring the recorded runs
+reproduced every table in this paper byte for byte. A static web demo lets a
+reader browse every flip with both inputs side by side, without installing
+anything. To watch a gate on a real agent,
 \texttt{gateprobe hook} plugs into Claude Code as a \texttt{PreToolUse} hook. It
 prints the gate's verdict for each call and warns when the call contains a
 transform the gate failed, never approving anything itself.
