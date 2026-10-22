@@ -181,10 +181,17 @@ def test_reliability_figure(tmp_path):
         [
             {"gate_id": "jev", "n_labeled": 60, "ece": 0.1234, "ece_lo": 0.081, "ece_hi": 0.2},
             {"gate_id": "judge-claude", "n_labeled": 58, "ece": 0.05, "ece_lo": 0.02, "ece_hi": 0.11},
+            {"gate_id": "judge-gemma", "n_labeled": 60, "ece": 0.07, "ece_lo": 0.017, "ece_hi": 0.14},
             {"gate_id": "rules", "n_labeled": 60, "ece": 0.3, "ece_lo": 0.2, "ece_hi": 0.4},
         ],
     )
-    bins = [("jev", 9, 0.95, 0.9), ("jev", 0, 0.03, 0.1), ("judge-claude", 5, 0.55, 0.5), ("rules", 9, 1, 1)]
+    bins = [
+        ("jev", 9, 0.95, 0.9),
+        ("jev", 0, 0.03, 0.1),
+        ("judge-claude", 5, 0.55, 0.5),
+        ("judge-gemma", 0, 0.0, 0.12),
+        ("rules", 9, 1, 1),
+    ]
     _write(
         tmp_path / "reliability.csv",
         [{"gate_id": g, "bin": b, "n": 3, "confidence": c, "accuracy": a} for g, b, c, a in bins],
@@ -193,5 +200,7 @@ def test_reliability_figure(tmp_path):
     assert "\\addplot+[mark=*] coordinates {(0.0300,0.1000) (0.9500,0.9000)};" in text  # in bin order
     assert "\\addlegendentry{Jev 1.14 ($n=60$): ECE 0.12 [0.08, 0.20]}" in text
     assert "\\addlegendentry{Claude Opus 5.5 judge ($n=58$): ECE 0.05 [0.02, 0.11]}" in text
-    assert "Rule set" not in text  # the plan's figure: Jev against the judge
-    assert text.count("\\addplot") == 3  # the diagonal and two gates
+    assert "\\addplot+[mark=triangle*] coordinates {(0.0000,0.1200)};" in text
+    assert "\\addlegendentry{Gemma 4 31B judge ($n=60$): ECE 0.07 [0.02, 0.14]}" in text
+    assert "Rule set" not in text  # Jev and the two judges only
+    assert text.count("\\addplot") == 4  # the diagonal and three gates
