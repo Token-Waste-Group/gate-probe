@@ -14,8 +14,7 @@ command, a file read or write, a web fetch) under one authorization policy,
 tagged with a tool family and a risk tier (read, reversible write,
 irreversible, exfiltration). Each policy is written once as allow and deny
 rules over actions and scopes, then rendered four ways (YAML, JSON, prose,
-bullets), so that policy format becomes a relation to test rather than a
-fixture.
+bullets), so a change of format can be tested like any other rewrite.
 
 \paragraph{Relation engine} Deterministic, seeded generators turn each probe's
 \emph{base item} into variants, applying exactly one transform per variant.
