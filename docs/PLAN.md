@@ -426,9 +426,9 @@ first takes the skeleton and the decision packets):
 - done-when: RQ1–RQ4 reported from the frozen numbers only (each with repeats and interval, matching `docs/gates/g3-results-freeze.md`); the three figures; both case studies; the planned 8–10-developer study described, not run; the carbon-footprint sentence; negative results stated plainly (if E flips sit at the floor, the section leads with M and A, as the plan's risk table says); still ≤ 4 pages.
 
 ### W5 — Full paper draft, 4-page check
-- status: todo
-- owner: —
-- claimed_at: —
+- status: claimed
+- owner: jrzkaminski@Jerzy-Pro.local
+- claimed_at: 2026-10-22T10:15:31Z
 - deps: W2 W3 W4
 - source: gateprobe_plan.md Thu DoD "full paper draft"
 - done-when: the complete draft builds with `scripts/build_paper.sh` at ≤ 4 pages including references; the PR description ticks each submission-checklist item the PDF itself satisfies and lists the rest with their owner.
