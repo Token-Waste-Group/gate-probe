@@ -22,7 +22,8 @@ Each variant records its parent, relation class, transform, expected outcome
 and seed (Section~\ref{sec:relations}).
 
 \paragraph{Gate adapters} Every gate implements one contract: a policy
-rendering, a tool call, context text and answer labels go in; a verdict
+rendering, a tool call, context text and answer labels go in.
+A verdict
 (allow, ask, deny), a block probability $p_\mathrm{block}$, the raw response,
 the pinned model id, latency and cost come out. Adapters exist for the
 Decisions API (true/false and labeled questions), LLM judges on any

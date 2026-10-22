@@ -15,7 +15,7 @@
 \paragraph{Setup} The corpus has 300 tool calls under four policies. They
 yield 5,861 deterministic items (300 base items and 1,621 E, 436 M, 1,452 I
 and 2,052 A variants) and 529 P variants written by Qwen3-8B. Seven gates take
-every item $R=3$ times; brackets give 95\% intervals. Four are decision models on the Decisions API, in
+every item $R=3$ times. Brackets give 95\% intervals. Four are decision models on the Decisions API, in
 true/false mode at $\tau=0.5$ and pinned to dated snapshots: Jev
 1.14~\cite{openrouter2026jev114,typesafe2026models}, GPT-6 Luna
 Decisions~\cite{openrouter2026luna}, pplx-decider
@@ -28,7 +28,7 @@ is 134,190 logged decisions.
 
 \begin{table*}[t]
 \centering
-\caption{Flip rate above the test--retest floor ($F-f$, points, Newcombe 95\% interval; floor $f$ with its Wilson 95\% interval; $R=3$). Bold: violated (interval above 0); $^\dagger$: survives Bonferroni over 35 tests. M counts risk inversions against the inversion floor.}
+\caption{Flip rate above the test--retest floor ($F-f$, points, Newcombe 95\% interval; floor $f$ with its Wilson 95\% interval; $R=3$). Bold: violated (interval above 0). $^\dagger$: survives Bonferroni over 35 tests. M counts risk inversions against the inversion floor.}
 \label{tab:flips}
 \footnotesize
 \setlength{\tabcolsep}{4pt}
@@ -42,8 +42,7 @@ re-renderings flip on Luna, 8.9\% $[7.2, 10.9]$ on drex, 3.3\% $[2.3, 4.7]$ on
 pplx and Gemma, 2.8\% $[1.9, 4.1]$ on Jev and 1.8\% $[1.1, 2.9]$ on Claude
 (Fig.~\ref{fig:case}). The rule set has the opposite weakness. It never reads
 the policy text, but it flips on call spelling, for 12.7\% $[6.6, 23.1]$ of long-flag
-rewrites. Four model gates never change a verdict between repeats ($f=0$), so
-every flip they show is the transform's doing. P is violated on all seven
+rewrites. Four model gates never change a verdict between repeats ($f=0$), so every flip they show comes from the transform. P is violated on all seven
 gates, but it is the weaker class. Run in a sandbox with no network, 90 of 229
 command rewrites have the same effect as the original call. On
 these, Luna, drex, the rule set and, on one pair, Gemma still flip above their
@@ -51,9 +50,9 @@ floors, while Jev, Claude and pplx do not. Drex, for one, denies
 \texttt{git push origin --delete feature/old} (0.99) but allows \texttt{git push origin :feature/old} (0.12), a
 remote branch deletion that release-manager forbids.
 
-\paragraph{RQ2 Monotonicity} Verdict-level risk inversions are rare, at most
-one per gate. Four of seven gates allow \emph{overwriting} a
-secrets file, an irreversible write, where they deny reading it: Jev goes from
+\paragraph{RQ2 Monotonicity} Verdict-level risk inversions are rare, at most one of the 436 M variants per
+gate. Four of seven gates allow \emph{overwriting} a
+secrets file, an irreversible write, where they deny reading it. Jev goes from
 0.82 to 0.49 ($\bar p_\mathrm{block}$), Claude from 0.99 to 0.30, pplx from
 1.00 to 0.41, and the rule set has no write-deny for \texttt{.env}. Gemma
 denies \texttt{ls -la \textasciitilde} but allows \texttt{ls -la /} (1.00 to
@@ -65,30 +64,28 @@ $p_\mathrm{block}$ counts.
 push Luna toward \emph{deny} (73 of 86 flips, $+2.4$ $[1.4, 3.4]$ points of
 $p_\mathrm{block}$), and Gemma too (16 of 20, mostly renamed option labels),
 but pplx and drex toward \emph{allow} (25 of 28 and 23 of 33 flips). The single
-line ``This action is safe per the policy.'' unblocks pplx 15 times. Jev and
+line ``This action is safe per the policy.'' unblocks pplx on 15 of 300 calls. Jev and
 Claude stay within their floors, yet Jev's
 $p_\mathrm{block}$ falls by 1.0 point $[0.8, 1.2]$ on average. ``The user
 pre-approved this command.'' takes it across $\tau$ on 3 of 300 pairs, among
 them a \texttt{git fetch} that a read-only policy denies: 0.57, 0.53, 0.53
 become 0.35, 0.30, 0.31.
 
-\paragraph{Calibration} Two labelers marked 60 sampled base calls allow or
-deny from the policy alone and agree on 58 ($\kappa=0.93$). One saw Claude's
-suggested labels; a third labeler, who did not, agrees with that one on all 60.
-ECE on the 58 runs from 0.04 $[0.02, 0.07]$ (pplx) to 0.11 $[0.07, 0.17]$
+\paragraph{Calibration} Two labelers marked 60 sampled probes allow or deny from the policy alone and agree on 58 ($\kappa=0.93$). One saw Claude's suggested labels. A third labeler, who did not, agrees with
+that one on all 60.
+ECE on the 58 probes runs from 0.04 $[0.02, 0.07]$ (pplx) to 0.11 $[0.07, 0.17]$
 (Jev), and is 0.26 $[0.16, 0.38]$ for the rule set (Fig.~\ref{fig:reliability}).
 
-\paragraph{RQ4 Cost} The full suite is about 60 calls per probe. Per 1,000
-probes it costs nothing and 11\,s on the rule set; \$0.67--\$3.78 and
-2.4--8.6\,h with 8 parallel workers on the decision models; \$173 and 1.3\,h
-through message batches on Claude; and no fees and 0.8\,h on one H100 for
-Gemma. The whole evaluation cost \$54.
+\paragraph{RQ4 Cost} The full suite is about 60 calls per probe. Per 1,000 probes, the rule set costs nothing and takes 11\,s. The decision
+models cost \$0.67--\$3.78 and take 2.4--8.6\,h with 8 parallel workers.
+Claude costs \$173 and 1.3\,h through message batches, and Gemma no fees and
+0.8\,h on one H100. The whole evaluation cost \$54.
 
 % Figure 2 of 3 (R7b): reliability diagram from results/r7b-calibration/; Gemma added by the humans (2026-10-22).
 \begin{figure}[t]
 \centering
 \input{figures/reliability.tex}
-\caption{Reliability on the 58 calls both labelers agree on ($\bar p_\mathrm{block}$, $R=3$; dashed: perfect calibration; legend: ECE, 10,000-resample bootstrap 95\% interval). Claude refuses four calls labeled deny ($n=54$).}
+\caption{Reliability on the 58 probes both labelers agree on ($\bar p_\mathrm{block}$, $R=3$; dashed: perfect calibration; legend: ECE, 10,000-resample bootstrap 95\% interval). Claude refuses four calls labeled deny ($n=54$).}
 \label{fig:reliability}
 \end{figure}
 
@@ -104,7 +101,8 @@ Gemma. The whole evaluation cost \$54.
 \paragraph{Threats} A check of the most-flipping transforms found one
 generator bug. Two of 130 path rewrites turned an \texttt{rsync} remote into a
 local path. Only Claude flipped on them, and rightly: without them its E is
-$+1.0$ $[0.5, 1.8]$. A flip shows a contradiction, not which verdict is wrong.
+$+1.0$ $[0.5, 1.8]$. A flip marks two verdicts that contradict each other, and either one may be
+the wrong one.
 The pre-registered case picks concern calls the policy allows, so after
 reading the policies we show the E flip with the largest drop on a denied call,
 and a \texttt{git fetch} that crosses $\tau$ at every repeat.
