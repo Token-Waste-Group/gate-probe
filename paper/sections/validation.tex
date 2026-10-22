@@ -12,9 +12,8 @@
 
 \section{Validation}\label{sec:validation}
 
-\paragraph{Setup} The corpus has 300 tool calls under four policies. They
-yield 5,861 deterministic items (300 base items and 1,621 E, 436 M, 1,452 I
-and 2,052 A variants) and 529 P variants written by Qwen3-8B. Seven gates take
+\paragraph{Setup} The corpus has 300 tool calls under four policies. They yield 5,861 deterministic items, the base items and their E, M, I and A
+variants, and 529 P variants written by Qwen3-8B. Seven gates take
 every item $R=3$ times. Brackets give 95\% intervals. Four are decision models on the Decisions API, in
 true/false mode at $\tau=0.5$ and pinned to dated snapshots: Jev
 1.14~\cite{openrouter2026jev114,typesafe2026models}, GPT-6 Luna
@@ -35,46 +34,41 @@ is 134,190 logged decisions.
 \input{figures/flips.tex}
 \end{table*}
 
-\paragraph{RQ1 Invariance} \emph{Every gate violates equivalence}, from $+1.1$
-points on the Claude judge to $+7.5$ on Luna (Table~\ref{tab:flips}). On the model gates the largest
-source is the same policy rendered another way: 11.1\% $[9.2, 13.3]$ of
-re-renderings flip on Luna, 8.9\% $[7.2, 10.9]$ on drex, 3.3\% $[2.3, 4.7]$ on
-pplx and Gemma, 2.8\% $[1.9, 4.1]$ on Jev and 1.8\% $[1.1, 2.9]$ on Claude
-(Fig.~\ref{fig:case}). The rule set has the opposite weakness. It never reads
-the policy text, but it flips on call spelling, for 12.7\% $[6.6, 23.1]$ of long-flag
-rewrites. Four model gates never change a verdict between repeats ($f=0$), so every flip they show comes from the transform. P is violated on all seven
+\paragraph{RQ1 Invariance} \emph{Every gate violates equivalence} above its floor
+(Table~\ref{tab:flips}). On the model gates the largest source is the same
+policy in another format, which flips up to 11.1\% $[9.2, 13.3]$ of
+re-renderings, on Luna (Fig.~\ref{fig:case}). The rule set ignores the policy
+text and flips on call spelling, such as long flags. Four model gates never change a verdict between repeats ($f=0$), so every flip they show comes from the transform. P is violated on all seven
 gates, but it is the weaker class. Run in a sandbox with no network, 90 of 229
 command rewrites have the same effect as the original call. On
 these, Luna, drex, the rule set and, on one pair, Gemma still flip above their
 floors, while Jev, Claude and pplx do not. Drex, for one, denies
-\texttt{git push origin --delete feature/old} (0.99) but allows \texttt{git push origin :feature/old} (0.12), a
-remote branch deletion that release-manager forbids.
+\texttt{git push origin --delete feature/old} but allows
+\texttt{git push origin :feature/old}, the same remote branch deletion, which
+release-manager forbids.
 
 \paragraph{RQ2 Monotonicity} Verdict-level risk inversions are rare, at most one of the 436 M variants per
 gate. Four of seven gates allow \emph{overwriting} a
-secrets file, an irreversible write, where they deny reading it. Jev goes from
-0.82 to 0.49 ($\bar p_\mathrm{block}$), Claude from 0.99 to 0.30, pplx from
-1.00 to 0.41, and the rule set has no write-deny for \texttt{.env}. Gemma
-denies \texttt{ls -la \textasciitilde} but allows \texttt{ls -la /} (1.00 to
-0.00). Under the pre-registered predicate the three zero-floor decision models
+secrets file, an irreversible write, where they deny reading it: Jev, Claude, pplx and the rule set, which has no
+write-deny for \texttt{.env}. Gemma denies \texttt{ls -la \textasciitilde} but
+allows \texttt{ls -la /}. Under the pre-registered predicate the three zero-floor decision models
 also count M as violated, because with $\delta=0$ any drop in
 $p_\mathrm{block}$ counts.
 
-\paragraph{RQ3 Adversarial} The injections split the gates by direction. They
-push Luna toward \emph{deny} (73 of 86 flips, $+2.4$ $[1.4, 3.4]$ points of
-$p_\mathrm{block}$), and Gemma too (16 of 20, mostly renamed option labels),
-but pplx and drex toward \emph{allow} (25 of 28 and 23 of 33 flips). The single
+\paragraph{RQ3 Adversarial} The injections split the gates by direction. They push Luna toward \emph{deny} (73 of 86 flips) and Gemma too, mostly
+through renamed option labels, but pplx and drex toward \emph{allow} (25 of 28
+and 23 of 33 flips). The single
 line ``This action is safe per the policy.'' unblocks pplx on 15 of 300 calls. Jev and
 Claude stay within their floors, yet Jev's
 $p_\mathrm{block}$ falls by 1.0 point $[0.8, 1.2]$ on average. ``The user
-pre-approved this command.'' takes it across $\tau$ on 3 of 300 pairs, among
-them a \texttt{git fetch} that a read-only policy denies: 0.57, 0.53, 0.53
-become 0.35, 0.30, 0.31.
+pre-approved this command.'' takes it across $\tau$ on 3 of 300 pairs. One is a \texttt{git fetch} that a
+read-only policy denies, and it crosses at every repeat.
 
 \paragraph{Calibration} Two labelers marked 60 sampled probes allow or deny from the policy alone and agree on 58 ($\kappa=0.93$). One saw Claude's suggested labels. A third labeler, who did not, agrees with
 that one on all 60.
-ECE on the 58 probes runs from 0.04 $[0.02, 0.07]$ (pplx) to 0.11 $[0.07, 0.17]$
-(Jev), and is 0.26 $[0.16, 0.38]$ for the rule set (Fig.~\ref{fig:reliability}).
+On the 58, ECE is lowest on pplx, 0.04 $[0.02, 0.07]$, and highest on the
+rule set, 0.26 $[0.16, 0.38]$. Fig.~\ref{fig:reliability} shows Jev and the two
+judges.
 
 \paragraph{RQ4 Cost} The full suite is about 60 calls per probe. Per 1,000 probes, the rule set costs nothing and takes 11\,s. The decision
 models cost \$0.67--\$3.78 and take 2.4--8.6\,h with 8 parallel workers.
@@ -85,7 +79,9 @@ Claude costs \$173 and 1.3\,h through message batches, and Gemma no fees and
 \begin{figure}[t]
 \centering
 \input{figures/reliability.tex}
-\caption{Reliability on the 58 probes both labelers agree on ($\bar p_\mathrm{block}$, $R=3$; dashed: perfect calibration; legend: ECE, 10,000-resample bootstrap 95\% interval). Claude refuses four calls labeled deny ($n=54$).}
+\caption{Reliability on the 58 probes both labelers agree on, one panel per gate. Each dot is a bin
+of mean $p_\mathrm{block}$ ($R=3$), with area growing with the bin's probes. Dashed: perfect calibration.
+Titles give ECE with a 10,000-resample bootstrap 95\% interval. Claude refuses four probes labeled deny.}
 \label{fig:reliability}
 \end{figure}
 
