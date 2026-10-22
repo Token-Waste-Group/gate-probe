@@ -6,8 +6,8 @@ its Wilson interval, labels and the Bonferroni mark) from results/x2-seven-gates
 paper/figures/case_box.tex (p_block per repeat, before / after) from results/x5-case-studies/. The
 inputs shown in the box (call, policy rendering, context) come from the committed variant files.
 Once results/r7b-calibration/ exists (the analysis with the H2 labels), it also writes
-paper/figures/reliability.tex: a pgfplots reliability diagram, Jev against the Claude judge, with
-each gate's ECE and its bootstrap interval. No number is typed by hand.
+paper/figures/reliability.tex: a pgfplots reliability diagram, Jev against the Claude and Gemma
+judges, with each gate's ECE and its bootstrap interval. No number is typed by hand.
 
     uv run python scripts/paper_tables.py [--case GATE:VARIANT_ID ...] [--check]
 
@@ -38,7 +38,8 @@ CLASSES = "EMIAP"
 CASES = ["drex:p0109/policy_format/0"]
 RENDERINGS = {"yaml": "YAML", "json": "JSON", "prose": "prose", "bullets": "bullets"}
 CALIBRATION = "r7b-calibration"  # results/<this>/: gateprobe analyze with probes/labels.jsonl (R7b)
-RELIABILITY_GATES = ("jev", "judge-claude")  # the plan's figure 2: Jev against the judge
+# The plan's figure 2 is Jev against the judge; the humans added the Gemma judge (2026-10-22).
+RELIABILITY_GATES = ("jev", "judge-claude", "judge-gemma")
 MARKS = ("*", "square*", "triangle*", "diamond*")
 
 
