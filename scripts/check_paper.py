@@ -7,7 +7,8 @@ Rules (docs/icse27-demo-cfp.md, CLAUDE.md § Paper):
 - one section per file: main.tex has no \\section and only \\input's sections/*.tex; every
   sections/ file is input exactly once; abstract.tex has no section, every other file exactly one;
 - every \\cite key exists in references.bib;
-- with --final, no \\todo{...} is left anywhere (the macro's definition in main.tex aside).
+- with --final, no \\todo{...} is left anywhere (the macro's definition in main.tex aside), and no
+  \\url{...} still holds a TODO placeholder (the tool and video links in main.tex).
 
 Usage: scripts/check_paper.py [--final]   (exit 0 clean, 1 problems found, 2 bad usage)
 Page count is checked by scripts/build_paper.sh after the build, not here.
@@ -45,6 +46,7 @@ SECTION = re.compile(r"\\section\*?\{")
 CITE = re.compile(r"\\cite[a-zA-Z]*\*?(?:\[[^\]]*\])*\{([^}]*)\}")
 BIBKEY = re.compile(r"^\s*@\w+\s*\{\s*([^,\s]+)\s*,", re.MULTILINE)
 TODO = re.compile(r"\\todo\{")
+PLACEHOLDER_URL = re.compile(r"\\url\{[^}]*TODO[^}]*\}")
 
 
 def strip_comments(tex: str) -> str:
@@ -107,6 +109,8 @@ def check(paper: Path = PAPER, final: bool = False) -> list[str]:
             body = tex.replace(r"\newcommand{\todo}", "") if rel == "main.tex" else tex
             if TODO.search(body):
                 problems.append(f"{rel}: \\todo left in the final paper")
+            for url in PLACEHOLDER_URL.findall(tex):
+                problems.append(f"{rel}: placeholder link {url} left in the final paper")
     return problems
 
 

@@ -86,3 +86,10 @@ def test_final_mode_rejects_todos(tmp_path):
     paper = _paper(tmp_path, intro=intro)
     assert _lint().check(paper) == []
     assert any("\\todo left" in p for p in _lint().check(paper, final=True))
+
+
+def test_final_mode_rejects_placeholder_links(tmp_path):
+    intro = "\\section{Intro}\nSee \\url{https://youtu.be/TODO}.\n"
+    paper = _paper(tmp_path, intro=intro)
+    assert _lint().check(paper) == []
+    assert any("placeholder link" in p for p in _lint().check(paper, final=True))
