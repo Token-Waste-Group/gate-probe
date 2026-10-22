@@ -67,10 +67,16 @@ def test_flips_table_cells(tmp_path):
     jev = next(line for line in text.splitlines() if line.startswith("Jev 1.14"))
     cells = [c.strip() for c in jev.removesuffix("\\\\").split("&")]
     assert cells[1] == "0.38"  # the floor; intervals stay in the released CSVs (one number per cell)
-    assert cells[2] == "\\textbf{+1.3}\\rlap{$^\\dagger$}"  # E: positive, Bonferroni
+    assert (
+        cells[2] == "\\textbf{\\phantom{0}+1.3}\\rlap{$^\\dagger$}"
+    )  # E: positive, Bonferroni, padded to +10.5
     assert cells[3] == "--"  # M: no row
-    assert cells[4] == "\\textbf{+0.6}"  # I: the class row, not the transform row
-    assert cells[5] == "0.0"  # A: negative, and a value that rounds to zero has no sign
+    assert cells[4] == "\\textbf{\\phantom{0}+0.6}"  # I: the class row, not the transform row
+    assert cells[5] == "\\phantom{+}\\phantom{0}0.0"  # A: negative; a value that rounds to zero has no sign
+    assert (
+        "Gate & Noise floor (\\%) & Equivalence & Monotonicity & Irrelevance & Adversarial & Paraphrase"
+        in text
+    )
     assert "[" not in jev and "\\cmidrule(l){3-7}" in text and text.count("\\addlinespace") == 2
     assert "% Bonferroni over 30 class tests (z = 3.14)." in text
 
