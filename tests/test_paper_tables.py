@@ -198,9 +198,9 @@ def test_reliability_figure(tmp_path):
     )
     text = pt.reliability_figure(tmp_path)
     assert "\\addplot+[mark=*] coordinates {(0.0300,0.1000) (0.9500,0.9000)};" in text  # in bin order
-    assert "\\addlegendentry{Jev 1.14 ($n=60$): ECE 0.12 [0.08, 0.20]}" in text
-    assert "\\addlegendentry{Claude Opus 5.5 judge ($n=58$): ECE 0.05 [0.02, 0.11]}" in text
+    assert "\\addlegendentry{Jev 0.12 [0.08, 0.20]}" in text  # ECE and its interval; n is in the caption
+    assert "\\addlegendentry{Claude 0.05 [0.02, 0.11]}" in text
     assert "\\addplot+[mark=triangle*] coordinates {(0.0000,0.1200)};" in text
-    assert "\\addlegendentry{Gemma 4 31B judge ($n=60$): ECE 0.07 [0.02, 0.14]}" in text
+    assert "\\addlegendentry{Gemma 0.07 [0.02, 0.14]}" in text
     assert "Rule set" not in text  # Jev and the two judges only
     assert text.count("\\addplot") == 4  # the diagonal and three gates

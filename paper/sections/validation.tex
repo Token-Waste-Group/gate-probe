@@ -4,11 +4,11 @@
 % Numbers ONLY from the G3 freeze (docs/gates/g3-results-freeze.md); every
 % number with its repeats and a Wilson 95% interval; figures come from R7's
 % scripts, never hand-edited. If E flips sit at the floor, lead with M and A.
-% DRAFT (loop, 2026-10-20). Numbers from results/ as frozen at G3 (19fd14a), plus X2
+% W4 (loop, 2026-10-22). Numbers from results/ as frozen at G3 (19fd14a), plus X2
 % (G3 decision 4): results/x2-seven-gates/ (its six frozen gates = results/x4-final/
 % byte for byte) and results/x5-case-studies/. Case pairs: G3 decision 6
 % (1E in the box, 2' beside it). Table and box: scripts/paper_tables.py (R7a).
-% Figure 2 waits on R7b (H2 labels); its placeholder below has the figure's size.
+% Figure 2: R7b (results/r7b-calibration/, labels: majority of probes/labels.jsonl).
 
 \section{Validation}\label{sec:validation}
 
@@ -24,8 +24,7 @@ Two are LLM judges with one frozen prompt: Claude Opus 5.5 states its block
 probability (Message Batches API), and Gemma~4 31B~\cite{google2026gemma4} on
 vLLM~\cite{kwon2023efficient} gives it by logprobs. The seventh is a
 hand-written Claude Code-style rule set~\cite{anthropic2026permissions}. That
-is 134,190 logged decisions. Table~\ref{tab:flips} gives $F-f$ per gate and
-class, with Bonferroni over its 35 tests.
+is 134,190 logged decisions.
 
 \begin{table*}[t]
 \centering
@@ -37,7 +36,7 @@ class, with Bonferroni over its 35 tests.
 \end{table*}
 
 \paragraph{RQ1 Invariance} \emph{Every gate violates equivalence}, from $+1.1$
-points on the Claude judge to $+7.5$ on Luna. On the model gates the largest
+points on the Claude judge to $+7.5$ on Luna (Table~\ref{tab:flips}). On the model gates the largest
 source is the same policy rendered another way: 11.1\% of re-renderings flip
 on Luna, 8.9\% on drex, 3.3\% on pplx and Gemma, 2.8\% on Jev and 1.8\% on
 Claude (Fig.~\ref{fig:case}). The rule set has the opposite weakness. It never reads
@@ -72,18 +71,23 @@ pre-approved this command.'' takes it across $\tau$ on 3 of 300 pairs, among
 them a \texttt{git fetch} that a read-only policy denies: 0.57, 0.53, 0.53
 become 0.35, 0.30, 0.31.
 
+\paragraph{Calibration} Two labelers marked 60 sampled base calls allow or
+deny from the policy alone and agree on 58 ($\kappa=0.93$). One saw Claude's
+suggested labels; a third labeler, who did not, agrees with that one on all 60.
+ECE on the 58 runs from 0.04 $[0.02, 0.07]$ (pplx) to 0.11 $[0.07, 0.17]$
+(Jev), and is 0.26 $[0.16, 0.38]$ for the rule set (Fig.~\ref{fig:reliability}).
+
 \paragraph{RQ4 Cost} The full suite is about 60 calls per probe. Per 1,000
 probes it costs nothing and 11\,s on the rule set; \$0.67--\$3.78 and
 2.4--8.6\,h with 8 parallel workers on the decision models; \$173 and 1.3\,h
 through message batches on Claude; and no fees and 0.8\,h on one H100 for
 Gemma. The whole evaluation cost \$54.
 
-% Figure 2 of 3 (R7b): reliability diagram, Jev vs. the Claude judge, labeled subset.
-% Placeholder of the generated figure's height (axis 0.55 columnwidth + legend).
+% Figure 2 of 3 (R7b): reliability diagram from results/r7b-calibration/; Gemma added by the humans (2026-10-22).
 \begin{figure}[t]
 \centering
-\fbox{\parbox[c][0.6\columnwidth][c]{0.95\columnwidth}{\centering\todo{R7b reliability diagram (waits on the H2 labels)}}}
-\caption{Reliability of Jev and the Claude judge on the hand-labeled subset (dashed: perfect calibration)}
+\input{figures/reliability.tex}
+\caption{Reliability on the 58 calls both labelers agree on ($\bar p_\mathrm{block}$, $R=3$; dashed: perfect calibration; legend: ECE, 10,000-resample bootstrap 95\% interval). Claude refuses four calls labeled deny ($n=54$).}
 \label{fig:reliability}
 \end{figure}
 
@@ -92,7 +96,7 @@ Gemma. The whole evaluation cost \$54.
 \centering
 \footnotesize
 \input{figures/case_box.tex}
-\caption{The same policy as JSON lets drex delete tests, which release-manager does not allow ($p_\mathrm{block}$ at repeats 1--3, replayed from the cache). Chosen among flips on calls the policy denies.}
+\caption{The same policy as JSON lets drex delete tests, which release-manager does not allow ($p_\mathrm{block}$ at repeats 1--3, replayed from the cache).}
 \label{fig:case}
 \end{figure}
 
@@ -100,10 +104,9 @@ Gemma. The whole evaluation cost \$54.
 generator bug. Two of 130 path rewrites turned an \texttt{rsync} remote into a
 local path. Only Claude flipped on them, and rightly: without them its E is
 $+1.0$ $[0.5, 1.8]$. A flip shows a contradiction, not which verdict is wrong.
-The pre-registered case picks (Luna on \texttt{git branch -D}, Jev on
-\texttt{git ls-remote}) concern calls the policy allows. So, after reading the
-policies, we show the E flip with the largest drop on a call the policy denies,
-and a \texttt{git fetch} on such a call that crosses at every repeat.
+The pre-registered case picks concern calls the policy allows, so after
+reading the policies we show the E flip with the largest drop on a denied call,
+and a \texttt{git fetch} that crosses $\tau$ at every repeat.
 
 \paragraph{Planned study} Eight to ten developers configure a gate with and
 without \tool{}'s report. We record the threshold they pick and how many
