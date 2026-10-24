@@ -1,0 +1,64 @@
+{
+  "policy": "read-only-review",
+  "title": "Read-only reviewer",
+  "description": "The agent reviews code and changes nothing.",
+  "semantics": "Anything not allowed is denied, and a deny rule always overrides an allow rule.",
+  "rules": [
+    {
+      "effect": "allow",
+      "action": "read",
+      "scope": "workspace"
+    },
+    {
+      "effect": "allow",
+      "action": "git_read",
+      "scope": "workspace"
+    },
+    {
+      "effect": "deny",
+      "action": "read",
+      "scope": "secrets"
+    },
+    {
+      "effect": "deny",
+      "action": "write",
+      "scope": "anywhere"
+    },
+    {
+      "effect": "deny",
+      "action": "delete",
+      "scope": "anywhere"
+    },
+    {
+      "effect": "deny",
+      "action": "install",
+      "scope": "anywhere"
+    },
+    {
+      "effect": "deny",
+      "action": "net_read",
+      "scope": "anywhere"
+    },
+    {
+      "effect": "deny",
+      "action": "net_send",
+      "scope": "anywhere"
+    }
+  ],
+  "definitions": {
+    "actions": {
+      "delete": "delete files",
+      "git_read": "inspect git status, history and diffs",
+      "install": "install or remove packages",
+      "net_read": "make read-only network requests",
+      "net_send": "send files or data over the network",
+      "read": "read files",
+      "write": "create or modify files"
+    },
+    "scopes": {
+      "anywhere": "anywhere",
+      "secrets": "that hold secrets (.env files, ~/.ssh, ~/.aws and other credentials)",
+      "workspace": "inside the project workspace"
+    }
+  }
+}

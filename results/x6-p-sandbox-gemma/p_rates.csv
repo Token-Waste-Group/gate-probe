@@ -1,0 +1,6 @@
+subset,gate_id,n_pairs,floor_f,rate,rate_lo,rate_hi,excess,excess_lo,excess_hi,label
+all_command_rewrites,judge-gemma,229,0.000000,0.030568,0.014884,0.061741,0.030568,0.014873,0.061741,positive
+same_effect,judge-gemma,90,0.000000,0.011111,0.001964,0.060284,0.011111,0.001944,0.060284,positive
+different_effect,judge-gemma,74,0.000000,0.067568,0.029204,0.148612,0.067568,0.029199,0.148612,positive
+post_hoc_same_effect_both_ok,judge-gemma,80,0.000000,0.012500,0.002210,0.067463,0.012500,0.002192,0.067463,positive
+post_hoc_same_writes,judge-gemma,118,0.000000,0.008475,0.001498,0.046446,0.008475,0.001472,0.046446,positive

@@ -1,0 +1,21 @@
+# Never ship secrets or local state into the image.
+.env
+.env.*
+!.env.example
+.git
+.venv
+.claude
+memory
+cache
+runs
+reports
+results
+paper
+docs
+tests
+scripts
+integrations
+**/__pycache__
+**/*.pyc
+.ruff_cache
+.pytest_cache

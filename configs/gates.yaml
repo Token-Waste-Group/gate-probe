@@ -1,0 +1,71 @@
+# Gates under test (every model id is pinned — no
+# floating aliases such as "latest" or "preview"; gateprobe.config rejects them).
+# Adapters: decisions (R1), judge (R4; Claude backend R8), rules (R3), http.
+
+gates:
+  jev:
+    adapter: decisions
+    # Human decision 2026-10-19: 1.14, not 1.13. Pinned to the dated snapshot the API
+    # serves for "typesafe/jev-1.14" (R1), so the alias can't move under us; the
+    # adapter rejects any response served by a different model.
+    model: typesafe/jev-1.14-20261014
+    mode: noul                        # noul | choice; plan proposal: noul for flips, choice for the hook (G1)
+    endpoint: https://openrouter.ai/api/alpha/decisions   # OpenRouter API reference, checked in R1
+    api_key_env: OPENROUTER_API_KEY
+    threshold: 0.5                    # noul: deny when p_block >= threshold
+    price_usd_per_mtok: {input: 0.042, output: 0.0}       # fallback when a response carries no usage.cost
+
+  # Three further decision models, chosen at G1 (human, 2026-10-19), pinned to the dated
+  # snapshots the API serves. Prices measured with one call each at G1 (usage.cost).
+  gpt-6-luna-decisions:
+    adapter: decisions
+    model: openai/gpt-6-luna-decisions-20261006     # ~$0.00007 per call (~$0.10 per M input; output free)
+    mode: noul
+    endpoint: https://openrouter.ai/api/alpha/decisions
+    api_key_env: OPENROUTER_API_KEY
+    threshold: 0.5
+
+  pplx-decider:
+    adapter: decisions
+    model: perplexity/pplx-decider-v1.2-20261016    # ~$0.000013 per call
+    mode: noul
+    endpoint: https://openrouter.ai/api/alpha/decisions
+    api_key_env: OPENROUTER_API_KEY
+    threshold: 0.5
+
+  drex:
+    adapter: decisions
+    model: nace-ai/drex-v1.5-20261009               # ~$0.000024 per call (served by DeepInfra)
+    mode: noul
+    endpoint: https://openrouter.ai/api/alpha/decisions
+    api_key_env: OPENROUTER_API_KEY
+    threshold: 0.5
+
+  judge-gemma:
+    adapter: judge
+    backend: openai                   # any OpenAI-compatible chat endpoint (vLLM on the H100, R5)
+    model: google/gemma-4-31B-it      # the served name; the adapter rejects any other
+    revision: 842da3794eaa0b77d5f08bae87a17459d91ff475   # Hugging Face commit of 2026-07-20 (R5)
+    dtype: bfloat16                   # the checkpoint's own; no quantization (R5)
+    server: vllm/vllm-openai:v0.29.0  # --language-model-only --generation-config=vllm --max-logprobs=20
+    base_url: http://localhost:8017/v1   # a vLLM server on this port (here an ssh tunnel to the GPU node)
+    prompt: configs/judge_prompt.md   # frozen since R4 merged; changing it needs a human
+    p_block_source: logprobs          # first answer token, renormalized over the option labels (R4)
+    top_logprobs: 20
+    price_usd_per_mtok: {input: 0.0, output: 0.0}   # local vLLM
+
+  judge-claude:
+    adapter: judge
+    backend: anthropic                # Message Batches API (R8); human decision 2026-10-19
+    model: claude-opus-5-5
+    effort: low                       # Opus 5.5 keeps thinking on; effort, not temperature (X7 pilot confirms)
+    max_tokens: 4096                  # thinking counts toward it
+    prompt: configs/judge_prompt.md   # the same frozen prompt as judge-gemma
+    api_key_env: ANTHROPIC_API_KEY
+    price_usd_per_mtok: {input: 4.0, output: 20.0}   # standard; batch results are billed at half
+    batch: true                       # gateprobe run submits Message Batches
+    est_usd_per_call: 0.00337         # X7 pilot (2026-10-19): 1.25 x $0.0027 mean per call at batch prices
+
+  rules:
+    adapter: rules
+    model: rules-v0                   # version of the per-policy rule sets (R3)

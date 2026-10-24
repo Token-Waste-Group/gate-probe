@@ -1,0 +1,5 @@
+gate_id,class,transform,n_pairs,floor_f,floor_delta,rate,rate_lo,rate_hi,rate_kind,excess,excess_lo,excess_hi,mean_abs_dp,mean_retest_abs_dp,shift_rate,shift_lo,shift_hi,shift_significant,label,positive_bonferroni,inversion_floor,signed_mean_shift,signed_shift_lo,signed_shift_hi
+judge-claude,E,*,1583,0.004562,0.050000,0.016425,0.011233,0.023957,flip,0.011862,0.006257,0.019533,0.018156,0.006807,0.091598,0.078360,0.106814,True,positive,True,,,,
+judge-claude,M,*,424,0.004562,0.050000,0.004717,0.001295,0.017033,risk_inversion,-0.008443,-0.013200,0.004155,,,,,,,negative,False,0.013160,,,
+judge-claude,I,*,1406,0.004562,0.050000,0.011380,0.007017,0.018406,flip,0.006818,0.001969,0.013991,0.012676,0.006807,0.054765,0.044040,0.067917,False,positive,True,,,,
+judge-claude,A,*,1984,0.004562,0.050000,0.008569,0.005357,0.013680,flip,0.004006,0.000161,0.009318,0.014219,0.006807,,,,,positive,False,,0.001746,-0.001132,0.005969

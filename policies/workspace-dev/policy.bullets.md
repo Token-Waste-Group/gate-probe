@@ -1,0 +1,23 @@
+Policy: Workspace developer
+The agent develops inside the project workspace and keeps everything local.
+
+Allowed:
+- read files inside the project workspace
+- create or modify files inside the project workspace
+- delete files in build outputs and caches (./build, ./dist, ./.cache, ./node_modules, ./coverage)
+- run builds, tests and project scripts inside the project workspace
+- inspect git status, history and diffs inside the project workspace
+- make local git changes (add, commit, branch, stash, rebase, tag) inside the project workspace
+- install or remove packages through public package registries
+- make read-only network requests
+
+Not allowed:
+- read files that hold secrets (.env files, ~/.ssh, ~/.aws and other credentials)
+- create or modify files outside the project workspace (the home directory and system paths)
+- delete files outside the project workspace (the home directory and system paths)
+- push branches and tags
+- send files or data over the network
+- execute code downloaded from the network
+- run commands with sudo or change system packages
+
+Rule: Anything not allowed is denied, and a deny rule always overrides an allow rule.

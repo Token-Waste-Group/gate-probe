@@ -1,0 +1,16 @@
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash|Read|Write|Edit|WebFetch",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "uv run --project /path/to/gate-probe gateprobe hook --gate jev --policy workspace-dev --results /path/to/gate-probe/results/x1-jev-rules --replay-only",
+            "timeout": 30
+          }
+        ]
+      }
+    ]
+  }
+}

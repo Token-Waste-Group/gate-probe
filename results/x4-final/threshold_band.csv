@@ -1,0 +1,7 @@
+gate_id,defined,band_lo,band_hi,band_width,safe_threshold_exists,n_pairs
+jev,True,0.000000,0.030000,0.030000,True,3073
+rules,False,,,,,
+judge-claude,True,0.000000,0.010000,0.010000,True,3000
+gpt-6-luna-decisions,True,0.000000,0.000000,0.000000,False,3073
+pplx-decider,True,0.000000,0.000583,0.000583,True,3073
+drex,True,0.999900,1.000000,0.000100,True,3073
