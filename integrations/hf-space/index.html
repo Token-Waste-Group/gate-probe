@@ -3,102 +3,195 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>GateProbe replay demo</title>
-<meta name="description" content="Browse the metamorphic flips GateProbe found in six coding-agent permission gates, replayed from the frozen runs.">
+<title>GateProbe replay</title>
 <style>
 :root {
-  --bg: #fafaf8; --panel: #ffffff; --ink: #1d1f24; --muted: #646872; --line: #e1e1dc;
-  --head: #f2f2ee; --pos: #fbe3e0; --pos-ink: #8a1f14; --neg: #e3f2e6; --neg-ink: #1d5b2b;
-  --deny: #b3261e; --allow: #1f6f3a; --accent: #2f5fb3; --mark: #fff3c4; --sel: #e8eefb;
+  --bg: #ffffff;
+  --ink: #1a1a1a;
+  --muted: #6b6b6b;
+  --line: #dddddd;
+  --soft: #f3f3f3;
+  --edge: #bdbdbd;
+  --red: #c8505b; /* the red of the paper's figures and Table I */
+  --bar: #d4d4d4;
+  color-scheme: light;
 }
 @media (prefers-color-scheme: dark) {
-  :root {
-    --bg: #15171b; --panel: #1d2026; --ink: #e6e6e3; --muted: #9a9ea8; --line: #30343c;
-    --head: #252930; --pos: #4a2420; --pos-ink: #ffb4a8; --neg: #1f3a26; --neg-ink: #a6e3b4;
-    --deny: #ff8a80; --allow: #7fd69a; --accent: #8fb0ff; --mark: #4a4120; --sel: #26324a;
+  :root:not([data-theme="light"]) {
+    --bg: #151515;
+    --ink: #e6e6e6;
+    --muted: #9b9b9b;
+    --line: #333333;
+    --soft: #222222;
+    --edge: #555555;
+    --red: #e06c75;
+    --bar: #444444;
+    color-scheme: dark;
   }
 }
+:root[data-theme="dark"] {
+  --bg: #151515;
+  --ink: #e6e6e6;
+  --muted: #9b9b9b;
+  --line: #333333;
+  --soft: #222222;
+  --edge: #555555;
+  --red: #e06c75;
+  --bar: #444444;
+  color-scheme: dark;
+}
 * { box-sizing: border-box; }
-body { margin: 0; background: var(--bg); color: var(--ink); font: 15px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif; }
-main { max-width: 1180px; margin: 0 auto; padding: 20px 16px 48px; }
-h1 { font-size: 24px; margin: 0 0 4px; }
-h2 { font-size: 17px; margin: 28px 0 8px; }
-p { margin: 6px 0; }
-.muted { color: var(--muted); }
-.small { font-size: 13px; }
-code, pre { font: 12.5px/1.45 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
-pre { white-space: pre-wrap; word-break: break-word; margin: 4px 0 0; }
-.panel { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 12px; }
-.scroll { overflow-x: auto; }
-table { border-collapse: collapse; width: 100%; background: var(--panel); }
-th, td { border: 1px solid var(--line); padding: 6px 8px; text-align: left; vertical-align: top; }
-th { background: var(--head); font-weight: 600; font-size: 13px; }
-td.num { font-variant-numeric: tabular-nums; white-space: nowrap; }
-td.pick, tr.pick { cursor: pointer; }
-td.pick:hover, tr.pick:hover td { outline: 2px solid var(--accent); outline-offset: -2px; }
-.positive { background: var(--pos); color: var(--pos-ink); }
-.negative { background: var(--neg); color: var(--neg-ink); }
-.selected, tr.selected td { box-shadow: inset 0 0 0 2px var(--accent); }
-.controls { display: flex; flex-wrap: wrap; gap: 10px 16px; align-items: end; margin: 8px 0; }
-label { display: grid; gap: 2px; font-size: 13px; color: var(--muted); }
-select { font: inherit; padding: 4px 6px; border: 1px solid var(--line); border-radius: 6px; background: var(--panel); color: var(--ink); min-width: 160px; }
-.deny { color: var(--deny); font-weight: 600; }
-.allow { color: var(--allow); font-weight: 600; }
-.tag { display: inline-block; font-size: 12px; padding: 0 6px; border-radius: 10px; border: 1px solid var(--line); color: var(--muted); }
-.tag.looser { border-color: var(--deny); color: var(--deny); }
-.tag.stricter { border-color: var(--allow); color: var(--allow); }
-.pair { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-@media (max-width: 760px) { .pair { grid-template-columns: 1fr; } }
-.field { margin: 8px 0; }
-.field > b { font-size: 13px; }
-.changed { background: var(--mark); border-radius: 4px; padding: 0 4px; font-size: 12px; margin-left: 6px; }
-button { font: inherit; padding: 4px 10px; border: 1px solid var(--line); border-radius: 6px; background: var(--panel); color: var(--ink); cursor: pointer; }
-details summary { cursor: pointer; color: var(--accent); font-size: 13px; }
-#error { color: var(--deny); }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font: 15px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+code, pre, .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 13px; }
+main { max-width: 1360px; margin: 0 auto; padding: 20px 24px 48px; }
+h1, h2, h3 { font-size: 15px; font-weight: 600; margin: 0; }
+p { margin: 0 0 8px; }
+button { font: inherit; color: inherit; }
+select, .btn {
+  font: inherit; color: var(--ink); background: var(--bg);
+  border: 1px solid var(--line); border-radius: 4px; padding: 5px 8px;
+}
+select { max-width: 100%; }
+.btn { cursor: pointer; }
+.btn:hover, select:hover { border-color: var(--muted); }
+:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+
+.bar-top { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 20px; padding-bottom: 14px; border-bottom: 1px solid var(--line); }
+.bar-top label { display: flex; align-items: center; gap: 8px; min-width: 0; }
+.bar-top label span { color: var(--muted); }
+#call { width: 250px; }
+#gate { width: 220px; }
+.seg { display: inline-flex; border: 1px solid var(--line); border-radius: 4px; overflow: hidden; }
+.seg button { background: var(--bg); border: 0; padding: 5px 10px; cursor: pointer; color: var(--muted); }
+.seg button + button { border-left: 1px solid var(--line); }
+.seg button.on { color: var(--ink); background: var(--soft); }
+.btn:disabled { color: var(--muted); cursor: default; }
+.links { margin-left: auto; display: flex; gap: 16px; }
+.links a { color: var(--muted); text-decoration: none; cursor: pointer; }
+.links a:hover { color: var(--ink); }
+.keyrow { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 20px; margin-top: 14px; }
+.keyrow label { display: flex; align-items: center; gap: 8px; }
+.keyrow label span { color: var(--muted); white-space: nowrap; }
+.keyrow input { font: inherit; color: var(--ink); background: var(--bg); border: 1px solid var(--line); border-radius: 4px; padding: 5px 8px; width: 300px; max-width: 100%; }
+.keyrow #livenote { max-width: 78ch; }
+[hidden] { display: none !important; }
+.answers.three .reps { display: block; }
+.diff { text-decoration: underline dotted; text-underline-offset: 3px; }
+.intro { max-width: 78ch; margin: 14px 0 0; }
+.note { max-width: 78ch; margin: 14px 0 0; }
+.note:empty { display: none; }
+
+.layout { display: grid; grid-template-columns: 320px minmax(0, 1fr); gap: 32px; margin-top: 22px; }
+.detail { border-right: 1px solid var(--line); padding-right: 24px; min-width: 0; }
+.detail h2 { margin-bottom: 12px; }
+.field { margin-bottom: 14px; }
+.field > .name { color: var(--muted); margin-bottom: 2px; }
+.field pre { margin: 0; white-space: pre-wrap; word-break: break-word; }
+.field .was { color: var(--muted); margin-top: 4px; }
+.field details summary { cursor: pointer; color: var(--muted); }
+.field details pre { margin-top: 6px; max-height: 260px; overflow: auto; padding: 8px; background: var(--soft); border-radius: 4px; }
+ins { text-decoration: none; background: var(--soft); box-shadow: inset 0 -2px 0 var(--ink); }
+.answers { display: grid; grid-template-columns: auto 1fr; gap: 2px 14px; }
+.answers.three { grid-template-columns: auto 1fr 1fr; }
+.answers .reps { color: var(--muted); }
+.outcome { margin-top: 10px; }
+.bad { color: var(--red); }
+.quiet { color: var(--muted); }
+
+.graph { position: relative; display: grid; grid-template-columns: 170px 136px minmax(0, 1fr); column-gap: 40px; row-gap: 2px; align-items: center; }
+.graph svg { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; overflow: visible; }
+.graph svg path { fill: none; stroke: var(--edge); stroke-width: 1.25; }
+.graph svg path.bad { stroke: var(--red); stroke-width: 1.75; }
+.graph svg path.na { stroke-dasharray: 3 3; }
+.node { position: relative; z-index: 1; text-align: left; background: var(--bg); border: 1px solid var(--line); border-radius: 4px; padding: 8px 10px; cursor: pointer; min-width: 0; }
+.node:hover { border-color: var(--muted); }
+.node.selected { border-color: var(--ink); }
+.root .mono { display: block; overflow-wrap: break-word; margin: 0 0 4px; }
+.root .edit { width: 100%; color: var(--ink); background: var(--soft); border: 1px solid var(--line); border-radius: 4px; padding: 3px 6px; resize: vertical; }
+.root .edit:focus { border-color: var(--ink); outline: 0; }
+.detail select { max-width: 100%; }
+.group { padding: 6px 10px; cursor: default; }
+.group:hover { border-color: var(--line); }
+.leaf { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 12px; align-items: baseline; border-color: transparent; padding: 4px 8px; }
+.leaf:hover { border-color: var(--line); }
+.leaf.selected { border-color: var(--ink); }
+.leaf .what { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.leaf .what .mono { color: var(--muted); margin-left: 8px; }
+.leaf .ans { white-space: nowrap; font-variant-numeric: tabular-nums; }
+.gap { height: 12px; }
+
+.anim .leaf, .anim .group, .anim svg path { animation: show 0.3s ease-out both; }
+@keyframes show { from { opacity: 0; } to { opacity: 1; } }
+@media (prefers-reduced-motion: reduce) {
+  .anim .leaf, .anim .group, .anim svg path { animation: none; }
+}
+
+.summary { margin-top: 40px; padding-top: 18px; border-top: 1px solid var(--line); }
+.summary p { max-width: 78ch; }
+.bars { margin-top: 12px; max-width: 760px; }
+.bars button { display: grid; grid-template-columns: 220px minmax(0, 1fr) 64px; gap: 14px; align-items: center; width: 100%; padding: 3px 4px; background: none; border: 0; border-radius: 4px; text-align: left; cursor: pointer; }
+.bars button:hover { background: var(--soft); }
+.bars .gname { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.bars .track { display: block; height: 10px; }
+.bars .fill { display: block; height: 10px; background: var(--bar); border-radius: 0 4px 4px 0; }
+.bars .val { text-align: right; font-variant-numeric: tabular-nums; }
+.bars .on .fill { background: var(--ink); }
+.bars .on .gname { font-weight: 600; }
+footer { margin-top: 32px; color: var(--muted); }
+
+@media (max-width: 860px) {
+  main { padding: 16px 16px 40px; }
+  #call { width: 100%; }
+  .bar-top label { flex: 1 1 100%; }
+  .bar-top label select { flex: 1; width: auto; min-width: 0; }
+  .links { margin-left: 0; }
+  .keyrow input { width: 100%; }
+  .layout { grid-template-columns: minmax(0, 1fr); }
+  .detail { border-right: 0; padding-right: 0; border-bottom: 1px solid var(--line); padding-bottom: 12px; order: 2; }
+  .graph { grid-template-columns: minmax(0, 1fr); column-gap: 0; }
+  .graph svg { display: none; }
+  .graph > * { grid-row: auto !important; grid-column: 1 !important; }
+  .group { border: 0; padding: 12px 0 2px; font-weight: 600; }
+  .bars button { grid-template-columns: minmax(0, 150px) minmax(0, 1fr) 40px; gap: 10px; }
+}
 </style>
 </head>
 <body>
 <main>
-  <h1>GateProbe replay demo</h1>
-  <p class="muted">
-    GateProbe rewrites the inputs of coding-agent permission gates under relations whose expected outcome is known.
-    It then counts the verdicts that move. Every answer on this page was recorded in the frozen runs and is replayed from them.
-    Nothing here calls a gate.
-  </p>
-  <p class="small muted" id="provenance">Loading the frozen data…</p>
-  <p id="error" hidden></p>
-
-  <h2>Flip rate above the noise floor, per gate and relation</h2>
-  <p class="small muted">
-    F − f in points: the rate at which a rewrite moves the verdict, minus the gate's own test–retest rate (floor f), with Newcombe 95% intervals.
-    For M, the rate counts risk inversions instead.
-    Red: violated (the interval is above 0). Green: invariant within 5 points. † survives Bonferroni over 30 tests. Click a cell to browse its flips.
-  </p>
-  <div class="scroll"><table id="overview"></table></div>
-
-  <h2>Transforms</h2>
-  <div class="controls">
-    <label>Gate <select id="gate"></select></label>
-    <label>Relation <select id="cls"></select></label>
-    <label>Transform <select id="transform"></select></label>
-    <label>Direction <select id="direction">
-      <option value="violations">violations only</option>
-      <option value="all">all flips</option>
-    </select></label>
+  <div class="bar-top">
+    <h1>GateProbe</h1>
+    <div class="seg" role="group" aria-label="Mode">
+      <button type="button" data-mode="replay" class="on">Replay</button>
+      <button type="button" data-mode="live">Live</button>
+    </div>
+    <label><span>Call</span><select id="call"></select></label>
+    <label><span>Gate</span><select id="gate"></select></label>
+    <button class="btn" id="replay" type="button">Replay</button>
+    <nav class="links"><a>Paper</a><a href="https://youtu.be/rZ6yazAzKs8">Video</a><a href="https://github.com/Token-Waste-Group/gate-probe">GitHub</a></nav>
   </div>
-  <p class="small muted" id="cls-note"></p>
-  <div class="scroll"><table id="transforms"></table></div>
-
-  <h2 id="flips-title">Flips</h2>
-  <p class="small muted">
-    A flip: the parent and its rewrite get different verdicts at the same repeat. It shows the gate contradicting itself, not which verdict is wrong.
-    Click a flip to see both inputs side by side.
-  </p>
-  <div class="scroll"><table id="flips"></table></div>
-  <p><button id="more" hidden>Show more</button></p>
-
-  <h2>Side by side</h2>
-  <div id="detail" class="pair"><p class="muted">Pick a flip above.</p></div>
+  <div class="keyrow" id="keyrow" hidden>
+    <label id="keylabel"><span id="keyname">API key</span><input id="key" type="password" autocomplete="off" spellcheck="false"></label>
+    <span class="quiet" id="livenote"></span>
+    <span id="status"></span>
+  </div>
+  <p class="intro">A permission gate reads a project's policy and a coding agent's tool call and decides whether to allow the call. GateProbe rewrites each call in ways whose effect on the verdict is known: writing <code>-r</code> as <code>--recursive</code> or the policy in another format must keep the verdict, and adding <code>sudo</code> must not weaken it. It then checks whether the gate's verdicts agree. Red marks a rewrite whose verdict contradicts the verdict on the original call. In replay, every verdict was recorded in the paper's runs and the page calls no model. In live mode, your key sends the same requests to the gate again.</p>
+  <p class="note" id="note"></p>
+  <div class="layout">
+    <section class="detail" id="detail" aria-live="polite"></section>
+    <section class="graph" id="graph" aria-label="The original call and its rewrites"></section>
+  </div>
+  <section class="summary">
+    <h2>Share of equivalent rewrites with a changed verdict</h2>
+    <p>Across all 300 calls: the share of equivalent rewrites (%) whose verdict differs from the verdict on the original call, as in Table I of the paper. Every gate's share is above its repeat rate, the share of requests whose verdict differs when the identical request is sent again. Click a gate to select it.</p>
+    <div class="bars" id="bars"></div>
+  </section>
+  <footer id="footer"></footer>
 </main>
 <script src="app.js"></script>
 </body>
